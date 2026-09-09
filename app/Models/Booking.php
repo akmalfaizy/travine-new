@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Booking extends Model
 {
     protected $fillable = [
-        'tour_id', 'booking_code', 'invoice_number', 'invoice_category', 'name', 'whatsapp',
+        'tour_id', 'partner_id', 'referral_code', 'referral_source', 'booking_code', 'invoice_number', 'invoice_category', 'name', 'whatsapp',
         'email', 'departure_date', 'duration', 'participants', 'total_price', 'discount', 'notes',
         'payment_proof', 'payment_status', 'payment_type', 'paid_amount', 'booking_status', 'admin_notes'
     ];
@@ -36,6 +36,16 @@ class Booking extends Model
     public function tour()
     {
         return $this->belongsTo(Tour::class);
+    }
+
+    public function partner()
+    {
+        return $this->belongsTo(Partner::class);
+    }
+
+    public function commission()
+    {
+        return $this->hasOne(Commission::class);
     }
 
     public function notificationLogs()

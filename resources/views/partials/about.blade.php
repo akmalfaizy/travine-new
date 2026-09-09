@@ -1,6 +1,6 @@
 {{-- About Section --}}
 <section class="about section" id="about">
-    <div class="container">
+    <div class="container centered">
         <div class="about__grid">
             {{-- Visual side --}}
             <div class="about__visual reveal">

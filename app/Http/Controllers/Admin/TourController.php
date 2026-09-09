@@ -26,20 +26,24 @@ class TourController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'category_id'       => 'required|exists:categories,id',
-            'title'             => 'required|string|max:255',
-            'price'             => 'required|numeric|min:0',
-            'location'          => 'nullable|string|max:255',
-            'duration'          => 'nullable|string|max:100',
-            'short_description' => 'nullable|string',
-            'description'       => 'nullable|string',
-            'itinerary'         => 'nullable|string',
-            'facilities'        => 'nullable|string',
-            'terms'             => 'nullable|string',
-            'is_active'         => 'boolean',
-            'thumbnail'         => 'nullable|image|max:3072',
-            'gallery.*'         => 'nullable|image|max:3072',
+            'category_id'           => 'required|exists:categories,id',
+            'title'                 => 'required|string|max:255',
+            'price'                 => 'required|numeric|min:0',
+            'hpp_price'             => 'nullable|numeric|min:0',
+            'commission_percentage' => 'nullable|numeric|min:0|max:100',
+            'location'              => 'nullable|string|max:255',
+            'duration'              => 'nullable|string|max:100',
+            'short_description'     => 'nullable|string',
+            'description'           => 'nullable|string',
+            'itinerary'             => 'nullable|string',
+            'facilities'            => 'nullable|string',
+            'terms'                 => 'nullable|string',
+            'is_active'             => 'boolean',
+            'thumbnail'             => 'nullable|image|max:3072',
+            'gallery.*'             => 'nullable|image|max:3072',
         ]);
+        $data['hpp_price']             = $data['hpp_price'] ?? 0;
+        $data['commission_percentage'] = $data['commission_percentage'] ?? 0;
 
         $data['slug']      = Str::slug($data['title']) . '-' . Str::random(4);
         $data['is_active'] = $request->boolean('is_active', true);
@@ -71,20 +75,24 @@ class TourController extends Controller
     public function update(Request $request, Tour $tour)
     {
         $data = $request->validate([
-            'category_id'       => 'required|exists:categories,id',
-            'title'             => 'required|string|max:255',
-            'price'             => 'required|numeric|min:0',
-            'location'          => 'nullable|string|max:255',
-            'duration'          => 'nullable|string|max:100',
-            'short_description' => 'nullable|string',
-            'description'       => 'nullable|string',
-            'itinerary'         => 'nullable|string',
-            'facilities'        => 'nullable|string',
-            'terms'             => 'nullable|string',
-            'is_active'         => 'boolean',
-            'thumbnail'         => 'nullable|image|max:3072',
-            'gallery.*'         => 'nullable|image|max:3072',
+            'category_id'           => 'required|exists:categories,id',
+            'title'                 => 'required|string|max:255',
+            'price'                 => 'required|numeric|min:0',
+            'hpp_price'             => 'nullable|numeric|min:0',
+            'commission_percentage' => 'nullable|numeric|min:0|max:100',
+            'location'              => 'nullable|string|max:255',
+            'duration'              => 'nullable|string|max:100',
+            'short_description'     => 'nullable|string',
+            'description'           => 'nullable|string',
+            'itinerary'             => 'nullable|string',
+            'facilities'            => 'nullable|string',
+            'terms'                 => 'nullable|string',
+            'is_active'             => 'boolean',
+            'thumbnail'             => 'nullable|image|max:3072',
+            'gallery.*'             => 'nullable|image|max:3072',
         ]);
+        $data['hpp_price']             = $data['hpp_price'] ?? 0;
+        $data['commission_percentage'] = $data['commission_percentage'] ?? 0;
 
         $data['is_active'] = $request->boolean('is_active', true);
 

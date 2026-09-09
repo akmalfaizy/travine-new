@@ -17,8 +17,9 @@
 <style>
     .booking-page {
         padding: 120px 0 80px;
-        background: var(--bg-offset, #f8fafc);
-        color: var(--text-primary, #0F2A52);
+        background: var(--bg-main);
+        color: var(--text-primary);
+        min-height: 100vh;
     }
     .booking-grid {
         display: grid;

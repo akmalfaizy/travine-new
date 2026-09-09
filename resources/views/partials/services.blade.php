@@ -1,6 +1,6 @@
 {{-- Services Section --}}
 <section class="services section" id="services">
-    <div class="container">
+    <div class="container centered">
         <div class="section__header reveal">
             <span class="section__badge">Layanan Kami</span>
             <h2 class="section__title">Solusi Wisata <span class="text-gradient">Komprehensif</span></h2>

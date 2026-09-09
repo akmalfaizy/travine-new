@@ -21,7 +21,7 @@
     </div>
 </div>
 
-<div class="news-body" style="padding: 80px 0; background: var(--bg-offset, #f8fafc);">
+<div class="news-body" style="padding: 80px 0; background: var(--bg-main);">
     <div class="container">
         @if($news->count() > 0)
             <div class="news-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;">

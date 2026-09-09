@@ -27,7 +27,18 @@ class BookingController extends Controller
             'departure_date' => 'required|date|after:today',
             'participants'   => 'required|integer|min:1|max:100',
             'notes'          => 'nullable|string|max:1000',
+            'referral_code'  => 'nullable|string|max:50',
         ]);
+
+        if (!empty($data['referral_code'])) {
+            $partner = \App\Models\Partner::where('referral_code', strtoupper(trim($data['referral_code'])))
+                ->whereIn('status', ['active', 'pending'])
+                ->first();
+            if ($partner) {
+                session(['travine_referral_code' => $partner->referral_code]);
+                $data['referral_code'] = $partner->referral_code;
+            }
+        }
 
         // Simpan data booking ke session
         session(['booking_draft' => $data]);
@@ -92,23 +103,44 @@ class BookingController extends Controller
         // Buat kode booking unik
         $bookingCode = Booking::generateBookingCode();
 
+        // Referral attribution from draft, session or cookie
+        $refCode = $draft['referral_code'] ?? session('travine_referral_code') ?? $request->cookie('travine_referral_code');
+        $partnerId = null;
+        if ($refCode) {
+            $partner = \App\Models\Partner::where('referral_code', strtoupper(trim($refCode)))->whereIn('status', ['active', 'pending'])->first();
+            if ($partner) {
+                $partnerId = $partner->id;
+                $refCode   = $partner->referral_code;
+            } else {
+                $refCode   = null;
+            }
+        }
+
         $booking = Booking::create([
-            'tour_id'        => $draft['tour_id'],
-            'booking_code'   => $bookingCode,
-            'name'           => $draft['name'],
-            'whatsapp'       => $draft['whatsapp'],
-            'email'          => $draft['email'],
-            'departure_date' => $draft['departure_date'],
-            'participants'   => $participants,
-            'notes'          => $draft['notes'] ?? null,
-            'total_price'    => $fullAmount,
-            'discount'       => 0,
-            'payment_type'   => $paymentType,
-            'paid_amount'    => $paidAmount,
-            'payment_proof'  => $proofPath,
-            'payment_status' => $paymentType === 'dp' ? 'dp_paid' : 'paid',
-            'booking_status' => 'waiting_verification',
+            'tour_id'         => $draft['tour_id'],
+            'partner_id'      => $partnerId,
+            'referral_code'   => $refCode,
+            'referral_source' => $refCode ? 'web_link' : null,
+            'booking_code'    => $bookingCode,
+            'name'            => $draft['name'],
+            'whatsapp'        => $draft['whatsapp'],
+            'email'           => $draft['email'],
+            'departure_date'  => $draft['departure_date'],
+            'participants'    => $participants,
+            'notes'           => $draft['notes'] ?? null,
+            'total_price'     => $fullAmount,
+            'discount'        => 0,
+            'payment_type'    => $paymentType,
+            'paid_amount'     => $paidAmount,
+            'payment_proof'   => $proofPath,
+            'payment_status'  => $paymentType === 'dp' ? 'dp_paid' : 'paid',
+            'booking_status'  => 'waiting_verification',
         ]);
+
+        // Record commission snapshot if partner referral exists
+        if ($partnerId) {
+            \App\Services\CommissionService::createOrUpdateForBooking($booking);
+        }
 
         // Kirim email invoice ke pemesan
         try {

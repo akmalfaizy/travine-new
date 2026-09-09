@@ -32,8 +32,19 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Harga (Rp) *</label>
-                        <input name="price" type="number" class="form-control" value="{{ old('price', $tour->price ?? '') }}" placeholder="1500000" required min="0">
+                        <label class="form-label">Harga Publish / Jual (Rp) *</label>
+                        <input name="price" id="admin_price" type="number" class="form-control" value="{{ old('price', $tour->price ?? '') }}" placeholder="1500000" required min="0" oninput="calcAdminCommission()">
+                        <small style="color:var(--text-muted); font-size:0.78rem;">Harga resmi yang ditampilkan ke customer</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Harga Modal / HPP per Produk (Rp)</label>
+                        <input name="hpp_price" id="admin_hpp" type="number" class="form-control" value="{{ old('hpp_price', $tour->hpp_price ?? '') }}" placeholder="1000000" min="0" oninput="calcAdminCommission()">
+                        <small style="color:var(--text-muted); font-size:0.78rem;">Harga Pokok Penjualan / Biaya Vendor</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Komisi Mitra (%)</label>
+                        <input name="commission_percentage" id="admin_comm_pct" type="number" step="0.1" class="form-control" value="{{ old('commission_percentage', $tour->commission_percentage ?? '') }}" placeholder="10" min="0" max="100" oninput="calcAdminCommission()">
+                        <small style="color:var(--text-muted); font-size:0.78rem;">% komisi yang dihitung dari margin (Publish - HPP)</small>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Lokasi</label>
@@ -42,6 +53,15 @@
                     <div class="form-group">
                         <label class="form-label">Durasi</label>
                         <input name="duration" type="text" class="form-control" value="{{ old('duration', $tour->duration ?? '') }}" placeholder="3 Hari 2 Malam">
+                    </div>
+                </div>
+
+                {{-- Live Financial Preview --}}
+                <div style="background:rgba(20,184,166,0.08); border:1px solid rgba(20,184,166,0.2); padding:16px; border-radius:10px; margin-top:16px;">
+                    <div style="font-weight:700; font-size:0.9rem; color:var(--teal); margin-bottom:8px;">💡 Est. Margin & Komisi Mitra per Pax:</div>
+                    <div style="display:flex; gap:24px; font-size:0.85rem; color:var(--text-primary);">
+                        <div>Margin (Profit): <strong id="preview-margin">Rp 0</strong></div>
+                        <div>Est. Komisi Mitra: <strong id="preview-comm" style="color:var(--orange,#F97316);">Rp 0</strong></div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -129,5 +149,21 @@ function previewImg(input, id) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+
+function calcAdminCommission() {
+    const price = parseFloat(document.getElementById('admin_price')?.value) || 0;
+    const hpp = parseFloat(document.getElementById('admin_hpp')?.value) || 0;
+    const commPct = parseFloat(document.getElementById('admin_comm_pct')?.value) || 0;
+
+    const margin = Math.max(0, price - hpp);
+    const commAmt = Math.round((margin * commPct) / 100);
+
+    const marginElem = document.getElementById('preview-margin');
+    const commElem = document.getElementById('preview-comm');
+
+    if (marginElem) marginElem.innerText = 'Rp ' + margin.toLocaleString('id-ID');
+    if (commElem) commElem.innerText = 'Rp ' + commAmt.toLocaleString('id-ID');
+}
+document.addEventListener('DOMContentLoaded', calcAdminCommission);
 </script>
 @endpush

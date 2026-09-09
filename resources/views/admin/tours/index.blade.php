@@ -8,7 +8,7 @@
 <div class="admin-card">
     <table class="admin-table">
         <thead>
-            <tr><th>Thumbnail</th><th>Judul</th><th>Kategori</th><th>Lokasi</th><th>Harga</th><th>Status</th><th>Aksi</th></tr>
+            <tr><th>Thumbnail</th><th>Judul</th><th>Kategori</th><th>Harga Publish</th><th>HPP (Modal)</th><th>Komisi Mitra</th><th>Status</th><th>Aksi</th></tr>
         </thead>
         <tbody>
         @forelse($tours as $tour)
@@ -22,8 +22,12 @@
                 </td>
                 <td style="font-weight:600;">{{ Str::limit($tour->title, 40) }}</td>
                 <td><span class="badge badge-info">{{ $tour->category?->name }}</span></td>
-                <td style="color:var(--text-muted); font-size:0.85rem;">{{ $tour->location }}</td>
                 <td style="font-weight:600; color:var(--teal);">{{ $tour->price_formatted }}</td>
+                <td style="color:var(--text-muted); font-size:0.85rem;">{{ $tour->hpp_price_formatted }}</td>
+                <td>
+                    <span style="font-weight:700; color:var(--orange, #F97316);">{{ $tour->commission_percentage ?? 0 }}%</span>
+                    <small style="display:block; font-size:0.75rem; color:var(--text-muted);">Est: {{ $tour->estimated_commission_formatted }}/pax</small>
+                </td>
                 <td><span class="badge {{ $tour->is_active ? 'badge-success' : 'badge-muted' }}">{{ $tour->is_active ? 'Aktif' : 'Draft' }}</span></td>
                 <td>
                     <div style="display:flex; gap:6px;">
@@ -36,7 +40,7 @@
                 </td>
             </tr>
         @empty
-            <tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:40px;">Belum ada paket wisata</td></tr>
+            <tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:40px;">Belum ada paket wisata</td></tr>
         @endforelse
         </tbody>
     </table>

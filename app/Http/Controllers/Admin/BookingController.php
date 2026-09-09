@@ -53,9 +53,20 @@ class BookingController extends Controller
 
         $booking->update($data);
 
-        // Generate invoice when confirmed
-        if ($data['booking_status'] === 'confirmed' && !$booking->invoice_number) {
-            $booking->update(['invoice_number' => Booking::generateInvoiceNumber()]);
+        // Sync commission status
+        \App\Services\CommissionService::syncStatusForBooking($booking);
+
+        // Generate invoice & send confirmation email with PDF when confirmed
+        if ($data['booking_status'] === 'confirmed') {
+            if (!$booking->invoice_number) {
+                $booking->update(['invoice_number' => Booking::generateInvoiceNumber()]);
+            }
+            $freshBooking = $booking->fresh(['tour.category']);
+            try {
+                $this->sendConfirmedInvoiceEmail($freshBooking);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to send confirmed invoice email for booking #' . $booking->id . ': ' . $e->getMessage());
+            }
         }
 
         // Send WhatsApp notification
@@ -68,7 +79,7 @@ class BookingController extends Controller
 
         ActivityLog::record("Update status booking {$booking->booking_code} → {$data['booking_status']}");
 
-        return back()->with('success', 'Status pemesanan berhasil diperbarui.');
+        return back()->with('success', 'Status pemesanan berhasil diperbarui. Email invoice resmi & notifikasi terverifikasi telah dikirim ke pelanggan.');
     }
 
     public function updatePayment(Request $request, Booking $booking)
@@ -78,11 +89,53 @@ class BookingController extends Controller
         ]);
 
         $booking->update($data);
+
+        // Sync commission status
+        \App\Services\CommissionService::syncStatusForBooking($booking);
+
+        // If payment status is updated to paid/dp_paid and booking is confirmed, send updated invoice email
+        if (in_array($data['payment_status'], ['paid', 'dp_paid']) && in_array($booking->booking_status, ['confirmed', 'completed'])) {
+            if (!$booking->invoice_number) {
+                $booking->update(['invoice_number' => Booking::generateInvoiceNumber()]);
+            }
+            $freshBooking = $booking->fresh(['tour.category']);
+            try {
+                $this->sendConfirmedInvoiceEmail($freshBooking);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to send updated payment invoice email for booking #' . $booking->id . ': ' . $e->getMessage());
+            }
+        }
+
         ActivityLog::record("Update pembayaran booking {$booking->booking_code} → {$data['payment_status']}");
 
-        return back()->with('success', 'Status pembayaran berhasil diperbarui.');
+        return back()->with('success', 'Status pembayaran berhasil diperbarui. Email invoice terverifikasi telah dikirim ke pelanggan.');
     }
 
+    /**
+     * Helper to generate PDF invoice and send confirmed email to customer.
+     */
+    private function sendConfirmedInvoiceEmail(Booking $booking): void
+    {
+        $qrUrl    = url('/bookings/' . $booking->booking_code . '/verify');
+        $writer   = new PngWriter();
+        $qrCode   = new QrCode(data: $qrUrl, size: 150, margin: 5);
+        $qrResult = $writer->write($qrCode);
+        $qrBase64 = base64_encode($qrResult->getString());
+
+        $pdf = Pdf::loadView('pdf.invoice', compact('booking', 'qrBase64'))
+                  ->setPaper('a4', 'portrait');
+        $pdfData = $pdf->output();
+
+        Mail::to($booking->email)->send(new \App\Mail\BookingConfirmedMail($booking, $pdfData));
+
+        NotificationLog::create([
+            'booking_id' => $booking->id,
+            'recipient'  => $booking->email,
+            'type'       => 'email',
+            'status'     => 'success',
+            'sent_at'    => now(),
+        ]);
+    }
 
     // Existing method unchanged
     public function downloadInvoice(Booking $booking)
@@ -105,28 +158,11 @@ class BookingController extends Controller
      */
     public function resendInvoice(Booking $booking)
     {
-        // Regenerate PDF content
-        $qrUrl    = url('/bookings/' . $booking->booking_code . '/verify');
-        $writer   = new PngWriter();
-        $qrCode   = new QrCode(data: $qrUrl, size: 150, margin: 5);
-        $qrResult = $writer->write($qrCode);
-        $qrBase64 = base64_encode($qrResult->getString());
-
-        $pdf = Pdf::loadView('pdf.invoice', compact('booking', 'qrBase64'))
-                  ->setPaper('a4', 'portrait');
-        $pdfData = $pdf->output();
-
-        // Send email with attachment
-        Mail::to($booking->email)->send(new \App\Mail\BookingConfirmedMail($booking, $pdfData));
-
-        // Log notification
-        \App\Models\NotificationLog::create([
-            'booking_id' => $booking->id,
-            'recipient'  => $booking->email,
-            'type'       => 'email',
-            'status'     => 'success',
-            'sent_at'    => now(),
-        ]);
+        if (!$booking->invoice_number) {
+            $booking->update(['invoice_number' => Booking::generateInvoiceNumber()]);
+        }
+        $freshBooking = $booking->fresh(['tour.category']);
+        $this->sendConfirmedInvoiceEmail($freshBooking);
 
         return back()->with('success', 'Invoice email berhasil dikirim ulang.');
     }

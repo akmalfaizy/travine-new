@@ -7,7 +7,7 @@
 @endphp
 
 <style>
-    .pay-page { padding: 110px 0 80px; background: var(--bg-offset, #f8fafc); min-height: 100vh; }
+    .pay-page { padding: 110px 0 80px; background: var(--bg-main); color: var(--text-primary); min-height: 100vh; }
     .pay-grid { display: grid; grid-template-columns: 1fr 420px; gap: 30px; margin-top: 30px; }
     @media(max-width:991px){ .pay-grid { grid-template-columns: 1fr; } }
 

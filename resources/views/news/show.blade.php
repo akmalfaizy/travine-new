@@ -4,8 +4,8 @@
 <style>
     .news-detail-page {
         padding: 120px 0 80px;
-        background: var(--bg-offset, #f8fafc);
-        color: var(--text-primary, #0F2A52);
+        background: var(--bg-main);
+        color: var(--text-primary);
     }
     .news-detail-container {
         display: grid;

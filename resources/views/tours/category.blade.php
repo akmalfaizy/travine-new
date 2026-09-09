@@ -24,12 +24,12 @@
     </div>
 </div>
 
-<div class="category-body" style="padding: 80px 0; background: var(--bg-offset, #f8fafc);">
+<div class="category-body" style="padding: 80px 0; background: var(--bg-main);">
     <div class="container">
         @if($tours->count() > 0)
             <div class="tours-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;">
                 @foreach($tours as $tour)
-                    <div class="tour-card" style="background: var(--card-bg, #ffffff); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s ease, box-shadow 0.3s ease; display: flex; flex-direction: column; height: 100%;">
+                    <div class="tour-card" style="background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); transition: transform 0.3s ease, box-shadow 0.3s ease; display: flex; flex-direction: column; height: 100%;">
                         <div class="tour-card__image-wrapper" style="position: relative; height: 220px; overflow: hidden;">
                             <img src="{{ $tour->thumbnail ? asset('storage/' . $tour->thumbnail) : asset('images/hero_bg.jpg') }}" alt="{{ $tour->title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
                             @if($tour->duration)

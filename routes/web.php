@@ -89,6 +89,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/bookings/{booking}/manual-invoice/create', [AdminBookingController::class, 'showManualInvoiceForm'])->name('bookings.manualInvoiceForm');
         Route::post('/bookings/{booking}/manual-invoice', [AdminBookingController::class, 'storeManualInvoice'])->name('bookings.manualInvoiceStore');
 
+        // Partners Management
+        Route::get('/partners', [\App\Http\Controllers\Admin\PartnerController::class, 'index'])->name('partners.index');
+        Route::get('/partners/{partner}', [\App\Http\Controllers\Admin\PartnerController::class, 'show'])->name('partners.show');
+        Route::post('/partners/{partner}/status', [\App\Http\Controllers\Admin\PartnerController::class, 'toggleStatus'])->name('partners.status');
+
+        // Withdrawals Management
+        Route::get('/withdrawals', [\App\Http\Controllers\Admin\WithdrawalController::class, 'index'])->name('withdrawals.index');
+        Route::get('/withdrawals/{withdrawal}', [\App\Http\Controllers\Admin\WithdrawalController::class, 'show'])->name('withdrawals.show');
+        Route::post('/withdrawals/{withdrawal}/status', [\App\Http\Controllers\Admin\WithdrawalController::class, 'updateStatus'])->name('withdrawals.status');
+
         // Settings
         Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
@@ -96,5 +106,41 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/social-links/edit', [SocialLinkController::class, 'edit'])->name('social-links.edit');
         Route::post('/social-links', [SocialLinkController::class, 'update'])->name('social-links.update');
     });
+});
+
+// ─── Partner (Mitra/Affiliate) Routes ────────────────────────────────────────
+Route::prefix('partner')->name('partner.')->group(function () {
+    // Guest routes
+    Route::middleware('guest:partner')->group(function () {
+        Route::get('register', [\App\Http\Controllers\Partner\AuthController::class, 'showRegister'])->name('register');
+        Route::post('register', [\App\Http\Controllers\Partner\AuthController::class, 'register']);
+        Route::get('login', [\App\Http\Controllers\Partner\AuthController::class, 'showLogin'])->name('login');
+        Route::post('login', [\App\Http\Controllers\Partner\AuthController::class, 'login']);
+        Route::get('forgot-password', [\App\Http\Controllers\Partner\AuthController::class, 'showForgotPassword'])->name('forgot-password');
+        Route::post('forgot-password', [\App\Http\Controllers\Partner\AuthController::class, 'sendResetLink']);
+        Route::get('reset-password/{token}', [\App\Http\Controllers\Partner\AuthController::class, 'showResetForm'])->name('password.reset');
+        Route::post('reset-password', [\App\Http\Controllers\Partner\AuthController::class, 'resetPassword'])->name('password.update');
+        Route::get('otp', [\App\Http\Controllers\Partner\AuthController::class, 'showOtp'])->name('otp');
+        Route::post('otp', [\App\Http\Controllers\Partner\AuthController::class, 'verifyOtp']);
+    });
+
+    // Authenticated partner routes
+    Route::middleware('auth:partner')->group(function () {
+        Route::get('dashboard', [\App\Http\Controllers\Partner\PartnerDashboardController::class, 'index'])->name('dashboard');
+        Route::get('profile', [\App\Http\Controllers\Partner\PartnerDashboardController::class, 'profile'])->name('profile');
+        Route::put('profile', [\App\Http\Controllers\Partner\PartnerDashboardController::class, 'updateProfile'])->name('profile.update');
+        Route::put('bank-details', [\App\Http\Controllers\Partner\PartnerDashboardController::class, 'updateBankDetails'])->name('bank.update');
+        Route::get('referrals', [\App\Http\Controllers\Partner\PartnerDashboardController::class, 'referrals'])->name('referrals');
+        Route::get('orders', [\App\Http\Controllers\Partner\PartnerDashboardController::class, 'orders'])->name('orders');
+        Route::get('commissions', [\App\Http\Controllers\Partner\PartnerDashboardController::class, 'commissions'])->name('commissions');
+        Route::get('withdrawals', [\App\Http\Controllers\Partner\PartnerDashboardController::class, 'withdrawals'])->name('withdrawals');
+        Route::post('withdrawals', [\App\Http\Controllers\Partner\PartnerDashboardController::class, 'storeWithdrawal'])->name('withdrawals.store');
+        Route::post('logout', [\App\Http\Controllers\Partner\AuthController::class, 'logout'])->name('logout');
+    });
+
+
+
+    // Alias for OTP verification page (used by existing controller redirects)
+    Route::get('partner/otp', [\App\Http\Controllers\Partner\AuthController::class, 'showOtp'])->name('partner.verifyOtpPage');
 });
 ?>

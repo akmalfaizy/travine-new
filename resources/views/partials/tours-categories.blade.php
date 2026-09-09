@@ -1,5 +1,5 @@
 {{-- Kategori Wisata Section --}}
-<section class="section categories-section" id="kategori-wisata" style="padding: 80px 0; background: var(--bg-offset, #f8fafc);">
+<section class="section categories-section" id="kategori-wisata" style="padding: 80px 0; background: var(--bg-alt);">
     <div class="container">
         <div class="section__header reveal">
             <span class="section__badge">Destinasi</span>

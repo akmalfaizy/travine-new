@@ -34,6 +34,9 @@
     </main>
 
     @include('partials.footer')
+    @include('partials.partner_float')
+
+    {{-- Main JS --}}
 
     {{-- Main JS --}}
     <script src="{{ asset('js/app.js') }}"></script>

@@ -2,6 +2,10 @@
 
 @section('content')
     @include('partials.hero')
+    <!-- Mascot invitation for partner program -->
+    <!-- <div class="text-center my-5">
+        <img src="file:///C:/Users/asus/.gemini/antigravity-ide/brain/60d834d6-4d65-4285-9d26-084938a3fe29/mascot_invite_1788972621788.jpg" alt="Ayo jadi mitra kami dan dapatkan komisi!" style="max-width: 300px; width: 100%; height: auto;">
+    </div> -->
     @include('partials.about')
     @include('partials.services')
 

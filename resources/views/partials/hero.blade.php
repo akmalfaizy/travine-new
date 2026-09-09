@@ -21,7 +21,7 @@
         </svg>
     </div>
 
-    <div class="container hero__content">
+    <div class="hero__content">
         <div class="hero__grid">
             <div class="hero__text reveal">
                 <span class="hero__badge">🌏 Indonesia's Leading Tourism Partner</span>
@@ -44,8 +44,9 @@
                 </div>
             </div>
 
-            <div class="hero__mascot reveal reveal--delay-1">
-                <img src="{{ asset('images/maskot_travine.webp') }}" alt="Maskot Travine" class="hero__mascot-img">
+                <div class="partner-cta reveal reveal--delay-1" style="text-align:center;">
+                <h2 class="text-gradient" style="font-size:2rem; margin-bottom:1rem;">Ayo menjadi mitra kami dan dapatkan komisi!</h2>
+                <a href="{{ route('partner.register') }}" class="btn btn--primary">Daftar Sekarang</a>
             </div>
         </div>
 

@@ -4,7 +4,8 @@
 <style>
     .verify-page {
         padding: 120px 0 80px;
-        background: var(--bg-offset, #f8fafc);
+        background: var(--bg-main);
+        color: var(--text-primary);
         min-height: 100vh;
         display: flex;
         align-items: center;

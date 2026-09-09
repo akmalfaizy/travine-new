@@ -5,7 +5,21 @@ document.addEventListener('DOMContentLoaded', () => {
     initSmoothScroll();
     initContactForm();
     initParallax();
+    initReferralScroll();
 });
+
+// ===== REFERRAL AUTO SCROLL =====
+function initReferralScroll() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('ref')) {
+        const target = document.getElementById('kategori-wisata') || document.getElementById('services');
+        if (target) {
+            setTimeout(() => {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 400);
+        }
+    }
+}
 
 // ===== THEME =====
 function initTheme() {

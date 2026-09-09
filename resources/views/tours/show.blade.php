@@ -4,8 +4,8 @@
 <style>
     .tour-detail-page {
         padding: 120px 0 80px;
-        background: var(--bg-offset, #f8fafc);
-        color: var(--text-primary, #0F2A52);
+        background: var(--bg-main);
+        color: var(--text-primary);
     }
     .tour-container {
         display: grid;
@@ -20,10 +20,11 @@
     }
     /* Gallery Styles */
     .tour-gallery {
-        background: var(--card-bg, #fff);
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
         padding: 16px;
         border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        box-shadow: var(--shadow);
         margin-bottom: 30px;
     }
     .main-image-wrapper {
@@ -67,16 +68,17 @@
 
     /* Tabs Styles */
     .tour-tabs {
-        background: var(--card-bg, #fff);
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
         border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        box-shadow: var(--shadow);
         overflow: hidden;
         margin-bottom: 40px;
     }
     .tabs-header {
         display: flex;
-        border-bottom: 1px solid rgba(0,0,0,0.08);
-        background: rgba(15,42,82,0.02);
+        border-bottom: 1px solid var(--glass-border);
+        background: rgba(255,255,255,0.02);
         overflow-x: auto;
     }
     .tab-btn {
@@ -98,12 +100,13 @@
     .tab-btn.active {
         color: var(--teal, #14B8A6);
         border-bottom-color: var(--teal, #14B8A6);
-        background: var(--card-bg, #fff);
+        background: var(--card-bg);
     }
     .tab-pane {
         padding: 30px;
         display: none;
         line-height: 1.7;
+        color: var(--text-primary);
     }
     .tab-pane.active {
         display: block;
@@ -112,17 +115,18 @@
         margin-bottom: 16px;
         font-weight: 700;
         font-size: 1.3rem;
+        color: var(--text-primary);
     }
 
     /* Booking Form Sticky Sidebar */
     .booking-sidebar {
         position: sticky;
         top: 100px;
-        background: var(--card-bg, #fff);
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
         padding: 30px;
         border-radius: 16px;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.05);
-        border: 1px solid rgba(0,0,0,0.03);
+        box-shadow: var(--shadow);
         height: fit-content;
     }
     .form-group {
@@ -139,17 +143,17 @@
         width: 100%;
         padding: 12px 16px;
         border-radius: 8px;
-        border: 1px solid rgba(0,0,0,0.1);
+        border: 1px solid var(--glass-border);
         font-family: inherit;
         font-size: 0.95rem;
-        background: var(--bg-offset, #f8fafc);
-        color: inherit;
+        background: var(--input-bg);
+        color: var(--text-primary);
         transition: all 0.3s;
     }
     .form-control:focus {
         outline: none;
         border-color: var(--teal, #14B8A6);
-        background: var(--card-bg, #fff);
+        background: var(--card-bg);
         box-shadow: 0 0 0 3px rgba(20,184,166,0.1);
     }
 
@@ -339,6 +343,39 @@
                         <div class="form-group">
                             <label class="form-label" for="participants">Jumlah Peserta *</label>
                             <input type="number" name="participants" id="participants" class="form-control" min="1" required value="{{ old('participants', 1) }}" oninput="calculateTotal()">
+                        </div>
+
+                        @php
+                            $refCode = request()->query('ref') ?? request()->query('referral') ?? session('travine_referral_code') ?? request()->cookie('travine_referral_code');
+                            $partnerRef = null;
+                            if ($refCode) {
+                                $partnerRef = \App\Models\Partner::where('referral_code', strtoupper(trim($refCode)))->where('status', 'active')->first();
+                            }
+                            $hasPartnerLink = $partnerRef !== null;
+                            $referralValue = old('referral_code', $partnerRef ? $partnerRef->referral_code : '');
+                        @endphp
+
+                        <div class="form-group">
+                            <label class="form-label" for="referral_code">
+                                Kode Referral 
+                                @if($hasPartnerLink)
+                                    <span style="color:var(--teal, #14B8A6); font-size:0.8rem; font-weight:600;">(Mitra Terverifikasi)</span>
+                                @else
+                                    <span style="color:var(--text-muted); font-size:0.8rem;">(Opsional)</span>
+                                @endif
+                            </label>
+                            <input type="text" 
+                                   name="referral_code" 
+                                   id="referral_code" 
+                                   class="form-control" 
+                                   placeholder="Masukkan kode referral jika ada" 
+                                   value="{{ $referralValue }}" 
+                                   {{ $hasPartnerLink ? 'readonly style=background:#e2e8f0;cursor:not-allowed;font-weight:700;color:#0F2A52;' : '' }}>
+                            @if($hasPartnerLink)
+                                <small style="color:var(--teal, #14B8A6); font-size:0.825rem; display:block; margin-top:6px; font-weight:500;">
+                                    ✓ Terhubung dengan rekomendasi mitra <strong>{{ $partnerRef->name }}</strong> ({{ $partnerRef->referral_code }}). Kode dikunci secara otomatis.
+                                </small>
+                            @endif
                         </div>
 
                         <div class="form-group">
