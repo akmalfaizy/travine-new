@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Mail\WithdrawalStatusMail;
+use App\Models\CashLedger;
 use App\Models\Commission;
 use App\Models\Withdrawal;
 use Illuminate\Http\Request;
@@ -76,6 +77,21 @@ class WithdrawalController extends Controller
                 Commission::where('partner_id', $withdrawal->partner_id)
                     ->where('status', 'requested')
                     ->update(['status' => 'paid']);
+
+                // Auto-deduct from cash ledger (partner commission paid out)
+                try {
+                    $withdrawal->load('partner');
+                    $partnerName = $withdrawal->partner?->name ?? 'Mitra';
+                    CashLedger::addEntry(
+                        type:      'out',
+                        amount:    (int) $withdrawal->amount,
+                        note:      "Transfer komisi mitra: {$partnerName} — Kode Penarikan: {$withdrawal->withdrawal_code} | Rek: {$withdrawal->bank_name} a.n. {$withdrawal->bank_account_name} ({$withdrawal->bank_account_number})",
+                        source:    'withdrawal',
+                        createdBy: 'System (Withdrawal Auto)',
+                    );
+                } catch (\Throwable $e) {
+                    Log::error('Failed to deduct cash ledger for withdrawal #' . $withdrawal->id . ': ' . $e->getMessage());
+                }
             } elseif ($newStatus === 'rejected') {
                 $withdrawal->status           = 'rejected';
                 $withdrawal->rejection_reason = $request->input('rejection_reason');

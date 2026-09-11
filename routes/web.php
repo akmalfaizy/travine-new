@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\SocialLinkController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Admin\ExpenditureController;
 
 // ─── Public Routes ────────────────────────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -105,6 +106,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Social Links management
         Route::get('/social-links/edit', [SocialLinkController::class, 'edit'])->name('social-links.edit');
         Route::post('/social-links', [SocialLinkController::class, 'update'])->name('social-links.update');
+
+        // Expenditures / Keuangan (Private — PIN protected)
+        Route::get('/expenditures', [ExpenditureController::class, 'index'])->name('expenditures.index');
+        Route::post('/expenditures/verify-pin', [ExpenditureController::class, 'verifyPin'])->name('expenditures.verify-pin');
+        Route::post('/expenditures/lock', [ExpenditureController::class, 'lockPin'])->name('expenditures.lock');
+        Route::post('/expenditures/ledger', [ExpenditureController::class, 'storeLedger'])->name('expenditures.ledger');
+        Route::post('/expenditures/change-pin', [ExpenditureController::class, 'changePin'])->name('expenditures.change-pin');
+        Route::get('/expenditures/monthly-data', [ExpenditureController::class, 'monthlyData'])->name('expenditures.monthly-data');
     });
 });
 

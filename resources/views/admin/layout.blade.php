@@ -143,6 +143,17 @@
             <span>Pengaturan</span>
         </a>
 
+        <div class="sidebar-section">Keuangan</div>
+        <a href="{{ route('admin.expenditures.index') }}"
+           class="admin-nav-link {{ request()->routeIs('admin.expenditures.*') ? 'active' : '' }}"
+           style="{{ request()->routeIs('admin.expenditures.*') ? '' : '' }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span style="display:flex;align-items:center;gap:6px;width:100%;">
+                Keuangan
+                <span style="margin-left:auto;font-size:0.65rem;background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.25);border-radius:8px;padding:1px 6px;letter-spacing:0.05em;font-weight:700;">🔐</span>
+            </span>
+        </a>
+
         <div class="sidebar-bottom">
             <a href="/" target="_blank" class="admin-btn admin-btn--secondary" style="width:100%; justify-content: center; margin-bottom:8px;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>

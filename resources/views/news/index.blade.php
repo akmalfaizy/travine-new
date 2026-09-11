@@ -13,10 +13,10 @@
         </svg>
     </div>
     <div class="container" style="position: relative; z-index: 1;">
-        <span class="section__badge" style="background: rgba(20,184,166,0.15); color: var(--teal, #14B8A6); margin-bottom: 12px; display: inline-block;">Blog & Berita</span>
-        <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 16px;">Kabar & Artikel <span class="text-gradient">Terbaru</span></h1>
+        <span class="section__badge" style="background: rgba(20,184,166,0.15); color: var(--teal, #14B8A6); margin-bottom: 12px; display: inline-block;">{{ __('Blog & Berita') }}</span>
+        <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 16px;">{{ __('Kabar & Artikel') }} <span class="text-gradient">{{ __('Terbaru') }}</span></h1>
         <p style="font-size: 1.15rem; max-width: 600px; margin: 0 auto; color: rgba(255,255,255,0.7); line-height: 1.6;">
-            Temukan inspirasi perjalanan, tips liburan, dan berita terbaru seputar destinasi pariwisata di Indonesia.
+            {{ __('Temukan inspirasi perjalanan, tips liburan, dan berita terbaru seputar destinasi pariwisata di Indonesia.') }}
         </p>
     </div>
 </div>
@@ -52,7 +52,7 @@
                                 {{ Str::limit(strip_tags($item->summary), 120) }}
                             </p>
                             <a href="{{ route('news.show', $item->slug) }}" class="news-card__link" style="font-weight: 600; color: var(--teal, #14B8A6); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 0.95rem; transition: gap 0.3s; margin-top: auto;">
-                                Baca Artikel
+                                {{ __('Baca Artikel') }}
                                 <svg class="news-card__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M5 12h14M12 5l7 7-7 7"/>
                                 </svg>
@@ -67,9 +67,9 @@
         @else
             <div style="text-align: center; padding: 80px 20px; background: var(--card-bg, #ffffff); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
                 <div style="font-size: 4rem; margin-bottom: 20px;">📰</div>
-                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;">Belum Ada Artikel</h3>
-                <p style="color: var(--text-muted); max-width: 400px; margin: 0 auto 24px;">Tim penulis kami sedang menyiapkan artikel menarik untuk Anda. Kembali lagi beberapa saat lagi!</p>
-                <a href="{{ route('home') }}" class="btn btn--primary" style="text-decoration: none;">Kembali ke Beranda</a>
+                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;">{{ __('Belum Ada Artikel') }}</h3>
+                <p style="color: var(--text-muted); max-width: 400px; margin: 0 auto 24px;">{{ __('Tim penulis kami sedang menyiapkan artikel menarik untuk Anda. Kembali lagi beberapa saat lagi!') }}</p>
+                <a href="{{ route('home') }}" class="btn btn--primary" style="text-decoration: none;">{{ __('Kembali ke Beranda') }}</a>
             </div>
         @endif
     </div>

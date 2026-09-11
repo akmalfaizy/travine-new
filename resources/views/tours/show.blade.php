@@ -197,7 +197,7 @@
         {{-- Breadcrumbs / Back button --}}
         <div style="margin-bottom: 24px;">
             <a href="{{ route('tours.category', $tour->category->slug) }}" style="text-decoration: none; color: var(--teal, #14B8A6); font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
-                ← Kembali ke Kategori {{ $tour->category->name }}
+                ← {{ __('Kembali ke Kategori') }} {{ $tour->category->name }}
             </a>
         </div>
 
@@ -262,15 +262,15 @@
                 {{-- Tabs Container --}}
                 <div class="tour-tabs">
                     <div class="tabs-header">
-                        <button class="tab-btn active" onclick="switchTab(event, 'deskripsi')">Deskripsi</button>
-                        <button class="tab-btn" onclick="switchTab(event, 'itinerary')">Rencana Perjalanan</button>
-                        <button class="tab-btn" onclick="switchTab(event, 'fasilitas')">Fasilitas</button>
-                        <button class="tab-btn" onclick="switchTab(event, 'ketentuan')">Syarat & Ketentuan</button>
+                        <button class="tab-btn active" onclick="switchTab(event, 'deskripsi')">{{ __('Deskripsi') }}</button>
+                        <button class="tab-btn" onclick="switchTab(event, 'itinerary')">{{ __('Rencana Perjalanan') }}</button>
+                        <button class="tab-btn" onclick="switchTab(event, 'fasilitas')">{{ __('Fasilitas') }}</button>
+                        <button class="tab-btn" onclick="switchTab(event, 'ketentuan')">{{ __('Syarat & Ketentuan') }}</button>
                     </div>
 
                     {{-- Deskripsi Pane --}}
                     <div id="deskripsi" class="tab-pane active">
-                        <h3>Tentang Paket Wisata</h3>
+                        <h3>{{ __('Tentang Paket Wisata') }}</h3>
                         <div style="font-size: 1.05rem;">
                             {!! nl2br(e($tour->description)) !!}
                         </div>
@@ -278,25 +278,25 @@
 
                     {{-- Itinerary Pane --}}
                     <div id="itinerary" class="tab-pane">
-                        <h3>Rencana Perjalanan (Itinerary)</h3>
+                        <h3>{{ __('Rencana Perjalanan (Itinerary)') }}</h3>
                         <div style="font-size: 1.05rem;">
-                            {!! nl2br(e($tour->itinerary ?: 'Itinerary tidak didefinisikan untuk paket ini.')) !!}
+                            {!! nl2br(e($tour->itinerary ?: __('Itinerary tidak didefinisikan untuk paket ini.'))) !!}
                         </div>
                     </div>
 
                     {{-- Fasilitas Pane --}}
                     <div id="fasilitas" class="tab-pane">
-                        <h3>Fasilitas yang Didapat</h3>
+                        <h3>{{ __('Fasilitas yang Didapat') }}</h3>
                         <div style="font-size: 1.05rem;">
-                            {!! nl2br(e($tour->facilities ?: 'Informasi fasilitas tidak tersedia.')) !!}
+                            {!! nl2br(e($tour->facilities ?: __('Informasi fasilitas tidak tersedia.'))) !!}
                         </div>
                     </div>
 
                     {{-- Ketentuan Pane --}}
                     <div id="ketentuan" class="tab-pane">
-                        <h3>Syarat & Ketentuan</h3>
+                        <h3>{{ __('Syarat & Ketentuan') }}</h3>
                         <div style="font-size: 1.05rem;">
-                            {!! nl2br(e($tour->terms ?: 'Ketentuan standar berlaku untuk pemesanan paket ini.')) !!}
+                            {!! nl2br(e($tour->terms ?: __('Ketentuan standar berlaku untuk pemesanan paket ini.'))) !!}
                         </div>
                     </div>
                 </div>
@@ -306,42 +306,42 @@
             <div>
                 <div class="booking-sidebar">
                     <div style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid rgba(0,0,0,0.06);">
-                        <span style="font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Harga per Orang</span>
+                        <span style="font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 4px;">{{ __('Harga per Orang') }}</span>
                         <div style="display: flex; align-items: baseline; gap: 8px;">
                             <span style="font-size: 2rem; font-weight: 850; color: var(--orange, #F97316);">Rp {{ number_format($tour->price, 0, ',', '.') }}</span>
                         </div>
-                        <span style="font-size:0.8rem; color:var(--text-muted);">DP minimal Rp 100.000 / pax</span>
+                        <span style="font-size:0.8rem; color:var(--text-muted);">{{ __('DP minimal Rp 100.000 / pax') }}</span>
                     </div>
 
-                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 20px;">Formulir Pemesanan</h3>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 20px;">{{ __('Formulir Pemesanan') }}</h3>
 
                     <form method="POST" action="{{ route('bookings.initiate') }}" id="booking-form">
                         @csrf
                         <input type="hidden" name="tour_id" value="{{ $tour->id }}">
 
                         <div class="form-group">
-                            <label class="form-label" for="name">Nama Lengkap *</label>
+                            <label class="form-label" for="name">{{ __('Nama Lengkap') }} *</label>
                             <input type="text" name="name" id="name" class="form-control" placeholder="Hubert Blaine..." required value="{{ old('name') }}">
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="whatsapp">No. WhatsApp / HP *</label>
+                            <label class="form-label" for="whatsapp">{{ __('No. WhatsApp / HP') }} *</label>
                             <input type="text" name="whatsapp" id="whatsapp" class="form-control" placeholder="081234567890" required value="{{ old('whatsapp') }}">
-                            <small style="color:var(--text-muted); font-size:0.8rem;">Gunakan format nomor lokal atau internasional</small>
+                            <small style="color:var(--text-muted); font-size:0.8rem;">{{ __('Gunakan format nomor lokal atau internasional') }}</small>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="email">Alamat Email *</label>
+                            <label class="form-label" for="email">{{ __('Alamat Email') }} *</label>
                             <input type="email" name="email" id="email" class="form-control" placeholder="email@domain.com" required value="{{ old('email') }}">
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="departure_date">Tanggal Keberangkatan *</label>
+                            <label class="form-label" for="departure_date">{{ __('Tanggal Keberangkatan') }} *</label>
                             <input type="date" name="departure_date" id="departure_date" class="form-control" required min="{{ date('Y-m-d', strtotime('+1 day')) }}" value="{{ old('departure_date') }}">
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="participants">Jumlah Peserta *</label>
+                            <label class="form-label" for="participants">{{ __('Jumlah Peserta') }} *</label>
                             <input type="number" name="participants" id="participants" class="form-control" min="1" required value="{{ old('participants', 1) }}" oninput="calculateTotal()">
                         </div>
 
@@ -357,18 +357,18 @@
 
                         <div class="form-group">
                             <label class="form-label" for="referral_code">
-                                Kode Referral 
+                                {{ __('Kode Referral') }} 
                                 @if($hasPartnerLink)
-                                    <span style="color:var(--teal, #14B8A6); font-size:0.8rem; font-weight:600;">(Mitra Terverifikasi)</span>
+                                    <span style="color:var(--teal, #14B8A6); font-size:0.8rem; font-weight:600;">({{ __('Mitra Terverifikasi') }})</span>
                                 @else
-                                    <span style="color:var(--text-muted); font-size:0.8rem;">(Opsional)</span>
+                                    <span style="color:var(--text-muted); font-size:0.8rem;">({{ __('Opsional') }})</span>
                                 @endif
                             </label>
                             <input type="text" 
                                    name="referral_code" 
                                    id="referral_code" 
                                    class="form-control" 
-                                   placeholder="Masukkan kode referral jika ada" 
+                                   placeholder="{{ __('Masukkan kode referral jika ada') }}" 
                                    value="{{ $referralValue }}" 
                                    {{ $hasPartnerLink ? 'readonly style=background:#e2e8f0;cursor:not-allowed;font-weight:700;color:#0F2A52;' : '' }}>
                             @if($hasPartnerLink)
@@ -379,29 +379,29 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="notes">Catatan Tambahan (Opsional)</label>
-                            <textarea name="notes" id="notes" class="form-control" rows="3" placeholder="Permintaan khusus atau kebutuhan khusus lainnya...">{{ old('notes') }}</textarea>
+                            <label class="form-label" for="notes">{{ __('Catatan Tambahan (Opsional)') }}</label>
+                            <textarea name="notes" id="notes" class="form-control" rows="3" placeholder="{{ __('Permintaan khusus atau kebutuhan khusus lainnya...') }}">{{ old('notes') }}</textarea>
                         </div>
 
                         {{-- Calculation Box --}}
                         <div id="price-calculator" style="background: rgba(15,42,82,0.03); padding: 16px; border-radius: 8px; margin-bottom: 24px; border: 1px dashed rgba(0,0,0,0.1);">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem;">
-                                <span>Harga Tiket</span>
+                                <span>{{ __('Harga Tiket') }}</span>
                                 <span>Rp {{ number_format($tour->price, 0, ',', '.') }} × <span id="calc-qty">1</span></span>
                             </div>
                             <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.05rem; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 8px; color: var(--text-primary);">
-                                <span>Total Biaya</span>
+                                <span>{{ __('Total Biaya') }}</span>
                                 <span id="calc-total" style="color:var(--orange, #F97316);">Rp {{ number_format($tour->price, 0, ',', '.') }}</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; font-size: 0.85rem; padding-top: 8px; color: var(--text-muted); border-top: 1px dashed rgba(0,0,0,0.08); margin-top: 8px;">
-                                <span>DP Minimal (Rp 100rb/pax)</span>
+                                <span>{{ __('DP Minimal (Rp 100rb/pax)') }}</span>
                                 <span id="calc-dp" style="color:#F97316; font-weight:600;">Rp 100.000</span>
                             </div>
                         </div>
 
                         <button type="submit" class="btn btn--primary" style="width: 100%; border: none; padding: 14px; border-radius: 8px; font-size: 1.05rem; font-weight: 700; cursor: pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                            Lanjut ke Pembayaran
+                            {{ __('Lanjut ke Pembayaran') }}
                         </button>
                     </form>
                 </div>
@@ -411,7 +411,7 @@
         {{-- Related Tours --}}
         @if($relatedTours->count() > 0)
             <div style="margin-top: 80px;">
-                <h2 class="related-title">Paket Terkait</h2>
+                <h2 class="related-title">{{ __('Paket Terkait') }}</h2>
                 <div class="tours-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;">
                     @foreach($relatedTours as $relTour)
                         <div class="tour-card" style="background: var(--card-bg, #ffffff); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s ease, box-shadow 0.3s ease; display: flex; flex-direction: column; height: 100%;">
@@ -434,11 +434,11 @@
                                 </p>
                                 <div class="tour-card__footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 16px; margin-top: auto;">
                                     <div>
-                                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Mulai dari</span>
+                                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">{{ __('Mulai Dari') }}</span>
                                         <span style="font-size: 1.15rem; font-weight: 800; color: var(--orange, #F97316);">Rp {{ number_format($relTour->price, 0, ',', '.') }}</span>
                                     </div>
                                     <a href="{{ route('tours.show', $relTour->slug) }}" class="btn btn--primary" style="text-decoration: none; padding: 8px 16px; font-size: 0.85rem; font-weight: 600; border-radius: 8px;">
-                                        Detail
+                                        {{ __('Detail') }}
                                     </a>
                                 </div>
                             </div>

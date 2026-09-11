@@ -3,11 +3,11 @@
     <div class="container">
         <div class="section__header reveal" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; margin-bottom: 40px;">
             <div>
-                <span class="section__badge">Kabar Terbaru</span>
-                <h2 class="section__title" style="margin-bottom: 0;">Artikel & <span class="text-gradient">Berita</span></h2>
+                <span class="section__badge">{{ __('Kabar Terbaru') }}</span>
+                <h2 class="section__title" style="margin-bottom: 0;">{{ __('Artikel & Berita') }}</h2>
             </div>
             <a href="{{ route('news.index') }}" class="btn btn--secondary" style="text-decoration: none;">
-                Lihat Semua Artikel
+                {{ __('Lihat Semua Artikel') }}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: 8px;">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
@@ -31,7 +31,7 @@
                                 <line x1="8" y1="2" x2="8" y2="6"/>
                                 <line x1="3" y1="10" x2="21" y2="10"/>
                             </svg>
-                            <span>{{ $newsItem->published_at ? \Carbon\Carbon::parse($newsItem->published_at)->translatedFormat('d M Y') : $newsItem->created_at->translatedFormat('d M Y') }}</span>
+                            <span>{{ $newsItem->published_at ? \Carbon\Carbon::parse($newsItem->published_at)->locale(app()->getLocale())->translatedFormat('d M Y') : $newsItem->created_at->locale(app()->getLocale())->translatedFormat('d M Y') }}</span>
                         </div>
                         <h3 class="news-card__title" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; line-height: 1.4;">
                             <a href="{{ route('news.show', $newsItem->slug) }}" style="color: inherit; text-decoration: none; transition: color 0.3s;">
@@ -42,7 +42,7 @@
                             {{ Str::limit(strip_tags($newsItem->summary), 120) }}
                         </p>
                         <a href="{{ route('news.show', $newsItem->slug) }}" class="news-card__link" style="font-weight: 600; color: var(--teal, #14B8A6); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 0.95rem; transition: gap 0.3s;">
-                            Baca Artikel
+                            {{ __('Baca Artikel') }}
                             <svg class="news-card__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M5 12h14M12 5l7 7-7 7"/>
                             </svg>
@@ -51,7 +51,7 @@
                 </article>
             @empty
                 <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
-                    <p>Belum ada artikel atau berita terbaru saat ini.</p>
+                    <p>{{ __('Belum ada artikel atau berita terbaru saat ini.') }}</p>
                 </div>
             @endforelse
         </div>

@@ -13,6 +13,7 @@ use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use App\Models\CashLedger;
 
 class BookingController extends Controller
 {
@@ -66,6 +67,13 @@ class BookingController extends Controller
                 $this->sendConfirmedInvoiceEmail($freshBooking);
             } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::error('Failed to send confirmed invoice email for booking #' . $booking->id . ': ' . $e->getMessage());
+            }
+
+            // Auto-add margin to cash ledger
+            try {
+                CashLedger::addFromBooking($booking->fresh(['tour']));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to add cash ledger for booking #' . $booking->id . ': ' . $e->getMessage());
             }
         }
 

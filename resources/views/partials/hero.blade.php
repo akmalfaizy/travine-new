@@ -30,40 +30,23 @@
                     <span class="hero__title-highlight">Authentic Experiences</span>
                 </h1>
                 <p class="hero__subtitle">
-                    travine.id adalah mitra terpercaya dalam layanan manajemen perjalanan, pengembangan ekosistem pariwisata, konsultansi pengembangan dan operasional destinasi wisata di Indonesia. Kami menghadirkan pengalaman wisata
-                    yang autentik, inovatif, dan berkelanjutan.
+                    {{ __('travine.id adalah mitra terpercaya dalam layanan manajemen perjalanan, pengembangan ekosistem pariwisata, konsultansi pengembangan dan operasional destinasi wisata di Indonesia. Kami menghadirkan pengalaman wisata yang autentik, inovatif, dan berkelanjutan.') }}
                 </p>
                 <div class="hero__buttons">
                     <a href="#services" class="btn btn--primary" id="hero-cta-services">
-                        <span>Explore Services</span>
+                        <span>{{ __('Explore Services') }}</span>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
                     <a href="#contact" class="btn btn--outline" id="hero-cta-contact">
-                        <span>Contact Us</span>
+                        <span>{{ __('Contact Us') }}</span>
                     </a>
                 </div>
             </div>
 
-                <div class="partner-cta reveal reveal--delay-1" style="text-align:center;">
-                <h2 class="text-gradient" style="font-size:2rem; margin-bottom:1rem;">Ayo menjadi mitra kami dan dapatkan komisi!</h2>
-                <a href="{{ route('partner.register') }}" class="btn btn--primary">Daftar Sekarang</a>
+            <div class="partner-cta reveal reveal--delay-1" style="text-align:center;">
+                <h2 class="text-gradient" style="font-size:2rem; margin-bottom:1rem;">{{ __('Ayo menjadi mitra kami dan dapatkan komisi!') }}</h2>
+                <a href="{{ route('partner.register') }}" class="btn btn--primary">{{ __('Daftar Sekarang') }}</a>
             </div>
         </div>
-
-        {{-- Stats --}}
-        <!-- <div class="hero__stats reveal reveal--delay-2">
-            <div class="hero__stat">
-                <span class="hero__stat-number">150+</span>
-                <span class="hero__stat-label">Destinasi Wisata</span>
-            </div>
-            <div class="hero__stat">
-                <span class="hero__stat-number">50+</span>
-                <span class="hero__stat-label">Proyek Ekosistem</span>
-            </div>
-            <div class="hero__stat">
-                <span class="hero__stat-number">10K+</span>
-                <span class="hero__stat-label">Happy Travelers</span>
-            </div>
-        </div> -->
     </div>
 </section>

@@ -14,12 +14,12 @@
         </svg>
     </div>
     <div class="container" style="position: relative; z-index: 1;">
-        <span class="section__badge" style="background: rgba(20,184,166,0.15); color: var(--teal, #14B8A6); margin-bottom: 12px; display: inline-block;">Kategori Wisata</span>
+        <span class="section__badge" style="background: rgba(20,184,166,0.15); color: var(--teal, #14B8A6); margin-bottom: 12px; display: inline-block;">{{ __('Kategori Wisata') }}</span>
         <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 16px;">
             <span style="font-size: 1.5em; vertical-align: middle; margin-right: 8px;">{{ $category->icon ?: '🌴' }}</span>{{ $category->name }}
         </h1>
         <p style="font-size: 1.15rem; max-width: 600px; margin: 0 auto; color: rgba(255,255,255,0.7); line-height: 1.6;">
-            Jelajahi petualangan menakjubkan dan paket wisata pilihan terbaik kami di kategori {{ $category->name }}.
+            {{ __('Jelajahi petualangan menakjubkan dan paket wisata pilihan terbaik kami di kategori') }} {{ $category->name }}.
         </p>
     </div>
 </div>
@@ -56,11 +56,11 @@
                             </p>
                             <div class="tour-card__footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 16px; margin-top: auto;">
                                 <div>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted); display: block;">Mulai dari</span>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted); display: block;">{{ __('Mulai Dari') }}</span>
                                     <span style="font-size: 1.25rem; font-weight: 800; color: var(--orange, #F97316);">Rp {{ number_format($tour->price, 0, ',', '.') }}</span>
                                 </div>
                                 <a href="{{ route('tours.show', $tour->slug) }}" class="btn btn--primary" style="text-decoration: none; padding: 10px 20px; font-size: 0.9rem; font-weight: 600; border-radius: 8px;">
-                                    Detail Paket
+                                    {{ __('Detail Paket') }}
                                 </a>
                             </div>
                         </div>
@@ -73,9 +73,9 @@
         @else
             <div style="text-align: center; padding: 80px 20px; background: var(--card-bg, #ffffff); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
                 <div style="font-size: 4rem; margin-bottom: 20px;">🗺️</div>
-                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;">Belum Ada Paket Wisata</h3>
-                <p style="color: var(--text-muted); max-width: 400px; margin: 0 auto 24px;">Kami sedang menyiapkan paket perjalanan terbaik untuk kategori ini. Silakan hubungi kami untuk request kustom rute perjalanan!</p>
-                <a href="{{ route('home') }}#contact" class="btn btn--primary" style="text-decoration: none;">Hubungi Kami</a>
+                <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;">{{ __('Belum Ada Paket Wisata') }}</h3>
+                <p style="color: var(--text-muted); max-width: 400px; margin: 0 auto 24px;">{{ __('Kami sedang menyiapkan paket perjalanan terbaik untuk kategori ini. Silakan hubungi kami untuk request kustom rute perjalanan!') }}</p>
+                <a href="{{ route('home') }}#contact" class="btn btn--primary" style="text-decoration: none;">{{ __('Hubungi Kami') }}</a>
             </div>
         @endif
     </div>

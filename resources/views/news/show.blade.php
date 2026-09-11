@@ -120,7 +120,7 @@
         {{-- Breadcrumb / Back button --}}
         <div style="margin-bottom: 24px;">
             <a href="{{ route('news.index') }}" style="text-decoration: none; color: var(--teal, #14B8A6); font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
-                ← Kembali ke Semua Artikel
+                ← {{ __('Kembali ke Semua Artikel') }}
             </a>
         </div>
 
@@ -155,7 +155,7 @@
             <aside>
                 @if($related->count() > 0)
                     <div class="article-card" style="padding: 24px;">
-                        <h3 class="sidebar-title">Artikel Terkait</h3>
+                        <h3 class="sidebar-title">{{ __('Artikel Terkait') }}</h3>
                         @foreach($related as $rel)
                             <a href="{{ route('news.show', $rel->slug) }}" class="sidebar-item">
                                 <div class="sidebar-item-img">
@@ -173,12 +173,12 @@
                 {{-- Contact / CTA widget --}}
                 <div class="article-card" style="padding: 24px; margin-top: 30px; background: linear-gradient(135deg, #0F2A52 0%, #061124 100%); color: #fff; border:none; text-align: center;">
                     <div style="font-size: 2.5rem; margin-bottom: 12px;">🗺️</div>
-                    <h3 style="color:#fff; font-size:1.15rem; font-weight:750; margin-bottom:8px;">Butuh Bantuan Rencana Wisata?</h3>
+                    <h3 style="color:#fff; font-size:1.15rem; font-weight:750; margin-bottom:8px;">{{ __('Butuh Bantuan Rencana Wisata?') }}</h3>
                     <p style="color:rgba(255,255,255,0.7); font-size:0.85rem; line-height:1.5; margin-bottom:20px;">
-                        Konsultasikan rute liburan impian Anda bersama Travine secara gratis!
+                        {{ __('Konsultasikan rute liburan impian Anda bersama Travine secara gratis!') }}
                     </p>
                     <a href="{{ route('home') }}#contact" class="btn btn--primary" style="text-decoration:none; display:block; padding:10px; font-size:0.9rem; font-weight:600; text-align:center;">
-                        Mulai Konsultasi
+                        {{ __('Mulai Konsultasi') }}
                     </a>
                 </div>
             </aside>

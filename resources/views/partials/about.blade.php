@@ -38,28 +38,23 @@
                     {{-- Floating badge --}}
                     <div class="about__floating-badge">
                         <span class="about__floating-number">8+</span>
-                        <span class="about__floating-text">Tahun Pengalaman</span>
+                        <span class="about__floating-text">{{ __('Tahun Pengalaman') }}</span>
                     </div>
                 </div>
             </div>
 
             {{-- Text side --}}
             <div class="about__content reveal reveal--delay-1">
-                <span class="section__badge">Tentang Kami</span>
+                <span class="section__badge">{{ __('Tentang Kami') }}</span>
                 <h2 class="section__title">
-                    Membangun Ekosistem Wisata yang
-                    <span class="text-gradient">Berkelanjutan</span>
+                    {{ __('Membangun Ekosistem Wisata yang') }}
+                    <span class="text-gradient">{{ __('Berkelanjutan') }}</span>
                 </h2>
                 <p class="about__description">
-                    travine.id didirikan dengan visi untuk mentransformasi industri pariwisata Indonesia
-                    melalui pendekatan yang inovatif dan berkelanjutan. Kami percaya bahwa setiap destinasi
-                    memiliki potensi unik yang dapat dikembangkan menjadi pengalaman wisata yang autentik
-                    dan berkesan.
+                    {{ __('travine.id didirikan dengan visi untuk mentransformasi industri pariwisata Indonesia melalui pendekatan yang inovatif dan berkelanjutan. Kami percaya bahwa setiap destinasi memiliki potensi unik yang dapat dikembangkan menjadi pengalaman wisata yang autentik dan berkesan.') }}
                 </p>
                 <p class="about__description">
-                    Dengan tim ahli yang berpengalaman di bidang pariwisata, pengembangan destinasi,
-                    dan manajemen ekosistem wisata, kami menghadirkan solusi komprehensif yang
-                    menghubungkan potensi lokal dengan standar kualitas internasional.
+                    {{ __('Dengan tim ahli yang berpengalaman di bidang pariwisata, pengembangan destinasi, dan manajemen ekosistem wisata, kami menghadirkan solusi komprehensif yang menghubungkan potensi lokal dengan standar kualitas internasional.') }}
                 </p>
 
                 <div class="about__highlights">
@@ -68,8 +63,8 @@
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                         </div>
                         <div>
-                            <h4>Terpercaya</h4>
-                            <p>Dikelola oleh para professional yang kompetances dibidangnya</p>
+                            <h4>{{ __('Terpercaya') }}</h4>
+                            <p>{{ __('Dikelola oleh para professional yang kompetances dibidangnya') }}</p>
                         </div>
                     </div>
                     <div class="about__highlight">
@@ -77,8 +72,8 @@
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                         </div>
                         <div>
-                            <h4>Berpengalaman</h4>
-                            <p>8+ tahun pengalaman di operator pariwisata & pengembangan kawasan</p>
+                            <h4>{{ __('Berpengalaman') }}</h4>
+                            <p>{{ __('8+ tahun pengalaman di operator pariwisata & pengembangan kawasan') }}</p>
                         </div>
                     </div>
                 </div>

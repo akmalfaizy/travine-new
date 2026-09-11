@@ -2,9 +2,9 @@
 <section class="values section section--alt" id="values">
     <div class="container">
         <div class="section__header reveal">
-            <span class="section__badge">Nilai Kami</span>
+            <span class="section__badge">{{ __('Nilai Kami') }}</span>
             <h2 class="section__title">Core <span class="text-gradient">Values</span></h2>
-            <p class="section__subtitle">Nilai-nilai yang menjadi fondasi setiap layanan dan proyek yang kami kerjakan.</p>
+            <p class="section__subtitle">{{ __('Nilai-nilai yang menjadi fondasi setiap layanan dan proyek yang kami kerjakan.') }}</p>
         </div>
 
         <div class="values__grid">
@@ -19,8 +19,7 @@
                 </div>
                 <h3 class="values__card-title">Authentic</h3>
                 <p class="values__card-desc">
-                    Menghadirkan pengalaman wisata yang genuine dan otentik, menghargai kearifan lokal
-                    dan keunikan setiap destinasi.
+                    {{ __('Menghadirkan pengalaman wisata yang genuine dan otentik, menghargai kearifan lokal dan keunikan setiap destinasi.') }}
                 </p>
             </div>
 
@@ -38,8 +37,7 @@
                 </div>
                 <h3 class="values__card-title">Flexible & Transparent</h3>
                 <p class="values__card-desc">
-                    Layanan yang adaptif sesuai kebutuhan klien dengan proses yang transparan,
-                    terbuka, dan dapat dipercaya di setiap tahapan kerja sama.
+                    {{ __('Layanan yang adaptif sesuai kebutuhan klien dengan proses yang transparan, terbuka, dan dapat dipercaya di setiap tahapan kerja sama.') }}
                 </p>
             </div>
 
@@ -59,8 +57,7 @@
                 </div>
                 <h3 class="values__card-title">Full Services</h3>
                 <p class="values__card-desc">
-                    Solusi end-to-end dari perencanaan, pengembangan, hingga pengelolaan —
-                    semua kebutuhan wisata Anda terlayani dalam satu ekosistem terintegrasi.
+                    {{ __('Solusi end-to-end dari perencanaan, pengembangan, hingga pengelolaan — semua kebutuhan wisata Anda terlayani dalam satu ekosistem terintegrasi.') }}
                 </p>
             </div>
         </div>

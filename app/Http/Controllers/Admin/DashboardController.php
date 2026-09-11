@@ -18,7 +18,7 @@ class DashboardController extends Controller
             'total_categories' => Category::count(),
             'total_bookings'   => Booking::count(),
             'pending_bookings' => Booking::where('booking_status', 'waiting_verification')->count(),
-            'total_revenue'    => Booking::whereIn('payment_status', ['dp_paid', 'paid'])->sum('total_price'),
+            'total_partners'   => \App\Models\Partner::count(),
             'total_news'       => News::count(),
         ];
 

@@ -3,8 +3,8 @@
     <div class="container">
         <div class="section__header reveal">
             <span class="section__badge">Portfolio</span>
-            <h2 class="section__title">Proyek <span class="text-gradient">Unggulan</span></h2>
-            <p class="section__subtitle">Beberapa proyek wisata dan pengembangan destinasi yang telah kami kerjakan.</p>
+            <h2 class="section__title">{{ __('Proyek') }} <span class="text-gradient">{{ __('Unggulan') }}</span></h2>
+            <p class="section__subtitle">{{ __('Beberapa proyek wisata dan pengembangan destinasi yang telah kami kerjakan.') }}</p>
         </div>
 
         <div class="portfolio__grid">
@@ -18,7 +18,7 @@
                         <h3 class="portfolio__card-title">{{ $project->title }}</h3>
                         <p class="portfolio__card-desc">{{ Str::limit($project->description, 80) }}</p>
                         <span style="color: var(--teal); font-size: 0.8rem; font-weight: 600; margin-top: 12px; display: inline-flex; align-items: center; gap: 4px;">
-                            Lihat Detail <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            {{ __('Lihat Detail') }} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </span>
                     </div>
                 </div>

@@ -5,14 +5,13 @@
         <div class="cta-section__shape cta-section__shape--2"></div>
     </div>
     <div class="container cta-section__content reveal">
-        <h2 class="cta-section__title">Mari Berkolaborasi untuk Membangun Destinasi Wisata Unggulan</h2>
+        <h2 class="cta-section__title">{{ __('Mari Berkolaborasi untuk Membangun Destinasi Wisata Unggulan') }}</h2>
         <p class="cta-section__subtitle">
-            Bersama travine.id, wujudkan potensi wisata Anda menjadi pengalaman yang tak terlupakan.
-            Hubungi kami sekarang untuk konsultasi gratis.
+            {{ __('Bersama travine.id, wujudkan potensi wisata Anda menjadi pengalaman yang tak terlupakan. Hubungi kami sekarang untuk konsultasi gratis.') }}
         </p>
         <div class="cta-section__buttons">
             <a href="#contact" class="btn btn--cta" id="cta-main-button">
-                <span>Mulai Konsultasi Gratis</span>
+                <span>{{ __('Mulai Konsultasi Gratis') }}</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
             <a href="https://wa.me/6289990088800" target="_blank" class="btn btn--whatsapp" id="cta-whatsapp">

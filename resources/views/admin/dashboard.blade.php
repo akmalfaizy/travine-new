@@ -38,10 +38,10 @@
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(34,197,94,0.15);">💰</div>
+        <div class="stat-icon" style="background:rgba(168,85,247,0.15);">🤝</div>
         <div>
-            <div class="stat-value" style="font-size:1.1rem;">Rp {{ number_format($stats['total_revenue'],0,',','.') }}</div>
-            <div class="stat-label">Total Pendapatan</div>
+            <div class="stat-value">{{ $stats['total_partners'] }}</div>
+            <div class="stat-label">Mitra Terdaftar</div>
         </div>
     </div>
 </div>

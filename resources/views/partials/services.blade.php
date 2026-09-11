@@ -2,9 +2,9 @@
 <section class="services section" id="services">
     <div class="container centered">
         <div class="section__header reveal">
-            <span class="section__badge">Layanan Kami</span>
-            <h2 class="section__title">Solusi Wisata <span class="text-gradient">Komprehensif</span></h2>
-            <p class="section__subtitle">Kami menyediakan layanan lengkap untuk memenuhi kebutuhan wisata dan pengembangan destinasi Anda.</p>
+            <span class="section__badge">{{ __('Layanan Kami') }}</span>
+            <h2 class="section__title">{{ __('Solusi Wisata') }} <span class="text-gradient">{{ __('Komprehensif') }}</span></h2>
+            <p class="section__subtitle">{{ __('Kami menyediakan layanan lengkap untuk memenuhi kebutuhan wisata dan pengembangan destinasi Anda.') }}</p>
         </div>
 
         <div class="services__grid">
@@ -25,9 +25,9 @@
                         </defs>
                     </svg>
                 </div>
-                <h3 class="services__card-title">Jasa Wisata</h3>
+                <h3 class="services__card-title">{{ __('Jasa Wisata') }}</h3>
                 <p class="services__card-desc">
-                   Perencanaan dan pengelolaan paket wisata sesuai kebutuhan yang menghadirkan pengalaman autentik. Custom itinerary, group travel, dan private tour di seluruh destinasi Indonesia.
+                    {{ __('Perencanaan dan pengelolaan paket wisata sesuai kebutuhan yang menghadirkan pengalaman autentik. Custom itinerary, group travel, dan private tour di seluruh destinasi Indonesia.') }}
                 </p>
                 <ul class="services__card-features">
                     <li>Custom Itinerary</li>
@@ -35,7 +35,7 @@
                     <li>Local Experience</li>
                 </ul>
                 <a href="#contact" class="services__card-link">
-                    Pelajari Lebih Lanjut
+                    {{ __('Pelajari Lebih Lanjut') }}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
             </div>
@@ -59,10 +59,9 @@
                         </defs>
                     </svg>
                 </div>
-                <h3 class="services__card-title">Pengembangan Ekosistem Wisata</h3>
+                <h3 class="services__card-title">{{ __('Pengembangan Ekosistem Wisata') }}</h3>
                 <p class="services__card-desc">
-                    Membangun ekosistem wisata terintegrasi yang menghubungkan pelaku usaha lokal,
-                    pemerintah, dan komunitas untuk menciptakan destinasi wisata berkelanjutan.
+                    {{ __('Membangun ekosistem wisata terintegrasi yang menghubungkan pelaku usaha lokal, pemerintah, dan komunitas untuk menciptakan destinasi wisata berkelanjutan.') }}
                 </p>
                 <ul class="services__card-features">
                     <li>Ecosystem Mapping</li>
@@ -70,7 +69,7 @@
                     <li>Sustainable Development</li>
                 </ul>
                 <a href="#contact" class="services__card-link">
-                    Pelajari Lebih Lanjut
+                    {{ __('Pelajari Lebih Lanjut') }}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
             </div>
@@ -94,10 +93,9 @@
                         </defs>
                     </svg>
                 </div>
-                <h3 class="services__card-title">Konsultan Tempat Wisata</h3>
+                <h3 class="services__card-title">{{ __('Konsultan Tempat Wisata') }}</h3>
                 <p class="services__card-desc">
-                    Konsultasi profesional untuk pengembangan, branding, dan optimalisasi
-                    destinasi wisata. Dari feasibility study hingga implementasi strategi pemasaran.
+                    {{ __('Konsultasi profesional untuk pengembangan, branding, dan optimalisasi destinasi wisata. Dari feasibility study hingga implementasi strategi pemasaran.') }}
                 </p>
                 <ul class="services__card-features">
                     <li>Feasibility Study</li>
@@ -105,7 +103,7 @@
                     <li>Marketing Strategy</li>
                 </ul>
                 <a href="#contact" class="services__card-link">
-                    Pelajari Lebih Lanjut
+                    {{ __('Pelajari Lebih Lanjut') }}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
             </div>

@@ -117,24 +117,24 @@
 
         {{-- Breadcrumb --}}
         <a href="{{ route('tours.show', $tour->slug) }}" style="color:var(--teal,#14B8A6); font-weight:600; text-decoration:none; font-size:0.9rem; display:inline-flex; align-items:center; gap:6px;">
-            ← Kembali ke Detail Paket
+            ← {{ __('Kembali ke Detail Paket') }}
         </a>
 
         {{-- Step Indicator --}}
         <div class="steps" style="margin-top:20px;">
             <div class="step">
                 <div class="step-dot done">✓</div>
-                <div class="step-label done">Isi Data</div>
+                <div class="step-label done">{{ __('Isi Data') }}</div>
             </div>
             <div class="step-line done"></div>
             <div class="step">
                 <div class="step-dot current">2</div>
-                <div class="step-label current">Pembayaran</div>
+                <div class="step-label current">{{ __('Pembayaran') }}</div>
             </div>
             <div class="step-line"></div>
             <div class="step">
                 <div class="step-dot next">3</div>
-                <div class="step-label next">Konfirmasi</div>
+                <div class="step-label next">{{ __('Konfirmasi') }}</div>
             </div>
         </div>
 
@@ -147,7 +147,7 @@
 
                 {{-- 1. Pilih Tipe Pembayaran --}}
                 <div class="pay-card">
-                    <h2><span class="num">1</span> Pilih Metode Pembayaran</h2>
+                    <h2><span class="num">1</span> {{ __('Pilih Metode Pembayaran') }}</h2>
 
                     <div class="pay-type-grid">
                         {{-- DP --}}
@@ -169,44 +169,44 @@
                             <label for="type-lunas" class="pay-type-label">
                                 <div class="check-icon"></div>
                                 <div class="pay-icon">✅</div>
-                                <div class="pay-name">Bayar Lunas</div>
+                                <div class="pay-name">{{ __('Bayar Lunas') }}</div>
                                 <div class="pay-amount">Rp {{ number_format($fullAmount, 0, ',', '.') }}</div>
-                                <div class="pay-note">Harga penuh</div>
+                                <div class="pay-note">{{ __('Harga penuh') }}</div>
                             </label>
                         </div>
                     </div>
 
                     {{-- Dynamic amount banner --}}
                     <div class="amount-banner dp" id="amount-banner-dp">
-                        <div class="ab-label">Nominal yang Harus Dibayarkan Sekarang:</div>
+                        <div class="ab-label">{{ __('Nominal yang Harus Dibayarkan Sekarang:') }}</div>
                         <div class="ab-amount">Rp {{ number_format(100000 * $draft['participants'], 0, ',', '.') }}</div>
                     </div>
                     <div class="amount-banner lunas" id="amount-banner-lunas" style="display:none;">
-                        <div class="ab-label">Nominal yang Harus Dibayarkan Sekarang:</div>
+                        <div class="ab-label">{{ __('Nominal yang Harus Dibayarkan Sekarang:') }}</div>
                         <div class="ab-amount">Rp {{ number_format($fullAmount, 0, ',', '.') }}</div>
                     </div>
 
                     @if($draft['payment_type'] ?? null === 'dp')
                     <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.6; background:rgba(249,115,22,0.06); padding:12px 14px; border-radius:8px; margin-top:12px; border-left:3px solid #F97316;">
-                        ⚠️ Dengan memilih DP, sisa pelunasan <strong>Rp {{ number_format($fullAmount - (100000 * $draft['participants']), 0, ',', '.') }}</strong> wajib dibayar paling lambat <strong>H-1 sebelum keberangkatan</strong>.
+                        ⚠️ {{ __('Dengan memilih DP, sisa pelunasan') }} <strong>Rp {{ number_format($fullAmount - (100000 * $draft['participants']), 0, ',', '.') }}</strong> {{ __('wajib dibayar paling lambat') }} <strong>{{ __('H-1 sebelum keberangkatan') }}</strong>.
                     </p>
                     @endif
                     <p id="dp-warning" style="font-size:0.85rem; color:var(--text-muted); line-height:1.6; background:rgba(249,115,22,0.06); padding:12px 14px; border-radius:8px; margin-top:12px; border-left:3px solid #F97316;">
-                        ⚠️ Dengan memilih DP, sisa pelunasan <strong>Rp {{ number_format($fullAmount - (100000 * $draft['participants']), 0, ',', '.') }}</strong> wajib dibayar paling lambat <strong>H-1 sebelum keberangkatan</strong>.
+                        ⚠️ {{ __('Dengan memilih DP, sisa pelunasan') }} <strong>Rp {{ number_format($fullAmount - (100000 * $draft['participants']), 0, ',', '.') }}</strong> {{ __('wajib dibayar paling lambat') }} <strong>{{ __('H-1 sebelum keberangkatan') }}</strong>.
                     </p>
                     <p id="lunas-note" style="font-size:0.85rem; color:#059669; line-height:1.6; background:rgba(16,185,129,0.06); padding:12px 14px; border-radius:8px; margin-top:12px; border-left:3px solid #10B981; display:none;">
-                        ✅ Dengan bayar lunas, slot Anda langsung diamankan penuh dan tidak ada sisa pembayaran.
+                        ✅ {{ __('Dengan bayar lunas, slot Anda langsung diamankan penuh dan tidak ada sisa pembayaran.') }}
                     </p>
                 </div>
 
                 {{-- 2. Info Pembayaran --}}
                 <div class="pay-card">
-                    <h2><span class="num">2</span> Informasi Pembayaran</h2>
+                    <h2><span class="num">2</span> {{ __('Informasi Pembayaran') }}</h2>
 
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
                         {{-- Bank Transfer --}}
                         <div>
-                            <p style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:.5px; margin:0 0 10px;">Transfer Bank</p>
+                            <p style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:.5px; margin:0 0 10px;">{{ __('Transfer Bank') }}</p>
                             <div class="bank-box">
                                 <div class="bank-name">{{ $bankName }}</div>
                                 <div class="bank-num">{{ $bankAccount }}</div>
@@ -217,67 +217,67 @@
                         <div class="qris-box">
                             <p style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:.5px; margin:0 0 10px;">Scan QRIS</p>
                             <img src="{{ asset('images/qris.png') }}" alt="QRIS travine.id">
-                            <p>Scan dengan aplikasi dompet digital apapun</p>
+                            <p>{{ __('Scan dengan aplikasi dompet digital apapun') }}</p>
                         </div>
                     </div>
 
                     <p style="font-size:0.83rem; color:var(--text-muted); margin-top:16px; padding:10px 14px; border-left:3px solid var(--teal,#14B8A6); background:rgba(20,184,166,0.04); border-radius:0 8px 8px 0; line-height:1.6;">
-                        Harap transfer tepat sesuai nominal di atas. Simpan bukti struk/screenshot transfer dan unggah di bawah ini.
+                        {{ __('Harap transfer tepat sesuai nominal di atas. Simpan bukti struk/screenshot transfer dan unggah di bawah ini.') }}
                     </p>
                 </div>
 
                 {{-- 3. Upload Bukti --}}
                 <div class="pay-card">
-                    <h2><span class="num">3</span> Upload Bukti Pembayaran</h2>
+                    <h2><span class="num">3</span> {{ __('Upload Bukti Pembayaran') }}</h2>
 
                     <div class="upload-area" id="upload-area">
                         <input type="file" name="payment_proof" id="payment_proof" accept="image/*" required onchange="previewProof(this)">
                         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        <p><strong>Klik atau seret file</strong> ke sini untuk upload</p>
-                        <p style="font-size:0.78rem; margin-top:6px;">Format: JPG, PNG, WEBP — Maks 4 MB</p>
+                        <p><strong>{{ __('Klik atau seret file') }}</strong> {{ __('ke sini untuk upload') }}</p>
+                        <p style="font-size:0.78rem; margin-top:6px;">{{ __('Format: JPG, PNG, WEBP — Maks 4 MB') }}</p>
                     </div>
 
                     <div id="proof-preview">
-                        <img id="preview-img" src="" alt="Preview bukti bayar">
+                        <img id="preview-img" src="" alt="{{ __('Preview bukti bayar') }}">
                         <div>
-                            <span class="preview-clear" onclick="clearProof()">✕ Hapus dan pilih ulang</span>
+                            <span class="preview-clear" onclick="clearProof()">✕ {{ __('Hapus dan pilih ulang') }}</span>
                         </div>
                     </div>
                 </div>
 
                 {{-- 4. Syarat & Ketentuan --}}
                 <div class="pay-card">
-                    <h2><span class="num">4</span> Syarat &amp; Ketentuan Reservasi</h2>
+                    <h2><span class="num">4</span> {{ __('Syarat & Ketentuan Reservasi') }}</h2>
                     <div class="terms-box">
-                        <h4>1. Reservasi</h4>
+                        <h4>1. {{ __('Reservasi') }}</h4>
                         <ul>
-                            <li>Reservasi berhasil setelah mengisi formulir pendaftaran dan membayar DP (Down Payment) sebesar <strong>Rp 100.000 per peserta</strong>.</li>
-                            <li>DP sebagai tanda jadi untuk mengamankan slot peserta.</li>
-                            <li>Sistem <em>first come, first served</em> — siapa cepat mendaftar dan membayar DP, diprioritaskan mendapat slot.</li>
+                            <li>{{ __('Reservasi berhasil setelah mengisi formulir pendaftaran dan membayar DP (Down Payment) sebesar') }} <strong>Rp 100.000 {{ __('per peserta') }}</strong>.</li>
+                            <li>{{ __('DP sebagai tanda jadi untuk mengamankan slot peserta.') }}</li>
+                            <li>{{ __('Sistem') }} <em>first come, first served</em> — {{ __('siapa cepat mendaftar dan membayar DP, diprioritaskan mendapat slot.') }}</li>
                         </ul>
-                        <h4>2. Pelunasan</h4>
+                        <h4>2. {{ __('Pelunasan') }}</h4>
                         <ul>
-                            <li>Sisa pembayaran wajib dilunasi paling lambat <strong>H-1 sebelum keberangkatan</strong>.</li>
-                            <li>Jika belum dilunasi tanpa konfirmasi, penyelenggara berhak membatalkan reservasi.</li>
+                            <li>{{ __('Sisa pembayaran wajib dilunasi paling lambat') }} <strong>{{ __('H-1 sebelum keberangkatan') }}</strong>.</li>
+                            <li>{{ __('Jika belum dilunasi tanpa konfirmasi, penyelenggara berhak membatalkan reservasi.') }}</li>
                         </ul>
-                        <h4>3. Kebijakan Refund &amp; Pengalihan Jadwal</h4>
+                        <h4>3. {{ __('Kebijakan Refund & Pengalihan Jadwal') }}</h4>
                         <ul>
-                            <li>Refund 100% jika pembatalan diajukan maksimal <strong>1×24 jam setelah pembayaran DP</strong>.</li>
-                            <li>Setelah batas waktu tersebut: tidak dapat direfund, namun dapat dialihkan jadwal <strong>1 kali</strong>.</li>
+                            <li>{{ __('Refund 100% jika pembatalan diajukan maksimal') }} <strong>1×24 {{ __('jam setelah pembayaran DP') }}</strong>.</li>
+                            <li>{{ __('Setelah batas waktu tersebut: tidak dapat direfund, namun dapat dialihkan jadwal') }} <strong>1 {{ __('kali') }}</strong>.</li>
                         </ul>
-                        <h4>4. Pembatalan oleh Penyelenggara</h4>
+                        <h4>4. {{ __('Pembatalan oleh Penyelenggara') }}</h4>
                         <ul>
-                            <li>Jika trip dibatalkan penyelenggara: refund 100% atau alih jadwal gratis.</li>
+                            <li>{{ __('Jika trip dibatalkan penyelenggara: refund 100% atau alih jadwal gratis.') }}</li>
                         </ul>
                         <h4>5. Force Majeure</h4>
                         <ul>
-                            <li>Penyelesaian diutamakan dengan musyawarah / penjadwalan ulang.</li>
+                            <li>{{ __('Penyelesaian diutamakan dengan musyawarah / penjadwalan ulang.') }}</li>
                         </ul>
                     </div>
 
                     <div class="agree-row">
                         <input type="checkbox" name="agree_terms" id="agree_terms" value="1" required>
-                        <label for="agree_terms">Saya telah membaca dan menyetujui <strong>Syarat &amp; Ketentuan Reservasi Open Trip</strong> travine.id di atas, termasuk kebijakan DP, pelunasan, dan refund.</label>
+                        <label for="agree_terms">{{ __('Saya telah membaca dan menyetujui') }} <strong>{{ __('Syarat & Ketentuan Reservasi Open Trip') }}</strong> travine.id {{ __('di atas, termasuk kebijakan DP, pelunasan, dan refund.') }}</label>
                     </div>
                 </div>
 
@@ -286,7 +286,7 @@
             {{-- ===== RIGHT COLUMN: SUMMARY ===== --}}
             <div class="summary-sticky">
                 <div class="pay-card">
-                    <h2 style="font-size:1.1rem;"><span class="num" style="background:var(--navy,#0F2A52);">📋</span> Ringkasan Pesanan</h2>
+                    <h2 style="font-size:1.1rem;"><span class="num" style="background:var(--navy,#0F2A52);">📋</span> {{ __('Ringkasan Pesanan') }}</h2>
 
                     <div style="display:flex; gap:12px; align-items:center; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid rgba(0,0,0,0.05);">
                         <div style="flex-shrink:0; width:64px; height:64px; border-radius:10px; overflow:hidden; background:#e2e8f0;">
@@ -300,27 +300,27 @@
 
                     <table class="summary-table">
                         <tr>
-                            <td>Pemesan</td>
+                            <td>{{ __('Pemesan') }}</td>
                             <td style="text-align:right; font-weight:600;">{{ $draft['name'] }}</td>
                         </tr>
                         <tr>
-                            <td>Tanggal</td>
+                            <td>{{ __('Tanggal') }}</td>
                             <td style="text-align:right; font-weight:600;">{{ \Carbon\Carbon::parse($draft['departure_date'])->translatedFormat('d M Y') }}</td>
                         </tr>
                         <tr>
-                            <td>Peserta</td>
-                            <td style="text-align:right; font-weight:600;">{{ $draft['participants'] }} orang</td>
+                            <td>{{ __('Peserta') }}</td>
+                            <td style="text-align:right; font-weight:600;">{{ $draft['participants'] }} {{ __('orang') }}</td>
                         </tr>
                         <tr>
-                            <td>Harga/pax</td>
+                            <td>{{ __('Harga/pax') }}</td>
                             <td style="text-align:right; font-weight:600;">Rp {{ number_format($tour->price, 0, ',', '.') }}</td>
                         </tr>
                         <tr>
-                            <td>Total</td>
+                            <td>{{ __('Total') }}</td>
                             <td style="text-align:right; color:var(--orange,#F97316);">Rp {{ number_format($fullAmount, 0, ',', '.') }}</td>
                         </tr>
                         <tr>
-                            <td>Dibayar Sekarang</td>
+                            <td>{{ __('Dibayar Sekarang') }}</td>
                             <td style="text-align:right;">
                                 <span id="summary-paid" style="font-size:1.25rem; color:var(--teal,#14B8A6); font-weight:900;">
                                     Rp {{ number_format(100000 * $draft['participants'], 0, ',', '.') }}
@@ -330,25 +330,25 @@
                     </table>
 
                     <div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(0,0,0,0.05); font-size:0.8rem; color:var(--text-muted); line-height:1.6;" id="sisa-info">
-                        Sisa pelunasan: <strong style="color:var(--text-primary);">Rp {{ number_format($fullAmount - (100000 * $draft['participants']), 0, ',', '.') }}</strong> (wajib H-1 keberangkatan)
+                        {{ __('Sisa pelunasan') }}: <strong style="color:var(--text-primary);">Rp {{ number_format($fullAmount - (100000 * $draft['participants']), 0, ',', '.') }}</strong> ({{ __('wajib H-1 keberangkatan') }})
                     </div>
 
                     <button type="submit" class="submit-booking" id="submit-btn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                        Konfirmasi & Kirim Bukti
+                        {{ __('Konfirmasi & Kirim Bukti') }}
                     </button>
                     <p style="font-size:0.78rem; color:var(--text-muted); text-align:center; margin-top:10px; line-height:1.5;">
-                        Invoice konfirmasi akan dikirim ke<br><strong>{{ $draft['email'] }}</strong>
+                        {{ __('Invoice konfirmasi akan dikirim ke') }}<br><strong>{{ $draft['email'] }}</strong>
                     </p>
                 </div>
 
                 {{-- WhatsApp Help --}}
                 <div class="pay-card" style="text-align:center; padding:20px;">
-                    <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 12px;">Ada pertanyaan? Hubungi admin kami:</p>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 12px;">{{ __('Ada pertanyaan? Hubungi admin kami:') }}</p>
                     <a href="https://wa.me/{{ $whatsApp }}?text=Halo%20Admin%20Travine,%20saya%20ingin%20menanyakan%20tentang%20pemesanan%20paket%20{{ urlencode($tour->title) }}" target="_blank"
                        style="display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#fff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700; font-size:0.9rem;">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                        Chat via WhatsApp
+                        {{ __('Chat via WhatsApp') }}
                     </a>
                 </div>
             </div>
@@ -404,17 +404,17 @@
 
         if (!fileInput.files.length) {
             e.preventDefault();
-            alert('Harap upload bukti pembayaran terlebih dahulu.');
+            alert('{{ __('Harap upload bukti pembayaran terlebih dahulu.') }}');
             return;
         }
         if (!agreeCheck.checked) {
             e.preventDefault();
-            alert('Anda harus menyetujui Syarat & Ketentuan untuk melanjutkan.');
+            alert('{{ __('Anda harus menyetujui Syarat & Ketentuan untuk melanjutkan.') }}');
             return;
         }
 
         btn.disabled = true;
-        btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.49-4.5"/></svg> Memproses...';
+        btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.49-4.5"/></svg> {{ __('Memproses...') }}';
     });
 </script>
 

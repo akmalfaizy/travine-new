@@ -8,37 +8,36 @@
                     <img src="{{ asset('images/logo_tagline.png') }}" alt="travine.id" class="navbar__logo-img">
                 </a>
                 <p class="footer__tagline">
-                    Transforming Tourism with Authentic Experiences.
-                    Mitra terpercaya untuk jasa wisata dan pengembangan ekosistem wisata di Indonesia.
+                    {{ __('The best, safe, comfortable, and trusted travel solution for your dream vacation.') }}
                 </p>
             </div>
 
             {{-- Quick Links --}}
             <div class="footer__links">
-                <h4 class="footer__heading">Quick Links</h4>
+                <h4 class="footer__heading">{{ __('Quick Links') }}</h4>
                 <ul>
-                    <li><a href="#hero">Home</a></li>
-                    <li><a href="#about">About Us</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#portfolio">Portfolio</a></li>
-                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="{{ route('home') }}">{{ __('Home') }}</a></li>
+                    <li><a href="{{ route('home') }}#about">{{ __('About Us') }}</a></li>
+                    <li><a href="{{ route('home') }}#services">{{ __('Services') }}</a></li>
+                    <li><a href="{{ route('home') }}#portfolio">{{ __('Portfolio') }}</a></li>
+                    <li><a href="{{ route('home') }}#contact">{{ __('Contact Us') }}</a></li>
                 </ul>
             </div>
 
             {{-- Services --}}
             <div class="footer__links">
-                <h4 class="footer__heading">Services</h4>
+                <h4 class="footer__heading">{{ __('Services') }}</h4>
                 <ul>
-                    <li><a href="#services">Jasa Wisata</a></li>
-                    <li><a href="#services">Pengembangan Ekosistem</a></li>
-                    <li><a href="#services">Konsultan Destinasi</a></li>
-                    <li><a href="#services">Destination Branding</a></li>
+                    <li><a href="#services">{{ __('Paket Wisata') }}</a></li>
+                    <li><a href="#services">{{ __('Pengembangan Ekosistem') }}</a></li>
+                    <li><a href="#services">{{ __('Konsultan Destinasi') }}</a></li>
+                    <li><a href="#services">{{ __('Destination Branding') }}</a></li>
                 </ul>
             </div>
 
             {{-- Contact --}}
             <div class="footer__links">
-                <h4 class="footer__heading">Contact</h4>
+                <h4 class="footer__heading">{{ __('Contact Us') }}</h4>
                 <ul>
                     <li>travineid@gmail.com</li>
                     <li>0821-3792-5585</li>
@@ -62,8 +61,8 @@
         </div>
 
         <div class="footer__bottom">
-            <p>&copy; {{ date('Y') }} travine.id. All rights reserved.</p>
-            <p>Transforming Tourism with Authentic Experiences</p>
+            <p>&copy; {{ date('Y') }} travine.id. {{ __('All rights reserved.') }}</p>
+            <p>{{ __('Transforming Tourism with Authentic Experiences') }}</p>
         </div>
     </div>
 </footer>
