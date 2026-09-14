@@ -29,16 +29,23 @@
     }
     .main-image-wrapper {
         width: 100%;
-        height: 450px;
+        height: auto;
         border-radius: 12px;
         overflow: hidden;
         margin-bottom: 12px;
+        background: rgba(15, 42, 82, 0.02);
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     .main-image-wrapper img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s;
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        object-fit: contain !important;
+        border-radius: 12px;
+        display: block;
+        transition: transform 0.4s ease;
     }
     .gallery-thumbs {
         display: flex;

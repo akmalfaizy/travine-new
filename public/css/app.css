@@ -482,12 +482,31 @@ button,input,textarea{font-family:inherit;font-size:inherit;border:none;outline:
 .portfolio__card-desc{font-size:0.85rem;color:var(--text-secondary)}
 
 /* ===== TOUR IMAGE FIT ===== */
-.tour-card__image-wrapper img,
-.main-image-wrapper img {
+.tour-card__image-wrapper img {
     object-fit: cover !important;
     object-position: center !important;
     width: 100% !important;
     height: 100% !important;
+}
+.main-image-wrapper {
+    width: 100%;
+    height: auto !important;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-image-wrapper img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    object-position: center top !important;
+    border-radius: 12px;
+    display: block;
 }
 
 /* ===== WHY CHOOSE US ===== */
