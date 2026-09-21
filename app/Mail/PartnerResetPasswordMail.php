@@ -25,7 +25,7 @@ class PartnerResetPasswordMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Reset Password Akun Mitra Travine.id',
+            subject: 'Reset Password Akun Partner travine.id',
         );
     }
 

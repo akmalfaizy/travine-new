@@ -72,15 +72,22 @@
             </li>
 
             <li>
+                <a href="{{ route('bookings.track') }}" class="navbar__link {{ request()->routeIs('bookings.track') ? 'active' : '' }}" style="display:inline-flex; align-items:center; gap:6px; font-weight:600;" id="nav-cek-booking">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    {{ __('Cek Booking') }}
+                </a>
+            </li>
+
+            <li>
                 @if(Auth::guard('partner')->check())
                     <a href="{{ route('partner.dashboard') }}" class="btn btn--primary" style="padding:8px 18px; font-size:0.85rem; font-weight:700; display:inline-flex; align-items:center; gap:6px; text-decoration:none; border-radius:8px;">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        Dashboard {{ __('Mitra Travel') }}
+                        Dashboard {{ __('Partner Travel') }}
                     </a>
                 @else
                     <a href="{{ route('partner.login') }}" class="btn btn--primary" style="padding:8px 18px; font-size:0.85rem; font-weight:700; display:inline-flex; align-items:center; gap:6px; text-decoration:none; border-radius:8px;">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-                        {{ __('Login Mitra') }}
+                        {{ __('Login Partner') }}
                     </a>
                 @endif
             </li>

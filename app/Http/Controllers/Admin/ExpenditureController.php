@@ -53,16 +53,16 @@ class ExpenditureController extends Controller
         // Pendapatan Kotor = total harga semua booking terkonfirmasi
         $grossRevenue = $confirmedBookings->sum('total_price');
 
-        // Pendapatan Bersih = Kotor − HPP (modal) — sudah termasuk bagian komisi mitra
+        // Pendapatan Bersih = Kotor − HPP (modal) — sudah termasuk bagian komisi partner
         $netRevenue = $confirmedBookings->sum(function ($b) {
             $hpp = $b->tour ? (int) ($b->tour->hpp_price ?? 0) : 0;
             return max(0, (int) $b->total_price - ($hpp * (int) $b->participants));
         });
 
-        // Total komisi yang sudah ditransfer ke mitra (withdrawal paid)
+        // Total komisi yang sudah ditransfer ke partner (withdrawal paid)
         $totalCommission = Withdrawal::where('status', 'paid')->sum('amount');
 
-        // Total Margin Travine = Pendapatan Bersih − komisi yang sudah dibayarkan ke mitra
+        // Total Margin Travine = Pendapatan Bersih − komisi yang sudah dibayarkan ke partner
         $totalMargin = max(0, $netRevenue - $totalCommission);
 
         // Cash balance (dari ledger — saldo bank sesungguhnya)

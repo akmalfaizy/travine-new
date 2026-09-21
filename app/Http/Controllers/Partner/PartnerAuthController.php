@@ -118,7 +118,7 @@ class PartnerAuthController extends Controller
         Auth::guard('partner')->login($partner);
 
         return redirect()->route('partner.dashboard')
-            ->with('success', 'Email berhasil diverifikasi! Selamat datang di Portal Mitra Travine.id');
+            ->with('success', 'Email berhasil diverifikasi! Selamat datang di Portal Partner travine.id');
     }
 
     public function resendOtp(Request $request)
@@ -186,17 +186,17 @@ class PartnerAuthController extends Controller
         }
 
         if ($partner->status === 'suspended') {
-            return back()->withErrors(['email' => 'Akun Mitra Anda sedang ditangguhkan. Silakan hubungi customer service.']);
+            return back()->withErrors(['email' => 'Akun Partner Anda sedang ditangguhkan. Silakan hubungi customer service.']);
         }
 
         if ($partner->status === 'inactive') {
-            return back()->withErrors(['email' => 'Akun Mitra Anda nonaktif.']);
+            return back()->withErrors(['email' => 'Akun Partner Anda nonaktif.']);
         }
 
         Auth::guard('partner')->login($partner, $remember);
         $request->session()->regenerate();
 
-        return redirect()->route('partner.dashboard')->with('success', 'Berhasil login sebagai Mitra!');
+        return redirect()->route('partner.dashboard')->with('success', 'Berhasil login sebagai Partner!');
     }
 
     public function logout(Request $request)
@@ -205,7 +205,7 @@ class PartnerAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('partner.login')->with('success', 'Anda telah keluar dari akun Mitra.');
+        return redirect()->route('partner.login')->with('success', 'Anda telah keluar dari akun Partner.');
     }
 
     public function showForgotPasswordForm()

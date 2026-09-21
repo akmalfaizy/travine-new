@@ -8,7 +8,7 @@
 <div class="admin-card">
     <table class="admin-table">
         <thead>
-            <tr><th>Thumbnail</th><th>Judul</th><th>Kategori</th><th>Harga Publish</th><th>HPP (Modal)</th><th>Komisi Mitra</th><th>Status</th><th>Aksi</th></tr>
+            <tr><th>Thumbnail</th><th>Judul</th><th>Kategori</th><th>Keberangkatan</th><th>Harga Publish</th><th>HPP (Modal)</th><th>Komisi Partner</th><th>Status</th><th>Aksi</th></tr>
         </thead>
         <tbody>
         @forelse($tours as $tour)
@@ -22,6 +22,22 @@
                 </td>
                 <td style="font-weight:600;">{{ Str::limit($tour->title, 40) }}</td>
                 <td><span class="badge badge-info">{{ $tour->category?->name }}</span></td>
+                <td>
+                    @if($tour->departure_date)
+                        <div style="font-weight:600; font-size:0.85rem;">{{ $tour->departure_date->format('d M Y') }}</div>
+                        @if($tour->days_until_departure !== null)
+                            @if($tour->days_until_departure < 0)
+                                <span class="badge badge-muted" style="font-size:0.7rem;">Sudah lewat</span>
+                            @elseif($tour->days_until_departure === 0)
+                                <span class="badge badge-danger" style="font-size:0.7rem; background:#EF4444; color:#fff;">Hari ini</span>
+                            @else
+                                <span class="badge badge-warning" style="font-size:0.7rem; background:#F59E0B; color:#fff;">{{ $tour->departure_countdown }}</span>
+                            @endif
+                        @endif
+                    @else
+                        <span style="color:var(--text-muted); font-size:0.85rem;">Fleksibel</span>
+                    @endif
+                </td>
                 <td style="font-weight:600; color:var(--teal);">{{ $tour->price_formatted }}</td>
                 <td style="color:var(--text-muted); font-size:0.85rem;">{{ $tour->hpp_price_formatted }}</td>
                 <td>

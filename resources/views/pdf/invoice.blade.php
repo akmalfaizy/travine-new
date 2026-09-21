@@ -157,6 +157,39 @@
         </tfoot>
     </table>
 
+    @if(!empty($booking->participants_data) && is_array($booking->participants_data))
+    <div style="margin-top:16px;">
+        <h4 style="font-size:11px; font-weight:bold; color:#0f2a52; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Daftar Peserta Wisata (Asuransi Perjalanan)</h4>
+        <table class="items" style="margin-top:0;">
+            <thead>
+                <tr>
+                    <th style="width:25px; text-align:center;">#</th>
+                    <th>Nama Peserta</th>
+                    <th>NIK / Identitas</th>
+                    <th>Tgl Lahir</th>
+                    <th>No. Telepon</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($booking->participants_data as $idx => $p)
+                <tr>
+                    <td style="text-align:center; font-size:11px;">{{ $idx + 1 }}</td>
+                    <td style="font-size:11px;">
+                        <strong>{{ $p['name'] ?? '-' }}</strong>
+                        @if($idx === 0)
+                            <span style="font-size:9px; color:#14b8a6; font-weight:bold;">(PIC)</span>
+                        @endif
+                    </td>
+                    <td style="font-size:11px;">{{ $p['nik'] ?? '-' }}</td>
+                    <td style="font-size:11px;">{{ !empty($p['birth_date']) ? \Carbon\Carbon::parse($p['birth_date'])->format('d/m/Y') : '-' }}</td>
+                    <td style="font-size:11px;">{{ $p['phone'] ?? '-' }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    @endif
+
     <div class="qr-section">
         <img src="data:image/png;base64,{{ $qrBase64 }}" width="120" height="120">
         <p>Scan QR code untuk verifikasi keaslian dokumen ini</p>

@@ -22,6 +22,7 @@ class SetLocale
             $locale = 'id';
         }
 
+        Session::put('locale', $locale);
         App::setLocale($locale);
 
         return $next($request);

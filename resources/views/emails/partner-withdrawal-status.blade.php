@@ -22,7 +22,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Travine.id Partner</h1>
+            <h1>travine.id Partner</h1>
         </div>
         <div class="content">
             <h2>Halo, {{ $withdrawal->partner->name }}!</h2>
@@ -52,7 +52,7 @@
 
             @if($withdrawal->status === 'paid')
                 <p>Transfer komisi sebesar <strong>{{ $withdrawal->amount_formatted }}</strong> telah berhasil diproses ke rekening Anda.</p>
-                <p>Bukti transfer terlampir dalam email ini atau dapat diunduh di dashboard Mitra Anda.</p>
+                <p>Bukti transfer terlampir dalam email ini atau dapat diunduh di dashboard Partner Anda.</p>
             @elseif($withdrawal->status === 'rejected')
                 <p style="color: #B91C1C;"><strong>Alasan Penolakan:</strong></p>
                 <blockquote style="background:#FFF5F5; border-left:4px solid #EF4444; padding:12px; margin:0 0 16px 0; color:#7F1D1D;">
@@ -60,15 +60,15 @@
                 </blockquote>
                 <p>Saldo komisi Anda telah dikembalikan ke saldo <em>Available</em>. Anda dapat mengajukan pencairan ulang setelah memperbarui data rekening atau memenuhi ketentuan.</p>
             @else
-                <p>Pengajuan pencairan Anda sedang diproses oleh Tim Finance Travine.id.</p>
+                <p>Pengajuan pencairan Anda sedang diproses oleh Tim Finance travine.id.</p>
             @endif
 
             <div style="text-align: center; margin-top:25px;">
-                <a href="{{ route('partner.withdrawals') }}" style="background:#0D9488; color:#ffffff; padding:12px 24px; text-decoration:none; border-radius:6px; font-weight:bold;">Lihat Portal Mitra</a>
+                <a href="{{ route('partner.withdrawals') }}" style="background:#0D9488; color:#ffffff; padding:12px 24px; text-decoration:none; border-radius:6px; font-weight:bold;">Lihat Portal Partner</a>
             </div>
         </div>
         <div class="footer">
-            &copy; {{ date('Y') }} Travine.id. All rights reserved.
+            &copy; {{ date('Y') }} travine.id. All rights reserved.
         </div>
     </div>
 </body>

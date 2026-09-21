@@ -25,7 +25,7 @@ class PartnerOtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Kode Verifikasi OTP Akun Mitra Travine.id',
+            subject: 'Kode Verifikasi OTP Akun Partner travine.id',
         );
     }
 

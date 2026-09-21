@@ -10,6 +10,12 @@
         <a href="{{ route('admin.bookings.export') }}" class="admin-btn admin-btn--secondary">
             ↓ Export CSV
         </a>
+        <a href="{{ route('admin.bookings.export-insurance') }}"
+           class="admin-btn admin-btn--secondary"
+           style="border-color:rgba(251,191,36,0.3);color:#fbbf24;"
+           title="Export data peserta untuk keperluan asuransi (satu baris per peserta)">
+            🛡 Export CSV Asuransi
+        </a>
     </div>
 </div>
 

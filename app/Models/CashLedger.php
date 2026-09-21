@@ -90,7 +90,7 @@ class CashLedger extends Model
 
         $note = "Pendapatan bersih dari booking #{$booking->booking_code} ({$booking->name})"
             . " — Tour: {$tour?->title}"
-            . ($commissionPart > 0 ? " | Incl. komisi mitra: Rp " . number_format($commissionPart, 0, ',', '.') : '');
+            . ($commissionPart > 0 ? " | Incl. komisi partner: Rp " . number_format($commissionPart, 0, ',', '.') : '');
 
         static::addEntry(
             type:      'in',
@@ -129,7 +129,7 @@ class CashLedger extends Model
                         $commissionPart = $tour ? round(($netRevenue * ($tour->commission_percentage ?? 0)) / 100) : 0;
                         $note = "Pendapatan bersih dari booking #{$b->booking_code} ({$b->name})"
                             . " — Tour: " . ($tour?->title ?? '-')
-                            . ($commissionPart > 0 ? " | Incl. komisi mitra: Rp " . number_format($commissionPart, 0, ',', '.') : '');
+                            . ($commissionPart > 0 ? " | Incl. komisi partner: Rp " . number_format($commissionPart, 0, ',', '.') : '');
 
                         $entry = new static([
                             'type'          => 'in',
@@ -159,8 +159,8 @@ class CashLedger extends Model
                     ->exists();
 
                 if (!$exists) {
-                    $partnerName = $w->partner?->company_name ?? $w->bank_account_name ?? 'Mitra';
-                    $note = "Penarikan komisi mitra {$partnerName} (Withdrawal #{$w->id})";
+                    $partnerName = $w->partner?->company_name ?? $w->bank_account_name ?? 'Partner';
+                    $note = "Penarikan komisi partner {$partnerName} (Withdrawal #{$w->id})";
 
                     $entry = new static([
                         'type'          => 'out',

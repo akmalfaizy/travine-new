@@ -38,7 +38,7 @@
             {{-- Form 1: Data Diri --}}
             <div class="partner-auth-card" style="padding:32px;">
                 <h3 style="font-size:1.2rem; font-weight:700; color:var(--text-primary); margin-bottom:20px; display:flex; align-items:center; gap:8px;">
-                    👤 Data Pribadi Mitra
+                    👤 Data Pribadi Partner
                 </h3>
 
                 <form method="POST" action="{{ route('partner.profile.update') }}">
@@ -88,7 +88,7 @@
                     🏦 Rekening Bank Pembayaran Komisi
                 </h3>
                 <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:20px; line-height:1.5;">
-                    Data ini digunakan oleh tim Finance Travine.id untuk menyalurkan pencairan komisi Anda secara tepat dan aman.
+                    Data ini digunakan oleh tim Finance travine.id untuk menyalurkan pencairan komisi Anda secara tepat dan aman.
                 </p>
 
                 <form method="POST" action="{{ route('partner.bank.update') }}">

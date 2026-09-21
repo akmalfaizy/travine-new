@@ -84,9 +84,23 @@ class BookingController extends Controller
         }
 
         $request->validate([
-            'payment_type'  => 'required|in:dp,lunas',
-            'payment_proof' => 'required|image|max:4096',
-            'agree_terms'   => 'required|accepted',
+            'payment_type'              => 'required|in:dp,lunas',
+            'payment_proof'             => 'required|image|max:4096',
+            'agree_terms'               => 'required|accepted',
+            'participants'              => 'required|array',
+            'participants.*.name'       => 'required|string|max:255',
+            'participants.*.nik'        => 'required|string|max:50',
+            'participants.*.birth_date' => 'required|date',
+            'participants.*.phone'      => 'required|string|max:30',
+            'participants.*.address'    => 'required|string|max:500',
+        ], [
+            'participants.*.name.required'       => 'Nama lengkap seluruh peserta wajib diisi untuk keperluan asuransi.',
+            'participants.*.nik.required'        => 'NIK / No. KTP / KITAS seluruh peserta wajib diisi.',
+            'participants.*.birth_date.required' => 'Tanggal lahir seluruh peserta wajib diisi.',
+            'participants.*.phone.required'      => 'Nomor telepon seluruh peserta wajib diisi.',
+            'participants.*.address.required'    => 'Alamat seluruh peserta wajib diisi.',
+            'payment_proof.required'             => 'Bukti pembayaran wajib diunggah.',
+            'agree_terms.accepted'               => 'Anda harus menyetujui Syarat & Ketentuan.',
         ]);
 
         $tour        = Tour::with('category')->findOrFail($draft['tour_id']);
@@ -96,6 +110,21 @@ class BookingController extends Controller
         $fullAmount  = $tour->price * $participants;
         $paymentType = $request->input('payment_type');
         $paidAmount  = $paymentType === 'dp' ? $dpAmount : $fullAmount;
+
+        // Data Peserta Asuransi
+        $participantsData = [];
+        if ($request->has('participants') && is_array($request->input('participants'))) {
+            foreach ($request->input('participants') as $idx => $p) {
+                $participantsData[] = [
+                    'index'      => $idx + 1,
+                    'name'       => trim($p['name'] ?? ''),
+                    'nik'        => trim($p['nik'] ?? ''),
+                    'birth_date' => trim($p['birth_date'] ?? ''),
+                    'phone'      => trim($p['phone'] ?? ''),
+                    'address'    => trim($p['address'] ?? ''),
+                ];
+            }
+        }
 
         // Upload bukti bayar
         $proofPath = $request->file('payment_proof')->store('proofs', 'public');
@@ -117,24 +146,25 @@ class BookingController extends Controller
         }
 
         $booking = Booking::create([
-            'tour_id'         => $draft['tour_id'],
-            'partner_id'      => $partnerId,
-            'referral_code'   => $refCode,
-            'referral_source' => $refCode ? 'web_link' : null,
-            'booking_code'    => $bookingCode,
-            'name'            => $draft['name'],
-            'whatsapp'        => $draft['whatsapp'],
-            'email'           => $draft['email'],
-            'departure_date'  => $draft['departure_date'],
-            'participants'    => $participants,
-            'notes'           => $draft['notes'] ?? null,
-            'total_price'     => $fullAmount,
-            'discount'        => 0,
-            'payment_type'    => $paymentType,
-            'paid_amount'     => $paidAmount,
-            'payment_proof'   => $proofPath,
-            'payment_status'  => $paymentType === 'dp' ? 'dp_paid' : 'paid',
-            'booking_status'  => 'waiting_verification',
+            'tour_id'           => $draft['tour_id'],
+            'partner_id'        => $partnerId,
+            'referral_code'     => $refCode,
+            'referral_source'   => $refCode ? 'web_link' : null,
+            'booking_code'      => $bookingCode,
+            'name'              => $draft['name'],
+            'whatsapp'          => $draft['whatsapp'],
+            'email'             => $draft['email'],
+            'departure_date'    => $draft['departure_date'],
+            'participants'      => $participants,
+            'participants_data' => $participantsData ?: null,
+            'notes'             => $draft['notes'] ?? null,
+            'total_price'       => $fullAmount,
+            'discount'          => 0,
+            'payment_type'      => $paymentType,
+            'paid_amount'       => $paidAmount,
+            'payment_proof'     => $proofPath,
+            'payment_status'    => $paymentType === 'dp' ? 'dp_paid' : 'paid',
+            'booking_status'    => 'waiting_verification',
         ]);
 
         // Record commission snapshot if partner referral exists
@@ -191,6 +221,11 @@ class BookingController extends Controller
         $booking = Booking::where('booking_code', $code)->with('tour')->firstOrFail();
 
         abort_if(!$booking->invoice_number, 404, 'Invoice belum tersedia.');
+        abort_if(
+            !in_array($booking->booking_status, ['confirmed', 'departed', 'completed']),
+            403,
+            'Invoice hanya dapat diunduh setelah pemesanan dikonfirmasi oleh admin.'
+        );
 
         $qrUrl    = url('/bookings/' . $booking->booking_code . '/verify');
         $writer   = new PngWriter();
@@ -202,5 +237,37 @@ class BookingController extends Controller
                   ->setPaper('a4', 'portrait');
 
         return $pdf->download("Invoice-{$booking->booking_code}.pdf");
+    }
+
+    /**
+     * Halaman form pencarian status pemesanan.
+     */
+    public function trackPage()
+    {
+        return view('bookings.track');
+    }
+
+    /**
+     * Proses pencarian booking berdasarkan kode yang diinput customer.
+     */
+    public function trackSearch(Request $request)
+    {
+        $request->validate([
+            'booking_code' => 'required|string|min:4|max:20',
+        ], [
+            'booking_code.required' => 'Kode booking wajib diisi.',
+            'booking_code.min'      => 'Kode booking tidak valid.',
+        ]);
+
+        $code    = strtoupper(trim($request->input('booking_code')));
+        $booking = Booking::where('booking_code', $code)->first();
+
+        if (!$booking) {
+            return back()
+                ->withInput()
+                ->withErrors(['booking_code' => 'Kode booking "' . $code . '" tidak ditemukan. Periksa kembali kode yang Anda masukkan.']);
+        }
+
+        return redirect()->route('bookings.show', $booking->booking_code);
     }
 }

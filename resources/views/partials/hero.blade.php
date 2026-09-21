@@ -30,7 +30,7 @@
                     <span class="hero__title-highlight">Authentic Experiences</span>
                 </h1>
                 <p class="hero__subtitle">
-                    {{ __('travine.id adalah mitra terpercaya dalam layanan manajemen perjalanan, pengembangan ekosistem pariwisata, konsultansi pengembangan dan operasional destinasi wisata di Indonesia. Kami menghadirkan pengalaman wisata yang autentik, inovatif, dan berkelanjutan.') }}
+                    {{ __('travine.id adalah partner terpercaya dalam layanan manajemen perjalanan, pengembangan ekosistem pariwisata, konsultansi pengembangan dan operasional destinasi wisata di Indonesia. Kami menghadirkan pengalaman wisata yang autentik, inovatif, dan berkelanjutan.') }}
                 </p>
                 <div class="hero__buttons">
                     <a href="#services" class="btn btn--primary" id="hero-cta-services">
@@ -40,11 +40,15 @@
                     <a href="#contact" class="btn btn--outline" id="hero-cta-contact">
                         <span>{{ __('Contact Us') }}</span>
                     </a>
+                    <a href="{{ route('bookings.track') }}" class="btn btn--ghost" id="hero-cta-track" style="display:inline-flex; align-items:center; gap:8px; font-weight:600; font-size:0.88rem; padding:10px 18px; border-radius:10px; border:1.5px dashed rgba(255,255,255,0.45); color:rgba(255,255,255,0.88); text-decoration:none; transition:all 0.25s ease; backdrop-filter:blur(4px);" onmouseover="this.style.borderColor='rgba(255,255,255,0.85)'; this.style.color='#fff'; this.style.background='rgba(255,255,255,0.1)';" onmouseout="this.style.borderColor='rgba(255,255,255,0.45)'; this.style.color='rgba(255,255,255,0.88)'; this.style.background='transparent';">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                        <span>{{ __('Cek Status Booking') }}</span>
+                    </a>
                 </div>
             </div>
 
             <div class="partner-cta reveal reveal--delay-1" style="text-align:center;">
-                <h2 class="text-gradient" style="font-size:2rem; margin-bottom:1rem;">{{ __('Ayo menjadi mitra kami dan dapatkan komisi!') }}</h2>
+                <h2 class="text-gradient" style="font-size:2rem; margin-bottom:1rem;">{{ __('Ayo menjadi partner kami dan dapatkan komisi!') }}</h2>
                 <a href="{{ route('partner.register') }}" class="btn btn--primary">{{ __('Daftar Sekarang') }}</a>
             </div>
         </div>

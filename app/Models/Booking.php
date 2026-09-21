@@ -8,22 +8,29 @@ class Booking extends Model
 {
     protected $fillable = [
         'tour_id', 'partner_id', 'referral_code', 'referral_source', 'booking_code', 'invoice_number', 'invoice_category', 'name', 'whatsapp',
-        'email', 'departure_date', 'duration', 'participants', 'total_price', 'discount', 'notes',
+        'email', 'departure_date', 'duration', 'participants', 'participants_data', 'total_price', 'discount', 'notes',
         'payment_proof', 'payment_status', 'payment_type', 'paid_amount', 'booking_status', 'admin_notes'
     ];
 
     protected $casts = [
-        'departure_date' => 'date',
-        'total_price'    => 'integer',
-        'discount'       => 'integer',
-        'paid_amount'    => 'integer',
+        'departure_date'    => 'date',
+        'total_price'       => 'integer',
+        'discount'          => 'integer',
+        'paid_amount'       => 'integer',
+        'participants_data' => 'array',
     ];
 
     public static function generateBookingCode(): string
     {
-        $date = now()->format('Ymd');
-        $count = static::whereDate('created_at', today())->count() + 1;
-        return 'BOOK-' . $date . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+        $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // exclude confusable chars: 0,O,1,I
+        do {
+            $code = '';
+            for ($i = 0; $i < 6; $i++) {
+                $code .= $chars[random_int(0, strlen($chars) - 1)];
+            }
+        } while (static::where('booking_code', $code)->exists());
+
+        return $code;
     }
 
     public static function generateInvoiceNumber(): string

@@ -1,9 +1,9 @@
 @extends('admin.layout')
-@section('title', 'Detail Mitra - ' . $partner->name)
+@section('title', 'Detail Partner - ' . $partner->name)
 @section('content')
 <div class="admin-topbar">
     <div>
-        <h1>👤 Detail Mitra: {{ $partner->name }}</h1>
+        <h1>👤 Detail Partner: {{ $partner->name }}</h1>
         <small style="color:var(--text-muted);">Kode Referral: <strong style="color:var(--teal);">{{ $partner->referral_code }}</strong></small>
     </div>
     <a href="{{ route('admin.partners.index') }}" class="admin-btn admin-btn--secondary">← Kembali</a>
@@ -50,11 +50,11 @@
     <div style="display:flex; flex-direction:column; gap:20px;">
         {{-- Status Card --}}
         <div class="admin-card">
-            <h3 style="font-weight:700; margin-bottom:16px; font-size:1.05rem;">Status Keanggotaan Mitra</h3>
+            <h3 style="font-weight:700; margin-bottom:16px; font-size:1.05rem;">Status Keanggotaan Partner</h3>
             <form method="POST" action="{{ route('admin.partners.status', $partner) }}">
                 @csrf
                 <div class="form-group" style="margin-bottom:16px;">
-                    <label class="form-label">Ubah Status Mitra</label>
+                    <label class="form-label">Ubah Status Partner</label>
                     <select name="status" class="form-control" style="width:100%;">
                         <option value="active" {{ $partner->status === 'active' ? 'selected' : '' }}>🟢 Active (Aktif)</option>
                         <option value="suspended" {{ $partner->status === 'suspended' ? 'selected' : '' }}>🔴 Suspended (Ditangguhkan)</option>
@@ -62,7 +62,7 @@
                     </select>
                 </div>
                 <button type="submit" class="admin-btn admin-btn--primary" style="width:100%; justify-content:center;">
-                    Update Status Mitra
+                    Update Status Partner
                 </button>
             </form>
         </div>
@@ -77,7 +77,7 @@
                     <div><strong>Atas Nama:</strong> {{ $partner->bank_account_name }}</div>
                 </div>
             @else
-                <span style="color:#ef4444; font-size:0.85rem;">Mitra belum melengkapi informasi rekening bank.</span>
+                <span style="color:#ef4444; font-size:0.85rem;">Partner belum melengkapi informasi rekening bank.</span>
             @endif
         </div>
 
@@ -131,7 +131,7 @@
                     </tbody>
                 </table>
             @else
-                <div style="color:var(--text-muted); padding:20px; text-align:center;">Belum ada booking masuk via referral mitra ini.</div>
+                <div style="color:var(--text-muted); padding:20px; text-align:center;">Belum ada booking masuk via referral partner ini.</div>
             @endif
         </div>
 

@@ -2,7 +2,7 @@
 @section('title', 'Pengajuan Withdraw Komisi')
 @section('content')
 <div class="admin-topbar">
-    <h1>💸 Pengajuan Withdraw Komisi Mitra</h1>
+    <h1>💸 Pengajuan Withdraw Komisi Partner</h1>
 </div>
 
 @if(session('success'))
@@ -16,7 +16,7 @@
 {{-- Filters --}}
 <div class="admin-card" style="margin-bottom:24px;">
     <form method="GET" action="{{ route('admin.withdrawals.index') }}" style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
-        <input type="text" name="search" class="form-control" placeholder="Cari kode request, nama mitra, no rekening..." value="{{ request('search') }}" style="max-width:340px;">
+        <input type="text" name="search" class="form-control" placeholder="Cari kode request, nama partner, no rekening..." value="{{ request('search') }}" style="max-width:340px;">
         <select name="status" class="form-control" style="max-width:180px;">
             <option value="">-- Semua Status --</option>
             <option value="requested" {{ request('status') === 'requested' ? 'selected' : '' }}>Menunggu Diproses</option>
@@ -36,7 +36,7 @@
         <thead>
             <tr>
                 <th>Kode Request</th>
-                <th>Mitra</th>
+                <th>Partner</th>
                 <th>Nominal Cair</th>
                 <th>Rekening Tujuan Transfer</th>
                 <th>Tanggal Request</th>

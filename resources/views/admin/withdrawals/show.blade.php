@@ -4,7 +4,7 @@
 <div class="admin-topbar">
     <div>
         <h1>💸 Proses Penarikan Komisi #{{ $withdrawal->withdrawal_code }}</h1>
-        <small style="color:var(--text-muted);">Tujuan Mitra: <strong>{{ $withdrawal->partner?->name }}</strong> ({{ $withdrawal->partner?->email }})</small>
+        <small style="color:var(--text-muted);">Tujuan Partner: <strong>{{ $withdrawal->partner?->name }}</strong> ({{ $withdrawal->partner?->email }})</small>
     </div>
     <a href="{{ route('admin.withdrawals.index') }}" class="admin-btn admin-btn--secondary">← Kembali</a>
 </div>
@@ -91,12 +91,12 @@
 
         {{-- Partner Profile Box --}}
         <div class="admin-card">
-            <h3 style="font-weight:700; margin-bottom:16px;">Profil Pemohon Mitra</h3>
+            <h3 style="font-weight:700; margin-bottom:16px;">Profil Pemohon Partner</h3>
             <div style="font-size:0.875rem; line-height:1.6;">
-                <div><strong>Nama Mitra:</strong> {{ $withdrawal->partner?->name }}</div>
+                <div><strong>Nama Partner:</strong> {{ $withdrawal->partner?->name }}</div>
                 <div><strong>Email:</strong> {{ $withdrawal->partner?->email }}</div>
                 <div><strong>WhatsApp:</strong> {{ $withdrawal->partner?->phone }}</div>
-                <div><strong>Saldo Komisi Tersedia Mitra Saat Ini:</strong> <span style="color:var(--teal); font-weight:700;">Rp {{ number_format($withdrawal->partner?->available_commission ?? 0, 0, ',', '.') }}</span></div>
+                <div><strong>Saldo Komisi Tersedia Partner Saat Ini:</strong> <span style="color:var(--teal); font-weight:700;">Rp {{ number_format($withdrawal->partner?->available_commission ?? 0, 0, ',', '.') }}</span></div>
             </div>
         </div>
     </div>
@@ -131,7 +131,7 @@
 
             <div class="form-group" style="margin-bottom:20px;">
                 <label class="form-label">Catatan Admin (Opsional)</label>
-                <textarea name="admin_note" class="form-control" rows="2" placeholder="Catatan internal atau pesan tambahan untuk mitra...">{{ old('admin_note', $withdrawal->admin_note) }}</textarea>
+                <textarea name="admin_note" class="form-control" rows="2" placeholder="Catatan internal atau pesan tambahan untuk partner...">{{ old('admin_note', $withdrawal->admin_note) }}</textarea>
             </div>
 
             <button type="submit" class="admin-btn admin-btn--primary" style="width:100%; justify-content:center; padding:12px; font-size:1rem;">

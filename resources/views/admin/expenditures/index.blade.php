@@ -292,7 +292,7 @@ document.addEventListener('keydown', function(e) {
         <div class="fsc-icon">📈</div>
         <div class="fsc-value">Rp {{ number_format($totalMargin, 0, ',', '.') }}</div>
         <div class="fsc-label">Total Margin</div>
-        <div class="fsc-sub">Bersih − komisi mitra (Rp {{ number_format($totalCommission, 0, ',', '.') }})</div>
+        <div class="fsc-sub">Bersih − komisi partner (Rp {{ number_format($totalCommission, 0, ',', '.') }})</div>
     </div>
     <div class="finance-stat-card fsc-cash">
         <div class="fsc-icon">🏦</div>

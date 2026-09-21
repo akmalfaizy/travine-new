@@ -32,8 +32,16 @@
                     <div class="tour-card" style="background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); transition: transform 0.3s ease, box-shadow 0.3s ease; display: flex; flex-direction: column; height: 100%;">
                         <div class="tour-card__image-wrapper" style="position: relative; height: 220px; overflow: hidden;">
                             <img src="{{ $tour->thumbnail ? asset('storage/' . $tour->thumbnail) : asset('images/hero_bg.jpg') }}" alt="{{ $tour->title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                            @if($tour->departure_date)
+                                <div style="position: absolute; top: 14px; left: 14px; background: linear-gradient(135deg, rgba(15,42,82,0.92), rgba(20,184,166,0.92)); color: #fff; padding: 5px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 6px; backdrop-filter: blur(4px);">
+                                    <span>📅 {{ $tour->departure_date_formatted }}</span>
+                                    @if($tour->departure_countdown)
+                                        <span style="background: rgba(255,255,255,0.25); padding: 1px 6px; border-radius: 4px; font-size: 0.7rem;">{{ $tour->departure_countdown }}</span>
+                                    @endif
+                                </div>
+                            @endif
                             @if($tour->duration)
-                                <span class="tour-card__duration-badge" style="position: absolute; bottom: 20px; right: 20px; background: rgba(15,42,82,0.85); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(4px);">
+                                <span class="tour-card__duration-badge" style="position: absolute; bottom: 16px; right: 16px; background: rgba(15,42,82,0.85); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(4px);">
                                     ⏳ {{ $tour->duration }}
                                 </span>
                             @endif
@@ -43,6 +51,11 @@
                                 @if($tour->location)
                                     <span class="tour-card__location" style="font-size: 0.85rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px;">
                                         📍 {{ $tour->location }}
+                                    </span>
+                                @endif
+                                @if($tour->departure_date && $tour->departure_countdown)
+                                    <span style="font-size: 0.8rem; font-weight: 700; color: var(--teal, #14B8A6); background: rgba(20,184,166,0.1); padding: 2px 8px; border-radius: 6px; margin-left: auto;">
+                                        🔥 {{ $tour->departure_countdown }}
                                     </span>
                                 @endif
                             </div>

@@ -202,6 +202,89 @@ class BookingController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    /**
+     * Export data peserta asuransi — satu baris per peserta.
+     * Kolom: Kode Booking, Paket Wisata, Tanggal Keberangkatan,
+     *        Nama Peserta, NIK/KTP/KITAS, Tanggal Lahir, Alamat, No. Telepon.
+     */
+    public function exportInsuranceCsv(Request $request)
+    {
+        $query = Booking::with('tour')
+            ->whereNotNull('participants_data')
+            ->whereIn('booking_status', ['confirmed', 'departed', 'completed'])
+            ->latest();
+
+        // Optional filters
+        if ($request->filled('tour_id')) {
+            $query->where('tour_id', $request->tour_id);
+        }
+        if ($request->filled('departure_from')) {
+            $query->whereDate('departure_date', '>=', $request->departure_from);
+        }
+        if ($request->filled('departure_to')) {
+            $query->whereDate('departure_date', '<=', $request->departure_to);
+        }
+
+        $bookings = $query->get();
+
+        $filename = 'data-asuransi-' . now()->format('Ymd-His') . '.csv';
+        $headers  = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function () use ($bookings) {
+            $handle = fopen('php://output', 'w');
+            // UTF-8 BOM so Excel opens correctly
+            fwrite($handle, "\xEF\xBB\xBF");
+
+            fputcsv($handle, [
+                'Kode Booking',
+                'Paket Wisata',
+                'Tanggal Keberangkatan',
+                'Nama Peserta',
+                'NIK / No. KTP / KITAS',
+                'Tanggal Lahir',
+                'Alamat',
+                'No. Telepon',
+            ]);
+
+            foreach ($bookings as $b) {
+                $participants = $b->participants_data ?? [];
+
+                // If no participant detail data, output one row with PIC only
+                if (empty($participants)) {
+                    fputcsv($handle, [
+                        $b->booking_code,
+                        $b->tour?->title ?? '-',
+                        $b->departure_date ? $b->departure_date->format('d/m/Y') : '-',
+                        $b->name,
+                        '-', '-', '-', $b->whatsapp,
+                    ]);
+                    continue;
+                }
+
+                foreach ($participants as $p) {
+                    fputcsv($handle, [
+                        $b->booking_code,
+                        $b->tour?->title ?? '-',
+                        $b->departure_date ? $b->departure_date->format('d/m/Y') : '-',
+                        $p['name']       ?? '-',
+                        $p['nik']        ?? ($p['ktp'] ?? '-'),
+                        $p['birth_date'] ?? ($p['tanggal_lahir'] ?? '-'),
+                        $p['address']    ?? ($p['alamat'] ?? '-'),
+                        $p['phone']      ?? ($p['telepon'] ?? ($p['whatsapp'] ?? '-')),
+                    ]);
+                }
+            }
+            fclose($handle);
+        };
+
+        ActivityLog::record('Export CSV Asuransi diunduh.');
+        return response()->stream($callback, 200, $headers);
+    }
+
+
     public function destroy(Booking $booking)
     {
         ActivityLog::record("Menghapus booking: {$booking->booking_code}");

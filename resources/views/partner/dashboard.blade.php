@@ -6,7 +6,7 @@
         {{-- Header --}}
         <div class="partner-dash__header">
             <div>
-                <h1 class="partner-dash__title">Dashboard Mitra</h1>
+                <h1 class="partner-dash__title">Dashboard Partner</h1>
                 <p class="partner-dash__subtitle">Selamat datang, <strong>{{ $partner->name }}</strong>!</p>
             </div>
             <div class="partner-dash__actions">

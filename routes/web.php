@@ -16,6 +16,9 @@ use App\Http\Controllers\Admin\SocialLinkController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\ExpenditureController;
+use App\Http\Controllers\Admin\OfferingController;
+use App\Http\Controllers\Admin\ProjectInvoiceController;
+use App\Http\Controllers\Admin\VendorController;
 
 // ─── Public Routes ────────────────────────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -40,6 +43,10 @@ Route::get('/bookings/{code}', [BookingController::class, 'show'])->name('bookin
 Route::post('/bookings/{code}/proof', [BookingController::class, 'uploadProof'])->name('bookings.proof');
 Route::get('/bookings/{code}/verify', [BookingController::class, 'verify'])->name('bookings.verify');
 Route::get('/bookings/{code}/invoice', [BookingController::class, 'downloadInvoice'])->name('bookings.invoice');
+
+// Booking Tracker (Cek Status Pemesanan)
+Route::get('/cek-booking', [BookingController::class, 'trackPage'])->name('bookings.track');
+Route::post('/cek-booking', [BookingController::class, 'trackSearch'])->name('bookings.track.search');
 
 // Contact
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
@@ -74,6 +81,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Bookings
         Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
         Route::get('/bookings/export', [AdminBookingController::class, 'exportCsv'])->name('bookings.export');
+        Route::get('/bookings/export-insurance', [AdminBookingController::class, 'exportInsuranceCsv'])->name('bookings.export-insurance');
         Route::get('/bookings/create', [AdminBookingController::class, 'create'])->name('bookings.create');
         Route::post('/bookings', [AdminBookingController::class, 'storeBooking'])->name('bookings.store');
         Route::get('/bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
@@ -107,6 +115,33 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/social-links/edit', [SocialLinkController::class, 'edit'])->name('social-links.edit');
         Route::post('/social-links', [SocialLinkController::class, 'update'])->name('social-links.update');
 
+        // ─── Offerings ────────────────────────────────────────────────────
+        Route::get('/offerings', [OfferingController::class, 'index'])->name('offerings.index');
+        Route::get('/offerings/create', [OfferingController::class, 'create'])->name('offerings.create');
+        Route::post('/offerings', [OfferingController::class, 'store'])->name('offerings.store');
+        Route::get('/offerings/{offering}', [OfferingController::class, 'show'])->name('offerings.show');
+        Route::get('/offerings/{offering}/edit', [OfferingController::class, 'edit'])->name('offerings.edit');
+        Route::put('/offerings/{offering}', [OfferingController::class, 'update'])->name('offerings.update');
+        Route::delete('/offerings/{offering}', [OfferingController::class, 'destroy'])->name('offerings.destroy');
+        Route::post('/offerings/{offering}/status', [OfferingController::class, 'updateStatus'])->name('offerings.status');
+        Route::get('/offerings/{offering}/proposal-pdf', [OfferingController::class, 'downloadProposal'])->name('offerings.proposal-pdf');
+        Route::get('/offerings/{offering}/create-invoice', [OfferingController::class, 'createInvoice'])->name('offerings.create-invoice');
+        Route::post('/offerings/{offering}/send-email', [OfferingController::class, 'sendEmail'])->name('offerings.send-email');
+
+        // ─── Project Invoices ─────────────────────────────────────────────
+        Route::get('/project-invoices', [ProjectInvoiceController::class, 'index'])->name('project-invoices.index');
+        Route::post('/project-invoices', [ProjectInvoiceController::class, 'store'])->name('project-invoices.store');
+        Route::get('/project-invoices/{projectInvoice}', [ProjectInvoiceController::class, 'show'])->name('project-invoices.show');
+        Route::post('/project-invoices/{projectInvoice}/payment', [ProjectInvoiceController::class, 'recordPayment'])->name('project-invoices.payment');
+        Route::post('/project-invoices/{projectInvoice}/status', [ProjectInvoiceController::class, 'updateStatus'])->name('project-invoices.status');
+        Route::get('/project-invoices/{projectInvoice}/pdf', [ProjectInvoiceController::class, 'downloadPdf'])->name('project-invoices.pdf');
+        Route::post('/project-invoices/{projectInvoice}/send-email', [ProjectInvoiceController::class, 'sendEmail'])->name('project-invoices.send-email');
+        Route::delete('/project-invoices/{projectInvoice}', [ProjectInvoiceController::class, 'destroy'])->name('project-invoices.destroy');
+
+        // ─── Vendors ──────────────────────────────────────────────────────
+        Route::resource('vendors', VendorController::class);
+        Route::post('/vendors/{vendor}/toggle', [VendorController::class, 'toggleActive'])->name('vendors.toggle');
+
         // Expenditures / Keuangan (Private — PIN protected)
         Route::get('/expenditures', [ExpenditureController::class, 'index'])->name('expenditures.index');
         Route::post('/expenditures/verify-pin', [ExpenditureController::class, 'verifyPin'])->name('expenditures.verify-pin');
@@ -117,7 +152,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 });
 
-// ─── Partner (Mitra/Affiliate) Routes ────────────────────────────────────────
+// ─── Partner (Partner/Affiliate) Routes ────────────────────────────────────────
 Route::prefix('partner')->name('partner.')->group(function () {
     // Guest routes
     Route::middleware('guest:partner')->group(function () {

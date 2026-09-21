@@ -41,7 +41,7 @@
         <div class="stat-icon" style="background:rgba(168,85,247,0.15);">🤝</div>
         <div>
             <div class="stat-value">{{ $stats['total_partners'] }}</div>
-            <div class="stat-label">Mitra Terdaftar</div>
+            <div class="stat-label">Partner Terdaftar</div>
         </div>
     </div>
 </div>

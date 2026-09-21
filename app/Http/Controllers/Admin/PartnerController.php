@@ -56,6 +56,6 @@ class PartnerController extends Controller
         $newStatus = $request->input('status');
         $partner->update(['status' => $newStatus]);
 
-        return back()->with('success', "Status mitra {$partner->name} berhasil diperbarui menjadi {$partner->status_label}.");
+        return back()->with('success', "Status partner {$partner->name} berhasil diperbarui menjadi {$partner->status_label}.");
     }
 }

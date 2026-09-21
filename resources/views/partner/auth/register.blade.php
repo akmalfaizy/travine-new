@@ -6,8 +6,8 @@
         <div class="partner-auth-card">
             <div class="partner-auth-card__header">
                 <span class="section__badge">🤝 Partner Program</span>
-                <h1 class="partner-auth-card__title">Daftar Mitra</h1>
-                <p class="partner-auth-card__subtitle">Bergabunglah menjadi mitra travine.id dan dapatkan komisi menarik!</p>
+                <h1 class="partner-auth-card__title">Registrasi Partner</h1>
+                <p class="partner-auth-card__subtitle">Bergabunglah menjadi partner travine.id dan dapatkan komisi menarik!</p>
             </div>
 
             @if(session('success'))

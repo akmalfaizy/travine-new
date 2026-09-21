@@ -6,8 +6,8 @@
         <div class="partner-auth-card">
             <div class="partner-auth-card__header">
                 <span class="section__badge">🔐 Partner Login</span>
-                <h1 class="partner-auth-card__title">Login Mitra</h1>
-                <p class="partner-auth-card__subtitle">Masuk ke akun mitra Anda untuk mengelola komisi dan referral.</p>
+                <h1 class="partner-auth-card__title">Login Partner</h1>
+                <p class="partner-auth-card__subtitle">Masuk ke akun partner Anda untuk mengelola komisi dan referral.</p>
             </div>
 
             @if(session('success'))

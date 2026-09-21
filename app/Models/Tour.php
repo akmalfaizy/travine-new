@@ -9,7 +9,7 @@ class Tour extends Model
 {
     protected $fillable = [
         'category_id', 'title', 'slug', 'thumbnail', 'gallery',
-        'price', 'hpp_price', 'commission_percentage', 'location', 'duration',
+        'price', 'hpp_price', 'commission_percentage', 'location', 'duration', 'departure_date',
         'short_description', 'description', 'itinerary', 'facilities', 'terms', 'is_active'
     ];
 
@@ -19,6 +19,7 @@ class Tour extends Model
         'price'                 => 'integer',
         'hpp_price'             => 'integer',
         'commission_percentage' => 'float',
+        'departure_date'        => 'date',
     ];
 
     public static function boot()
@@ -74,5 +75,38 @@ class Tour extends Model
     public function getEstimatedCommissionFormattedAttribute()
     {
         return 'Rp ' . number_format($this->estimated_commission, 0, ',', '.');
+    }
+
+    public function getDepartureDateFormattedAttribute(): ?string
+    {
+        return $this->departure_date ? $this->departure_date->translatedFormat('d M Y') : null;
+    }
+
+    public function getDaysUntilDepartureAttribute(): ?int
+    {
+        if (!$this->departure_date) {
+            return null;
+        }
+        return (int) now()->startOfDay()->diffInDays($this->departure_date->copy()->startOfDay(), false);
+    }
+
+    public function getDepartureCountdownAttribute(): ?string
+    {
+        if (!$this->departure_date) {
+            return null;
+        }
+
+        $diffDays = $this->days_until_departure;
+        $isId = app()->getLocale() === 'id';
+
+        if ($diffDays < 0) {
+            return $isId ? 'Sudah Berangkat' : 'Departed';
+        } elseif ($diffDays === 0) {
+            return $isId ? 'Hari Ini' : 'Today';
+        } elseif ($diffDays === 1) {
+            return $isId ? '1 hari lagi (Besok)' : '1 day left (Tomorrow)';
+        } else {
+            return $isId ? "{$diffDays} hari lagi" : "{$diffDays} days left";
+        }
     }
 }

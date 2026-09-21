@@ -224,6 +224,14 @@
                         ⏳ {{ $tour->duration }}
                     </span>
                 @endif
+                @if($tour->departure_date)
+                    <span style="background: linear-gradient(135deg, rgba(20,184,166,0.12), rgba(15,42,82,0.08)); color: var(--teal, #14B8A6); border: 1px solid rgba(20,184,166,0.3); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                        📅 {{ __('Keberangkatan') }}: {{ $tour->departure_date->translatedFormat('d F Y') }}
+                        @if($tour->departure_countdown)
+                            <strong style="background: var(--teal, #14B8A6); color: #fff; padding: 2px 8px; border-radius: 99px; font-size: 0.72rem;">{{ $tour->departure_countdown }}</strong>
+                        @endif
+                    </span>
+                @endif
             </div>
             <h1 style="font-size: 2.5rem; font-weight: 850; line-height: 1.2; color: var(--text-primary, #0F2A52);">{{ $tour->title }}</h1>
         </div>
@@ -343,8 +351,25 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="departure_date">{{ __('Tanggal Keberangkatan') }} *</label>
-                            <input type="date" name="departure_date" id="departure_date" class="form-control" required min="{{ date('Y-m-d', strtotime('+1 day')) }}" value="{{ old('departure_date') }}">
+                            <label class="form-label" for="departure_date">
+                                {{ __('Tanggal Keberangkatan') }} *
+                                @if($tour->departure_date && $tour->departure_countdown)
+                                    <span style="color:var(--teal, #14B8A6); font-weight:700; font-size:0.8rem;">(Open Trip: {{ $tour->departure_countdown }})</span>
+                                @endif
+                            </label>
+                            <input type="date" 
+                                   name="departure_date" 
+                                   id="departure_date" 
+                                   class="form-control" 
+                                   required 
+                                   min="{{ date('Y-m-d', strtotime('+1 day')) }}" 
+                                   value="{{ old('departure_date', $tour->departure_date ? $tour->departure_date->format('Y-m-d') : '') }}"
+                                   {{ $tour->departure_date && $tour->days_until_departure >= 1 ? 'readonly style=background:#f8fafc;cursor:not-allowed;font-weight:600;' : '' }}>
+                            @if($tour->departure_date)
+                                <small style="display:block; margin-top:6px; color:var(--teal, #14B8A6); font-weight:600; font-size:0.8rem;">
+                                    🚀 {{ __('Jadwal Keberangkatan:') }} {{ $tour->departure_date->translatedFormat('l, d F Y') }} ({{ $tour->departure_countdown }})
+                                </small>
+                            @endif
                         </div>
 
                         <div class="form-group">
@@ -366,7 +391,7 @@
                             <label class="form-label" for="referral_code">
                                 {{ __('Kode Referral') }} 
                                 @if($hasPartnerLink)
-                                    <span style="color:var(--teal, #14B8A6); font-size:0.8rem; font-weight:600;">({{ __('Mitra Terverifikasi') }})</span>
+                                    <span style="color:var(--teal, #14B8A6); font-size:0.8rem; font-weight:600;">({{ __('Partner Terverifikasi') }})</span>
                                 @else
                                     <span style="color:var(--text-muted); font-size:0.8rem;">({{ __('Opsional') }})</span>
                                 @endif
@@ -380,7 +405,7 @@
                                    {{ $hasPartnerLink ? 'readonly style=background:#e2e8f0;cursor:not-allowed;font-weight:700;color:#0F2A52;' : '' }}>
                             @if($hasPartnerLink)
                                 <small style="color:var(--teal, #14B8A6); font-size:0.825rem; display:block; margin-top:6px; font-weight:500;">
-                                    ✓ Terhubung dengan rekomendasi mitra <strong>{{ $partnerRef->name }}</strong> ({{ $partnerRef->referral_code }}). Kode dikunci secara otomatis.
+                                    ✓ Terhubung dengan rekomendasi partner <strong>{{ $partnerRef->name }}</strong> ({{ $partnerRef->referral_code }}). Kode dikunci secara otomatis.
                                 </small>
                             @endif
                         </div>
@@ -424,8 +449,13 @@
                         <div class="tour-card" style="background: var(--card-bg, #ffffff); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s ease, box-shadow 0.3s ease; display: flex; flex-direction: column; height: 100%;">
                             <div class="tour-card__image-wrapper" style="position: relative; height: 220px; overflow: hidden;">
                                 <img src="{{ $relTour->thumbnail ? asset('storage/' . $relTour->thumbnail) : asset('images/hero_bg.jpg') }}" alt="{{ $relTour->title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                                @if($relTour->departure_date)
+                                    <div style="position: absolute; top: 14px; left: 14px; background: linear-gradient(135deg, rgba(15,42,82,0.92), rgba(20,184,166,0.92)); color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.2); backdrop-filter: blur(4px);">
+                                        📅 {{ $relTour->departure_date_formatted }} • {{ $relTour->departure_countdown }}
+                                    </div>
+                                @endif
                                 @if($relTour->duration)
-                                    <span class="tour-card__duration-badge" style="position: absolute; bottom: 20px; right: 20px; background: rgba(15,42,82,0.85); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(4px);">
+                                    <span class="tour-card__duration-badge" style="position: absolute; bottom: 16px; right: 16px; background: rgba(15,42,82,0.85); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(4px);">
                                         ⏳ {{ $relTour->duration }}
                                     </span>
                                 @endif

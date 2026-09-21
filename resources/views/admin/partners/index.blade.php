@@ -1,8 +1,8 @@
 @extends('admin.layout')
-@section('title', 'Data Mitra')
+@section('title', 'Data Partner')
 @section('content')
 <div class="admin-topbar">
-    <h1>🤝 Data Mitra (Affiliate)</h1>
+    <h1>🤝 Data Partner (Affiliate)</h1>
 </div>
 
 @if(session('success'))
@@ -31,7 +31,7 @@
     <table class="admin-table">
         <thead>
             <tr>
-                <th>Mitra</th>
+                <th>Partner</th>
                 <th>Kode Referral</th>
                 <th>Kontak & Rekening</th>
                 <th>Performa</th>
@@ -84,7 +84,7 @@
         @empty
             <tr>
                 <td colspan="7" style="text-align:center; color:var(--text-muted); padding:40px;">
-                    Belum ada data mitra mendaftar.
+                    Belum ada data partner mendaftar.
                 </td>
             </tr>
         @endforelse

@@ -81,11 +81,11 @@ class WithdrawalController extends Controller
                 // Auto-deduct from cash ledger (partner commission paid out)
                 try {
                     $withdrawal->load('partner');
-                    $partnerName = $withdrawal->partner?->name ?? 'Mitra';
+                    $partnerName = $withdrawal->partner?->name ?? 'Partner';
                     CashLedger::addEntry(
                         type:      'out',
                         amount:    (int) $withdrawal->amount,
-                        note:      "Transfer komisi mitra: {$partnerName} — Kode Penarikan: {$withdrawal->withdrawal_code} | Rek: {$withdrawal->bank_name} a.n. {$withdrawal->bank_account_name} ({$withdrawal->bank_account_number})",
+                        note:      "Transfer komisi partner: {$partnerName} — Kode Penarikan: {$withdrawal->withdrawal_code} | Rek: {$withdrawal->bank_name} a.n. {$withdrawal->bank_account_name} ({$withdrawal->bank_account_number})",
                         source:    'withdrawal',
                         createdBy: 'System (Withdrawal Auto)',
                     );

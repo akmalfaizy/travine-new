@@ -60,6 +60,55 @@
             @endif
         </div>
 
+        {{-- Data Peserta Asuransi --}}
+        @if(!empty($booking->participants_data) && is_array($booking->participants_data))
+        <div class="admin-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h3 style="font-weight:700; margin:0; display:flex; align-items:center; gap:8px;">
+                    <span>🛡️</span> Data Peserta Asuransi ({{ count($booking->participants_data) }} Orang)
+                </h3>
+                <span class="badge badge-info">{{ count($booking->participants_data) }} Peserta</span>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="admin-table" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th style="width:40px;">#</th>
+                            <th>Nama Lengkap</th>
+                            <th>NIK / Identitas</th>
+                            <th>Tgl Lahir</th>
+                            <th>Telepon</th>
+                            <th>Alamat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($booking->participants_data as $idx => $p)
+                        <tr>
+                            <td style="font-weight:700;">{{ $idx + 1 }}</td>
+                            <td>
+                                <div style="font-weight:600; color:var(--text-primary);">{{ $p['name'] ?? '-' }}</div>
+                                @if($idx === 0)
+                                    <span style="font-size:0.7rem; color:var(--teal); font-weight:700;">PIC / Pemesan</span>
+                                @endif
+                            </td>
+                            <td><code style="font-size:0.85rem;">{{ $p['nik'] ?? '-' }}</code></td>
+                            <td>{{ !empty($p['birth_date']) ? \Carbon\Carbon::parse($p['birth_date'])->format('d/m/Y') : '-' }}</td>
+                            <td>
+                                @if(!empty($p['phone']))
+                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $p['phone']) }}" target="_blank" style="color:var(--teal); text-decoration:none;">{{ $p['phone'] }}</a>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td style="font-size:0.82rem; max-width:250px;">{{ $p['address'] ?? '-' }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @endif
+
         {{-- Tour Info --}}
         <div class="admin-card">
             <h3 style="font-weight:700; margin-bottom:16px;">Paket Wisata</h3>

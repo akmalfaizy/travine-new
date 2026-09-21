@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Reset Password Mitra</title>
+    <title>Reset Password Partner</title>
     <style>
         body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
         .container { max-width: 560px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
@@ -16,11 +16,11 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Travine.id Partner</h1>
+            <h1>travine.id Partner</h1>
         </div>
         <div class="content">
             <h2>Halo, {{ $partner->name }}!</h2>
-            <p>Kami menerima permintaan untuk mereset password akun Mitra Travine.id Anda.</p>
+            <p>Kami menerima permintaan untuk mereset password akun Partner travine.id Anda.</p>
             <p>Silakan klik tombol di bawah ini untuk membuat password baru:</p>
 
             <div style="text-align: center;">
@@ -30,7 +30,7 @@
             <p>Tautan ini akan kadaluarsa dalam waktu 60 menit. Jika Anda tidak meminta reset password, tidak ada tindakan lebih lanjut yang diperlukan.</p>
         </div>
         <div class="footer">
-            &copy; {{ date('Y') }} Travine.id. All rights reserved.
+            &copy; {{ date('Y') }} travine.id. All rights reserved.
         </div>
     </div>
 </body>

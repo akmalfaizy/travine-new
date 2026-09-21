@@ -4,7 +4,7 @@
         <div class="section__header reveal">
             <span class="section__badge">{{ __('Mengapa Kami') }}</span>
             <h2 class="section__title">Why Choose <span>travine.id</span></h2>
-            <p class="section__subtitle">{{ __('Keunggulan yang menjadikan kami mitra terbaik untuk kebutuhan wisata Anda.') }}</p>
+            <p class="section__subtitle">{{ __('Keunggulan yang menjadikan kami partner terbaik untuk kebutuhan wisata Anda.') }}</p>
         </div>
 
         <div class="why__grid">
@@ -38,7 +38,7 @@
                     </svg>
                 </div>
                 <h3 class="why__card-title">{{ __('Jaringan Luas') }}</h3>
-                <p class="why__card-desc">{{ __('Jaringan mitra yang kuat di seluruh Indonesia, mulai dari pemerintah daerah hingga pelaku usaha lokal.') }}</p>
+                <p class="why__card-desc">{{ __('Jaringan partner yang kuat di seluruh Indonesia, mulai dari pemerintah daerah hingga pelaku usaha lokal.') }}</p>
             </div>
 
             <div class="why__card reveal reveal--delay-2" id="why-innovation">

@@ -106,6 +106,34 @@
         border-radius: 12px;
         margin: 20px 0;
     }
+
+    .participant-detail-card {
+        background: var(--bg-offset, #f8fafc);
+        border: 1px solid rgba(0,0,0,0.06);
+        border-radius: 12px;
+        padding: 16px 18px;
+        margin-bottom: 12px;
+    }
+    .participant-detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px 20px;
+        margin-top: 10px;
+    }
+    .participant-detail-item label {
+        font-size: 0.74rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: block;
+        margin-bottom: 2px;
+    }
+    .participant-detail-item span {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
 </style>
 
 <div class="booking-page">
@@ -113,9 +141,9 @@
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
             <div>
                 <span style="font-weight:600; color:var(--text-muted);">{{ __('Pemesanan Wisata') }}</span>
-                <h1 style="font-size: 2.2rem; font-weight: 850;">{{ __('Kode Booking') }}: {{ $booking->booking_code }}</h1>
+                <h1 style="font-size: 2.2rem; font-weight: 850;">{{ __('Kode Booking') }}: <span style="font-family:monospace; letter-spacing:3px;">{{ $booking->booking_code }}</span></h1>
             </div>
-            @if($booking->invoice_number)
+            @if($booking->invoice_number && in_array($booking->booking_status, ['confirmed', 'departed', 'completed']))
                 <a href="{{ route('bookings.invoice', $booking->booking_code) }}" class="btn btn--primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
@@ -203,6 +231,49 @@
                         </tr>
                     @endif
                 </table>
+
+                @if(!empty($booking->participants_data) && is_array($booking->participants_data))
+                <h2 style="font-size:1.35rem; font-weight:750; border-bottom:2px solid rgba(0,0,0,0.06); padding-bottom:12px; margin:40px 0 20px; display:flex; align-items:center; gap:10px;">
+                    <span>🛡️</span> {{ __('Data Peserta untuk Asuransi Perjalanan') }}
+                    <span style="font-size:0.8rem; font-weight:600; background:rgba(20,184,166,0.1); color:var(--teal,#14B8A6); padding:4px 10px; border-radius:999px;">
+                        {{ count($booking->participants_data) }} {{ __('Peserta Terdaftar') }}
+                    </span>
+                </h2>
+
+                <div>
+                    @foreach($booking->participants_data as $index => $p)
+                    <div class="participant-detail-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed rgba(0,0,0,0.08); padding-bottom:8px; margin-bottom:12px;">
+                            <strong style="font-size:0.98rem; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
+                                <span>👤</span> {{ $p['name'] ?? '-' }}
+                                @if($index === 0)
+                                    <span style="font-size:0.7rem; background:rgba(20,184,166,0.12); color:var(--teal,#14B8A6); padding:2px 8px; border-radius:99px; font-weight:700;">PIC / Pemesan</span>
+                                @endif
+                            </strong>
+                            <span style="font-size:0.78rem; color:var(--text-muted); font-weight:600;">#{{ $index + 1 }} {{ __('dari') }} {{ count($booking->participants_data) }}</span>
+                        </div>
+                        <div class="participant-detail-grid">
+                            <div class="participant-detail-item">
+                                <label>{{ __('NIK / No. KTP / KITAS') }}</label>
+                                <span>{{ $p['nik'] ?? '-' }}</span>
+                            </div>
+                            <div class="participant-detail-item">
+                                <label>{{ __('Tanggal Lahir') }}</label>
+                                <span>{{ !empty($p['birth_date']) ? \Carbon\Carbon::parse($p['birth_date'])->translatedFormat('d F Y') : '-' }}</span>
+                            </div>
+                            <div class="participant-detail-item">
+                                <label>{{ __('Nomor Telepon / WA') }}</label>
+                                <span>{{ $p['phone'] ?? '-' }}</span>
+                            </div>
+                            <div class="participant-detail-item" style="grid-column: 1 / -1;">
+                                <label>{{ __('Alamat Domisili / KTP') }}</label>
+                                <span>{{ $p['address'] ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                @endif
 
                 <h2 style="font-size:1.4rem; font-weight:750; border-bottom:2px solid rgba(0,0,0,0.06); padding-bottom:12px; margin:40px 0 20px;">{{ __('Rincian Pembayaran') }}</h2>
                 

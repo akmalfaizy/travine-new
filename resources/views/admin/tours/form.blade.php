@@ -42,7 +42,7 @@
                         <small style="color:var(--text-muted); font-size:0.78rem;">Harga Pokok Penjualan / Biaya Vendor</small>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Komisi Mitra (%)</label>
+                        <label class="form-label">Komisi Partner (%)</label>
                         <input name="commission_percentage" id="admin_comm_pct" type="number" step="0.1" class="form-control" value="{{ old('commission_percentage', $tour->commission_percentage ?? '') }}" placeholder="10" min="0" max="100" oninput="calcAdminCommission()">
                         <small style="color:var(--text-muted); font-size:0.78rem;">% komisi yang dihitung dari margin (Publish - HPP)</small>
                     </div>
@@ -54,14 +54,19 @@
                         <label class="form-label">Durasi</label>
                         <input name="duration" type="text" class="form-control" value="{{ old('duration', $tour->duration ?? '') }}" placeholder="3 Hari 2 Malam">
                     </div>
+                    <div class="form-group" style="grid-column:span 2;">
+                        <label class="form-label">Tanggal Keberangkatan (Opsional)</label>
+                        <input name="departure_date" type="date" class="form-control" value="{{ old('departure_date', isset($tour) && $tour->departure_date ? $tour->departure_date->format('Y-m-d') : '') }}">
+                        <small style="color:var(--text-muted); font-size:0.78rem;">Khusus paket <strong>Open Trip</strong> atau paket dengan jadwal keberangkatan pasti. Sistem akan otomatis menampilkan hitung mundur (misal: "3 hari lagi"). Kosongkan untuk paket reguler / private trip.</small>
+                    </div>
                 </div>
 
                 {{-- Live Financial Preview --}}
                 <div style="background:rgba(20,184,166,0.08); border:1px solid rgba(20,184,166,0.2); padding:16px; border-radius:10px; margin-top:16px;">
-                    <div style="font-weight:700; font-size:0.9rem; color:var(--teal); margin-bottom:8px;">💡 Est. Margin & Komisi Mitra per Pax:</div>
+                    <div style="font-weight:700; font-size:0.9rem; color:var(--teal); margin-bottom:8px;">💡 Est. Margin & Komisi Partner per Pax:</div>
                     <div style="display:flex; gap:24px; font-size:0.85rem; color:var(--text-primary);">
                         <div>Margin (Profit): <strong id="preview-margin">Rp 0</strong></div>
-                        <div>Est. Komisi Mitra: <strong id="preview-comm" style="color:var(--orange,#F97316);">Rp 0</strong></div>
+                        <div>Est. Komisi Partner: <strong id="preview-comm" style="color:var(--orange,#F97316);">Rp 0</strong></div>
                     </div>
                 </div>
                 <div class="form-group">

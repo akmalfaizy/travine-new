@@ -110,6 +110,106 @@
     .step-label.next { color:var(--text-muted); }
     .step-line { flex:1; height:2px; background:rgba(0,0,0,0.08); margin:0 8px; min-width:30px; }
     .step-line.done { background:var(--teal,#14B8A6); }
+
+    /* Participant Form Styling */
+    .participant-card {
+        background: var(--bg-offset, #f8fafc);
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 14px;
+        padding: 22px;
+        margin-bottom: 20px;
+        transition: all 0.25s ease;
+    }
+    .participant-card:hover {
+        border-color: rgba(20, 184, 166, 0.4);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.03);
+    }
+    .participant-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+        border-bottom: 1px dashed rgba(0,0,0,0.1);
+    }
+    .participant-title {
+        font-size: 1.02rem;
+        font-weight: 750;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .participant-badge {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: rgba(20, 184, 166, 0.12);
+        color: var(--teal, #14B8A6);
+    }
+    .p-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    .p-form-full {
+        grid-column: 1 / -1;
+    }
+    @media(max-width: 640px) {
+        .p-form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    .p-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .p-form-group label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text-secondary, #475569);
+    }
+    .p-form-group label span.req {
+        color: #ef4444;
+        font-weight: 700;
+    }
+    .p-form-group input, .p-form-group textarea {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid rgba(0,0,0,0.12);
+        border-radius: 9px;
+        font-size: 0.9rem;
+        background: #fff;
+        color: var(--text-primary);
+        transition: all 0.2s;
+        box-sizing: border-box;
+    }
+    .p-form-group input:focus, .p-form-group textarea:focus {
+        outline: none;
+        border-color: var(--teal, #14B8A6);
+        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
+    }
+    .insurance-notice {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 16px 18px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(20, 184, 166, 0.09), rgba(15, 42, 82, 0.05));
+        border-left: 4px solid var(--teal, #14B8A6);
+        margin-bottom: 24px;
+        font-size: 0.86rem;
+        line-height: 1.6;
+    }
+    .insurance-notice-icon {
+        font-size: 1.6rem;
+        line-height: 1;
+        flex-shrink: 0;
+    }
 </style>
 
 <div class="pay-page">
@@ -137,6 +237,20 @@
                 <div class="step-label next">{{ __('Konfirmasi') }}</div>
             </div>
         </div>
+
+        @if ($errors->any())
+            <div style="background:#FEF2F2; border:1px solid #FCA5A5; border-left:4px solid #EF4444; border-radius:10px; padding:16px 20px; margin-bottom:24px; color:#991B1B;">
+                <div style="font-weight:750; font-size:0.95rem; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {{ __('Mohon periksa kembali data yang belum lengkap:') }}
+                </div>
+                <ul style="margin:0; padding-left:24px; font-size:0.86rem; line-height:1.6;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <form method="POST" action="{{ route('bookings.store') }}" enctype="multipart/form-data" id="payment-form">
         @csrf
@@ -226,9 +340,109 @@
                     </p>
                 </div>
 
-                {{-- 3. Upload Bukti --}}
+                {{-- 3. Data Peserta Asuransi --}}
                 <div class="pay-card">
-                    <h2><span class="num">3</span> {{ __('Upload Bukti Pembayaran') }}</h2>
+                    <h2><span class="num">3</span> {{ __('Data Peserta Wisata (Asuransi Perjalanan)') }}</h2>
+
+                    <div class="insurance-notice">
+                        <div class="insurance-notice-icon">🛡️</div>
+                        <div>
+                            <strong style="color:var(--text-primary); display:block; margin-bottom:4px;">{{ __('Kebutuhan Registrasi Asuransi Perjalanan') }}</strong>
+                            <span style="color:var(--text-secondary,#475569);">
+                                {{ __('Demi kenyamanan dan perlindungan keselamatan selama perjalanan, mohon lengkapi identitas seluruh peserta (') }}{{ $draft['participants'] }} {{ __('orang) sesuai KTP / Paspor / KITAS.') }}
+                            </span>
+                        </div>
+                    </div>
+
+                    @for($i = 0; $i < (int)$draft['participants']; $i++)
+                    <div class="participant-card">
+                        <div class="participant-header">
+                            <div class="participant-title">
+                                <span>👤</span> {{ __('Peserta') }} {{ $i + 1 }}
+                                @if($i === 0)
+                                    <span class="participant-badge">{{ __('Pemesan / PIC') }}</span>
+                                @endif
+                            </div>
+                            <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">#{{ $i + 1 }} {{ __('dari') }} {{ $draft['participants'] }}</span>
+                        </div>
+
+                        <div class="p-form-grid">
+                            {{-- Nama Lengkap --}}
+                            <div class="p-form-group">
+                                <label for="p-name-{{ $i }}">{{ __('Nama Lengkap (Sesuai KTP/Identitas)') }} <span class="req">*</span></label>
+                                <input type="text" 
+                                       id="p-name-{{ $i }}" 
+                                       name="participants[{{ $i }}][name]" 
+                                       value="{{ old('participants.'.$i.'.name', $i === 0 ? $draft['name'] : '') }}" 
+                                       placeholder="{{ __('Contoh: Budi Santoso') }}" 
+                                       required>
+                                @error('participants.'.$i.'.name')
+                                    <span style="color:#ef4444; font-size:0.75rem;">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            {{-- NIK / No. KTP / KITAS / Paspor --}}
+                            <div class="p-form-group">
+                                <label for="p-nik-{{ $i }}">{{ __('NIK / No. KTP / KITAS') }} <span class="req">*</span></label>
+                                <input type="text" 
+                                       id="p-nik-{{ $i }}" 
+                                       name="participants[{{ $i }}][nik]" 
+                                       value="{{ old('participants.'.$i.'.nik') }}" 
+                                       placeholder="{{ __('Contoh: 3201xxxxxxxxxxxx') }}" 
+                                       required>
+                                @error('participants.'.$i.'.nik')
+                                    <span style="color:#ef4444; font-size:0.75rem;">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            {{-- Tanggal Lahir --}}
+                            <div class="p-form-group">
+                                <label for="p-dob-{{ $i }}">{{ __('Tanggal Lahir') }} <span class="req">*</span></label>
+                                <input type="date" 
+                                       id="p-dob-{{ $i }}" 
+                                       name="participants[{{ $i }}][birth_date]" 
+                                       value="{{ old('participants.'.$i.'.birth_date') }}" 
+                                       max="{{ date('Y-m-d') }}" 
+                                       required>
+                                @error('participants.'.$i.'.birth_date')
+                                    <span style="color:#ef4444; font-size:0.75rem;">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            {{-- Nomor Telepon / WA --}}
+                            <div class="p-form-group">
+                                <label for="p-phone-{{ $i }}">{{ __('Nomor Telepon / WhatsApp') }} <span class="req">*</span></label>
+                                <input type="text" 
+                                       id="p-phone-{{ $i }}" 
+                                       name="participants[{{ $i }}][phone]" 
+                                       value="{{ old('participants.'.$i.'.phone', $i === 0 ? $draft['whatsapp'] : '') }}" 
+                                       placeholder="{{ __('Contoh: 081234567890') }}" 
+                                       required>
+                                @error('participants.'.$i.'.phone')
+                                    <span style="color:#ef4444; font-size:0.75rem;">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            {{-- Alamat Lengkap --}}
+                            <div class="p-form-group p-form-full">
+                                <label for="p-addr-{{ $i }}">{{ __('Alamat Lengkap (Sesuai Domisili / KTP)') }} <span class="req">*</span></label>
+                                <textarea id="p-addr-{{ $i }}" 
+                                          name="participants[{{ $i }}][address]" 
+                                          rows="2" 
+                                          placeholder="{{ __('Contoh: Jl. Kebon Sirih No. 10, Jakarta Pusat') }}" 
+                                          required>{{ old('participants.'.$i.'.address') }}</textarea>
+                                @error('participants.'.$i.'.address')
+                                    <span style="color:#ef4444; font-size:0.75rem;">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    @endfor
+                </div>
+
+                {{-- 4. Upload Bukti --}}
+                <div class="pay-card">
+                    <h2><span class="num">4</span> {{ __('Upload Bukti Pembayaran') }}</h2>
 
                     <div class="upload-area" id="upload-area">
                         <input type="file" name="payment_proof" id="payment_proof" accept="image/*" required onchange="previewProof(this)">
@@ -245,9 +459,9 @@
                     </div>
                 </div>
 
-                {{-- 4. Syarat & Ketentuan --}}
+                {{-- 5. Syarat & Ketentuan --}}
                 <div class="pay-card">
-                    <h2><span class="num">4</span> {{ __('Syarat & Ketentuan Reservasi') }}</h2>
+                    <h2><span class="num">5</span> {{ __('Syarat & Ketentuan Reservasi') }}</h2>
                     <div class="terms-box">
                         <h4>1. {{ __('Reservasi') }}</h4>
                         <ul>
@@ -398,6 +612,10 @@
 
     // Submit guard: disable button on submit to prevent double-click
     document.getElementById('payment-form').addEventListener('submit', function(e) {
+        if (!this.checkValidity()) {
+            return;
+        }
+
         const btn = document.getElementById('submit-btn');
         const fileInput = document.getElementById('payment_proof');
         const agreeCheck = document.getElementById('agree_terms');
