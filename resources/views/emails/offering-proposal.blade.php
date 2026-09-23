@@ -12,7 +12,7 @@
             {{-- Header --}}
             <tr>
                 <td style="background:linear-gradient(135deg, #0f2a52 0%, #14B8A6 100%); padding:32px; text-align:center;">
-                    <h1 style="color:#ffffff; font-size:26px; margin:0; font-weight:bold; letter-spacing:0.5px;">Travine<span style="color:#5eead4;">.id</span></h1>
+                    <h1 style="color:#ffffff; font-size:26px; margin:0; font-weight:bold; letter-spacing:0.5px;">travine<span style="color:#5eead4;">.id</span></h1>
                     <p style="color:rgba(255,255,255,0.85); margin:6px 0 0; font-size:13px;">Corporate Travel & Project Production Partner</p>
                 </td>
             </tr>
@@ -31,7 +31,7 @@
 
                     @if(!empty($emailMessage))
                     <div style="background:#f8fafc; border-left:4px solid #14B8A6; padding:12px 16px; margin-bottom:20px; border-radius:0 8px 8px 0; color:#1e293b; font-size:13px; line-height:1.5;">
-                        <strong style="color:#0f2a52; display:block; margin-bottom:4px;">Pesan Khusus dari Tim Travine:</strong>
+                        <strong style="color:#0f2a52; display:block; margin-bottom:4px;">Pesan Khusus dari Tim travine.id:</strong>
                         {!! nl2br(e($emailMessage)) !!}
                     </div>
                     @endif
@@ -88,7 +88,7 @@
                     {{-- Contact PIC Info --}}
                     @if(!empty($offering->pic_project))
                     <div style="background:#f8fafc; border-radius:8px; padding:14px; border:1px solid #e2e8f0; font-size:12.5px; color:#475569;">
-                        <strong>PIC Project Travine:</strong> {{ $offering->pic_project }} 
+                        <strong>PIC Project travine.id:</strong> {{ $offering->pic_project }} 
                         @if($offering->pic_contact) | Telp/WA: <strong>{{ $offering->pic_contact }}</strong> @endif
                         <br>
                         Silakan hubungi kami apabila ada pertanyaan atau penyesuaian kebutuhan paket.

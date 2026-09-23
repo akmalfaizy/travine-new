@@ -33,16 +33,20 @@ class OfferingItem extends Model
 
     public function getUnitPriceFormattedAttribute(): string
     {
-        return 'Rp ' . number_format($this->unit_price, 0, ',', '.');
+        return ($this->unit_price !== null && $this->unit_price !== '') 
+            ? 'Rp ' . number_format($this->unit_price, 0, ',', '.') 
+            : '-';
     }
 
     public function getTotalCostFormattedAttribute(): string
     {
-        return 'Rp ' . number_format($this->total_cost, 0, ',', '.');
+        return ($this->total_cost !== null && $this->total_cost !== '') 
+            ? 'Rp ' . number_format($this->total_cost, 0, ',', '.') 
+            : '-';
     }
 
     public function isOptional(): bool
     {
-        return stripos($this->remark, 'optional') !== false;
+        return stripos($this->remark ?? '', 'optional') !== false;
     }
 }

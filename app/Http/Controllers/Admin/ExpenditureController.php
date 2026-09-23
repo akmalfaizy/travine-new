@@ -62,7 +62,7 @@ class ExpenditureController extends Controller
         // Total komisi yang sudah ditransfer ke partner (withdrawal paid)
         $totalCommission = Withdrawal::where('status', 'paid')->sum('amount');
 
-        // Total Margin Travine = Pendapatan Bersih − komisi yang sudah dibayarkan ke partner
+        // Total Margin travine.id = Pendapatan Bersih − komisi yang sudah dibayarkan ke partner
         $totalMargin = max(0, $netRevenue - $totalCommission);
 
         // Cash balance (dari ledger — saldo bank sesungguhnya)

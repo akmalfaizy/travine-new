@@ -363,7 +363,7 @@
                                 <img src="{{ asset('storage/' . $booking->payment_proof) }}" alt="{{ __('Bukti Transfer') }}" style="max-width:100%; max-height:300px; object-fit:contain; border-radius:4px;">
                             </div>
                         @endif
-                        <a href="https://wa.me/{{ $whatsAppNumber }}?text=Halo%20Admin%20Travine,%20saya%20sudah%20mengunggah%20bukti%20pembayaran%20untuk%20Booking%20Code%3A%20{{ $booking->booking_code }}" class="btn btn--secondary" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px; margin-top:20px; font-weight:600;">
+                        <a href="https://wa.me/{{ $whatsAppNumber }}?text=Halo%20Admin%20travine.id,%20saya%20sudah%20mengunggah%20bukti%20pembayaran%20untuk%20Booking%20Code%3A%20{{ $booking->booking_code }}" class="btn btn--secondary" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px; margin-top:20px; font-weight:600;">
                             💬 {{ __('Hubungi Admin via WhatsApp') }}
                         </a>
                     </div>

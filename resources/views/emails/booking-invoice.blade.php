@@ -111,7 +111,7 @@
 
         <div style="text-align:center; margin-top:28px;">
             <a href="{{ url('/bookings/' . $booking->booking_code) }}" class="cta-btn">🔍 Pantau Status Pemesanan</a>
-            <a href="https://wa.me/{{ \App\Models\Setting::get('phone_whatsapp', '6282137925585') }}?text=Halo%20Admin%20Travine,%20saya%20sudah%20upload%20bukti%20bayar%20untuk%20booking%20{{ urlencode($booking->booking_code) }}" class="wa-btn" target="_blank">💬 Hubungi Admin via WhatsApp</a>
+            <a href="https://wa.me/{{ \App\Models\Setting::get('phone_whatsapp', '6282137925585') }}?text=Halo%20Admin%20travine.id,%20saya%20sudah%20upload%20bukti%20bayar%20untuk%20booking%20{{ urlencode($booking->booking_code) }}" class="wa-btn" target="_blank">💬 Hubungi Admin via WhatsApp</a>
         </div>
 
         <div class="terms">

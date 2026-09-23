@@ -392,4 +392,122 @@ class OfferingInvoiceTest extends TestCase
                    $mail->projectInvoice->id === $invoice->id;
         });
     }
+
+    public function test_offering_creation_with_optional_and_empty_item_fields(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        $offeringData = [
+            'client_name'               => 'PT Test Optional Fields',
+            'package_name'              => 'Event Gathering Opsional',
+            'participants'              => 20,
+            'other_cost_percentage'     => 5,
+            'management_fee_percentage' => 10,
+            'categories'                => [
+                [
+                    'name'  => 'Perlengkapan',
+                    'items' => [
+                        [
+                            'component'   => 'Banner Backdrop',
+                            'description' => '',
+                            'remark'      => '',
+                            'type'        => '',
+                            'quantity'    => '',
+                            'unit_price'  => '',
+                        ],
+                        [
+                            'component'   => '',
+                            'description' => 'Hanya deskripsi saja tanpa komponen dan harga',
+                            'remark'      => '',
+                            'type'        => '',
+                            'quantity'    => '',
+                            'unit_price'  => '',
+                        ],
+                        [
+                            'component'   => 'Item dengan Harga',
+                            'description' => 'Memiliki Qty dan Harga',
+                            'remark'      => 'Included',
+                            'type'        => 'V',
+                            'quantity'    => 2,
+                            'unit_price'  => 500000,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $response = $this->post(route('admin.offerings.store'), $offeringData);
+        $response->assertRedirect();
+        $response->assertSessionHasNoErrors();
+
+        $offering = Offering::with(['categories.items'])->where('client_name', 'PT Test Optional Fields')->first();
+        $this->assertNotNull($offering);
+        $this->assertCount(1, $offering->categories);
+        $this->assertCount(3, $offering->categories->first()->items);
+
+        $item1 = $offering->categories->first()->items[0];
+        $this->assertEquals('Banner Backdrop', $item1->component);
+        $this->assertNull($item1->quantity);
+        $this->assertNull($item1->unit_price);
+        $this->assertNull($item1->total_cost);
+        $this->assertEquals('-', $item1->unit_price_formatted);
+        $this->assertEquals('-', $item1->total_cost_formatted);
+
+        $item2 = $offering->categories->first()->items[1];
+        $this->assertNull($item2->component);
+        $this->assertEquals('Hanya deskripsi saja tanpa komponen dan harga', $item2->description);
+
+        $item3 = $offering->categories->first()->items[2];
+        $this->assertEquals(2, $item3->quantity);
+        $this->assertEquals(500000, $item3->unit_price);
+        $this->assertEquals(1000000, $item3->total_cost);
+
+        // Production cost should only count item3 (1,000,000)
+        $this->assertEquals(1000000, $offering->production_cost);
+
+        // Test show view loads cleanly
+        $showResponse = $this->get(route('admin.offerings.show', $offering));
+        $showResponse->assertStatus(200);
+        $showResponse->assertSee('Banner Backdrop');
+        $showResponse->assertSee('Hanya deskripsi saja tanpa komponen dan harga');
+
+        // Test PDF generation loads cleanly
+        $pdfResponse = $this->get(route('admin.offerings.proposal-pdf', $offering));
+        $pdfResponse->assertStatus(200);
+        $this->assertEquals('application/pdf', $pdfResponse->headers->get('content-type'));
+    }
+
+    public function test_offering_creation_with_empty_table(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        $offeringData = [
+            'client_name'               => 'PT Test Empty Table',
+            'package_name'              => 'Event Kosong',
+            'participants'              => 10,
+            'other_cost_percentage'     => 5,
+            'management_fee_percentage' => 15,
+            'categories'                => [],
+        ];
+
+        $response = $this->post(route('admin.offerings.store'), $offeringData);
+        $response->assertRedirect();
+        $response->assertSessionHasNoErrors();
+
+        $offering = Offering::with(['categories.items'])->where('client_name', 'PT Test Empty Table')->first();
+        $this->assertNotNull($offering);
+        $this->assertCount(0, $offering->categories);
+        $this->assertEquals(0, $offering->production_cost);
+        $this->assertEquals(0, $offering->total_amount);
+
+        // Test show view loads cleanly with empty table message
+        $showResponse = $this->get(route('admin.offerings.show', $offering));
+        $showResponse->assertStatus(200);
+        $showResponse->assertSee('Belum ada item budget.');
+
+        // Test PDF generation loads cleanly
+        $pdfResponse = $this->get(route('admin.offerings.proposal-pdf', $offering));
+        $pdfResponse->assertStatus(200);
+        $this->assertEquals('application/pdf', $pdfResponse->headers->get('content-type'));
+    }
 }

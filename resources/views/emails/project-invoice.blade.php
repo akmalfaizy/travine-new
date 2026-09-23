@@ -43,7 +43,7 @@
             {{-- Header --}}
             <tr>
                 <td style="background:linear-gradient(135deg, #0f2a52 0%, #14B8A6 100%); padding:32px; text-align:center;">
-                    <h1 style="color:#ffffff; font-size:26px; margin:0; font-weight:bold; letter-spacing:0.5px;">Travine<span style="color:#5eead4;">.id</span></h1>
+                    <h1 style="color:#ffffff; font-size:26px; margin:0; font-weight:bold; letter-spacing:0.5px;">travine<span style="color:#5eead4;">.id</span></h1>
                     <p style="color:rgba(255,255,255,0.85); margin:6px 0 0; font-size:13px;">Corporate Travel & Project Production Partner</p>
                 </td>
             </tr>
@@ -75,7 +75,7 @@
 
                     @if(!empty($emailMessage))
                     <div style="background:#f8fafc; border-left:4px solid #14B8A6; padding:12px 16px; margin-bottom:20px; border-radius:0 8px 8px 0; color:#1e293b; font-size:13px; line-height:1.5;">
-                        <strong style="color:#0f2a52; display:block; margin-bottom:4px;">Catatan Finance Travine:</strong>
+                        <strong style="color:#0f2a52; display:block; margin-bottom:4px;">Catatan Finance travine.id:</strong>
                         {!! nl2br(e($emailMessage)) !!}
                     </div>
                     @endif
@@ -183,7 +183,7 @@
                     </p>
                     <p style="color:#94a3b8; font-size:11px; margin:0;">
                         Email: travineid@gmail.com | Website: travine.id<br>
-                        Invoice ini diterbitkan secara sah oleh sistem manajemen Travine.id.
+                        Invoice ini diterbitkan secara sah oleh sistem manajemen travine.id.
                     </p>
                 </td>
             </tr>

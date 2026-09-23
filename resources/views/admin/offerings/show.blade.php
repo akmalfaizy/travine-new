@@ -112,23 +112,35 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            @foreach($cat->items as $item)
+                            @forelse($cat->items as $item)
                                 <tr>
-                                    <td><strong>{{ $item->component }}</strong></td>
-                                    <td style="font-size:0.85rem;color:var(--text-muted);">{{ $item->description ?? '-' }}</td>
+                                    <td><strong>{{ $item->component ?: '-' }}</strong></td>
+                                    <td style="font-size:0.85rem;color:var(--text-muted);">{{ $item->description ?: '-' }}</td>
                                     <td>
-                                        <span class="badge {{ str_contains(strtolower($item->remark ?? ''), 'optional') ? 'badge-warning' : 'badge-info' }}" style="font-size:0.72rem;">
-                                            {{ $item->remark }}
-                                        </span>
+                                        @if(!empty($item->remark))
+                                            <span class="badge {{ str_contains(strtolower($item->remark ?? ''), 'optional') ? 'badge-warning' : 'badge-info' }}" style="font-size:0.72rem;">
+                                                {{ $item->remark }}
+                                            </span>
+                                        @else
+                                            <span style="color:var(--text-muted);">-</span>
+                                        @endif
                                     </td>
                                     <td style="text-align:center;">
-                                        <span class="badge {{ $item->type === 'V' ? 'badge-info' : 'badge-warning' }}">{{ $item->type }}</span>
+                                        @if(!empty($item->type))
+                                            <span class="badge {{ $item->type === 'V' ? 'badge-info' : 'badge-warning' }}">{{ $item->type }}</span>
+                                        @else
+                                            <span style="color:var(--text-muted);">-</span>
+                                        @endif
                                     </td>
-                                    <td style="text-align:right;">{{ number_format($item->quantity, 0, ',', '.') }}</td>
-                                    <td style="text-align:right;font-family:monospace;">{{ $item->unit_price_formatted }}</td>
-                                    <td style="text-align:right;font-weight:700;font-family:monospace;color:var(--teal);">{{ $item->total_cost_formatted }}</td>
+                                    <td style="text-align:right;">{{ ($item->quantity !== null && $item->quantity !== '') ? number_format($item->quantity, 0, ',', '.') : '-' }}</td>
+                                    <td style="text-align:right;font-family:monospace;">{{ ($item->unit_price !== null && $item->unit_price !== '') ? $item->unit_price_formatted : '-' }}</td>
+                                    <td style="text-align:right;font-weight:700;font-family:monospace;color:var(--teal);">{{ ($item->total_cost !== null && $item->total_cost !== '') ? $item->total_cost_formatted : '-' }}</td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="7" style="text-align:center;color:var(--text-muted);padding:14px;">Belum ada item dalam kategori ini.</td>
+                                </tr>
+                            @endforelse
                             </tbody>
                             <tfoot>
                                 <tr style="background:rgba(20,184,166,0.05);">

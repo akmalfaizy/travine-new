@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'admin@travine.id'],
             [
-                'name'     => 'Admin Travine',
+                'name'     => 'admin travine.id',
                 'username' => 'admin',
                 'password' => Hash::make('admintravine123'),
                 'role'     => 'admin',
@@ -120,7 +120,7 @@ class DatabaseSeeder extends Seeder
                 'title'        => 'travine.id Hadirkan Paket Wisata Baru ke Raja Ampat',
                 'summary'      => 'travine.id dengan bangga menghadirkan paket wisata eksklusif ke Raja Ampat, Papua Barat, dengan harga yang terjangkau dan fasilitas premium.',
                 'content'      => '<p>travine.id terus berinovasi dalam menghadirkan paket wisata terbaik bagi pelanggan setia kami. Kali ini, kami dengan bangga memperkenalkan <strong>Paket Wisata Raja Ampat 4D3N</strong> yang menawarkan pengalaman tak terlupakan di surga tersembunyi Indonesia.</p><p>Raja Ampat dikenal sebagai salah satu destinasi diving terbaik di dunia, dengan keanekaragaman hayati laut yang luar biasa. Paket ini dirancang khusus untuk memberikan pengalaman terbaik dengan harga yang kompetitif.</p>',
-                'author'       => 'Admin Travine',
+                'author'       => 'admin travine.id',
                 'published_at' => now(),
                 'status'       => 'published',
             ]
@@ -132,7 +132,7 @@ class DatabaseSeeder extends Seeder
                 'title'        => 'Tips Persiapan Wisata ke Pulau-Pulau Indah Indonesia',
                 'summary'      => 'Sebelum memulai petualangan ke pulau-pulau indah di Indonesia, ada beberapa persiapan penting yang perlu Anda lakukan.',
                 'content'      => '<p>Berwisata ke pulau-pulau indah di Indonesia adalah pengalaman yang luar biasa. Namun, persiapan yang matang akan membuat perjalanan Anda semakin menyenangkan. Berikut adalah beberapa tips yang perlu Anda perhatikan.</p><h2>1. Pilih Waktu yang Tepat</h2><p>Musim kemarau (April-Oktober) adalah waktu terbaik untuk berwisata ke pulau-pulau di Indonesia.</p><h2>2. Siapkan Dokumen Penting</h2><p>Pastikan KTP dan dokumen perjalanan Anda selalu dalam kondisi baik dan mudah diakses.</p>',
-                'author'       => 'Admin Travine',
+                'author'       => 'admin travine.id',
                 'published_at' => now()->subDays(3),
                 'status'       => 'published',
             ]

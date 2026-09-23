@@ -297,7 +297,7 @@ document.addEventListener('keydown', function(e) {
     <div class="finance-stat-card fsc-cash">
         <div class="fsc-icon">🏦</div>
         <div class="fsc-value">Rp {{ number_format($cashBalance, 0, ',', '.') }}</div>
-        <div class="fsc-label">Saldo Kas Travine</div>
+        <div class="fsc-label">Saldo Kas travine.id</div>
         <div class="fsc-sub">Termasuk otomatis dari margin</div>
     </div>
 </div>

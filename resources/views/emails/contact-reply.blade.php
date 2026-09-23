@@ -94,7 +94,7 @@
             <p>Apabila Anda memerlukan respons mendesak, Anda dapat langsung menghubungi layanan pelanggan kami via WhatsApp dengan menekan tombol di bawah ini:</p>
             
             <div class="button-wrapper">
-                <a href="https://wa.me/6282137925585?text=Halo%20Admin%20Travine,%20saya%20sudah%20mengirimkan%20pesan%20melalui%20form%20kontak%20dengan%20email%20{{ urlencode($contact->email) }}" class="button" target="_blank">Chat Customer Service</a>
+                <a href="https://wa.me/6282137925585?text=Halo%20Admin%20travine.id,%20saya%20sudah%20mengirimkan%20pesan%20melalui%20form%20kontak%20dengan%20email%20{{ urlencode($contact->email) }}" class="button" target="_blank">Chat Customer Service</a>
             </div>
         </div>
         <div class="footer">

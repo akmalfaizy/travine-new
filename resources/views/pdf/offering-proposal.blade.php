@@ -393,11 +393,11 @@
 
 <!-- Production Cost Items by Category -->
 @php $itemGlobalIndex = 1; @endphp
-@foreach($offering->categories as $catIndex => $category)
+@forelse($offering->categories as $catIndex => $category)
     <div class="cat-wrapper">
         <table class="cat-header">
             <tr>
-                <td style="width: 65%;">{{ $catIndex + 1 }}. {{ strtoupper($category->name) }}</td>
+                <td style="width: 65%;">{{ $catIndex + 1 }}. {{ strtoupper($category->name ?: 'Kategori ' . ($catIndex + 1)) }}</td>
                 <td class="cat-header-subtotal" style="width: 35%;">
                     Subtotal: {{ $category->total_cost_formatted }}
                 </td>
@@ -421,7 +421,7 @@
                 @forelse($category->items as $item)
                 <tr>
                     <td class="text-center" style="color: #64748b;">{{ $itemGlobalIndex++ }}</td>
-                    <td><strong style="color: #0f2a52;">{{ $item->component }}</strong></td>
+                    <td><strong style="color: #0f2a52;">{{ $item->component ?: '-' }}</strong></td>
                     <td style="color: #475569;">{{ $item->description ?: '-' }}</td>
                     <td>
                         @if($item->remark)
@@ -433,10 +433,10 @@
                             <span style="color: #94a3b8;">-</span>
                         @endif
                     </td>
-                    <td class="text-center" style="color: #475569;">{{ $item->type ?: 'Pack' }}</td>
-                    <td class="text-center"><strong>{{ $item->quantity }}</strong></td>
-                    <td class="text-right" style="color: #334155;">{{ $item->unit_price_formatted }}</td>
-                    <td class="text-right"><strong style="color: #0f2a52;">{{ $item->total_cost_formatted }}</strong></td>
+                    <td class="text-center" style="color: #475569;">{{ $item->type ?: '-' }}</td>
+                    <td class="text-center">{{ ($item->quantity !== null && $item->quantity !== '') ? $item->quantity : '-' }}</td>
+                    <td class="text-right" style="color: #334155;">{{ ($item->unit_price !== null && $item->unit_price !== '') ? $item->unit_price_formatted : '-' }}</td>
+                    <td class="text-right"><strong style="color: #0f2a52;">{{ ($item->total_cost !== null && $item->total_cost !== '') ? $item->total_cost_formatted : '-' }}</strong></td>
                 </tr>
                 @empty
                 <tr>
@@ -446,7 +446,11 @@
             </tbody>
         </table>
     </div>
-@endforeach
+@empty
+    <div style="text-align: center; padding: 18px; color: #94a3b8; border: 1px dashed #cbd5e1; border-radius: 6px; margin-bottom: 15px; font-size: 9px;">
+        Tidak ada data rincian budget / tabel kosong.
+    </div>
+@endforelse
 
 <!-- Financial Summary & Calculation Breakdown -->
 <table class="summary-section">
@@ -467,7 +471,7 @@
 
             @if(!empty($offering->recommendation))
             <div class="rec-box">
-                <strong>Rekomendasi Travine:</strong> {{ $offering->recommendation }}
+                <strong>Rekomendasi travine.id:</strong> {{ $offering->recommendation }}
             </div>
             @endif
 
@@ -504,7 +508,7 @@
                 <tr>
                     <td style="color: #475569;">
                         Management Fee ({{ number_format($offering->management_fee_percentage, 1) }}%)
-                        <div style="font-size: 8px; color: #94a3b8;">Jasa manajemen & koordinasi Travine.id</div>
+                        <div style="font-size: 8px; color: #94a3b8;">Jasa manajemen & koordinasi travine.id</div>
                     </td>
                     <td class="text-right" style="color: #334155;">{{ $offering->management_fee_formatted }}</td>
                 </tr>
@@ -532,7 +536,7 @@
             <div class="sig-party">{{ $offering->provider ?: 'travine.id' }}</div>
             <div class="sig-line"></div>
             <div class="sig-name">{{ $offering->pic_project ?: 'Project Management' }}</div>
-            <div class="sig-sub">PIC Project / Travine Representative</div>
+            <div class="sig-sub">PIC Project / travine.id Representative</div>
         </td>
         <td>
             <div class="sig-role">Disetujui Oleh (Klien)</div>

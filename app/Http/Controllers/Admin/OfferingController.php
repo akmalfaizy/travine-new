@@ -73,15 +73,15 @@ class OfferingController extends Controller
             'recommendation'             => 'nullable|string',
             // categories
             'categories'                 => 'nullable|array',
-            'categories.*.name'          => 'required|string|max:255',
+            'categories.*.name'          => 'nullable|string|max:255',
             'categories.*.sort_order'    => 'nullable|integer',
             'categories.*.items'         => 'nullable|array',
-            'categories.*.items.*.component'  => 'required|string|max:255',
-            'categories.*.items.*.description'=> 'nullable|string',
-            'categories.*.items.*.remark'     => 'nullable|string|max:255',
-            'categories.*.items.*.type'       => 'required|in:V,F',
-            'categories.*.items.*.quantity'   => 'required|numeric|min:0',
-            'categories.*.items.*.unit_price' => 'required|numeric|min:0',
+            'categories.*.items.*.component'   => 'nullable|string|max:255',
+            'categories.*.items.*.description' => 'nullable|string',
+            'categories.*.items.*.remark'      => 'nullable|string|max:255',
+            'categories.*.items.*.type'        => 'nullable|string|max:20',
+            'categories.*.items.*.quantity'    => 'nullable|numeric|min:0',
+            'categories.*.items.*.unit_price'  => 'nullable|numeric|min:0',
         ]);
 
         DB::transaction(function () use ($validated) {
@@ -185,15 +185,15 @@ class OfferingController extends Controller
             'revision_notes.*.text'      => 'nullable|string',
             'recommendation'             => 'nullable|string',
             'categories'                 => 'nullable|array',
-            'categories.*.name'          => 'required|string|max:255',
+            'categories.*.name'          => 'nullable|string|max:255',
             'categories.*.sort_order'    => 'nullable|integer',
             'categories.*.items'         => 'nullable|array',
-            'categories.*.items.*.component'   => 'required|string|max:255',
+            'categories.*.items.*.component'   => 'nullable|string|max:255',
             'categories.*.items.*.description' => 'nullable|string',
             'categories.*.items.*.remark'      => 'nullable|string|max:255',
-            'categories.*.items.*.type'        => 'required|in:V,F',
-            'categories.*.items.*.quantity'    => 'required|numeric|min:0',
-            'categories.*.items.*.unit_price'  => 'required|numeric|min:0',
+            'categories.*.items.*.type'        => 'nullable|string|max:20',
+            'categories.*.items.*.quantity'    => 'nullable|numeric|min:0',
+            'categories.*.items.*.unit_price'  => 'nullable|numeric|min:0',
         ]);
 
         DB::transaction(function () use ($validated, $offering) {
@@ -364,9 +364,14 @@ class OfferingController extends Controller
 
         foreach ($categories as $cat) {
             foreach ($cat['items'] ?? [] as $item) {
-                $qty   = max(0, (float) ($item['quantity'] ?? 0));
-                $price = max(0, (float) ($item['unit_price'] ?? 0));
-                $productionCost += round($qty * $price, 2);
+                $qtyRaw   = $item['quantity'] ?? null;
+                $priceRaw = $item['unit_price'] ?? null;
+
+                if ($qtyRaw !== null && $qtyRaw !== '' && $priceRaw !== null && $priceRaw !== '') {
+                    $qty   = max(0, (float) $qtyRaw);
+                    $price = max(0, (float) $priceRaw);
+                    $productionCost += round($qty * $price, 2);
+                }
             }
         }
 
@@ -389,29 +394,46 @@ class OfferingController extends Controller
     private function syncCategoriesAndItems(Offering $offering, array $categories): void
     {
         foreach ($categories as $sortIndex => $catData) {
-            if (empty(trim($catData['name'] ?? ''))) continue;
+            $catName   = trim($catData['name'] ?? '');
+            $itemsData = $catData['items'] ?? [];
+
+            // If category has no name and no items, skip it
+            if ($catName === '' && empty($itemsData)) {
+                continue;
+            }
 
             $cat = OfferingCategory::create([
                 'offering_id' => $offering->id,
-                'name'        => $catData['name'],
+                'name'        => $catName !== '' ? $catName : 'Kategori ' . ($sortIndex + 1),
                 'sort_order'  => (int) ($catData['sort_order'] ?? $sortIndex),
             ]);
 
-            foreach ($catData['items'] ?? [] as $itemSortIndex => $itemData) {
-                if (empty(trim($itemData['component'] ?? ''))) continue;
+            foreach ($itemsData as $itemSortIndex => $itemData) {
+                $component   = isset($itemData['component']) && trim($itemData['component']) !== '' ? trim($itemData['component']) : null;
+                $description = isset($itemData['description']) && trim($itemData['description']) !== '' ? trim($itemData['description']) : null;
+                $remark      = isset($itemData['remark']) && trim($itemData['remark']) !== '' ? trim($itemData['remark']) : null;
+                $type        = isset($itemData['type']) && trim($itemData['type']) !== '' ? trim($itemData['type']) : null;
 
-                $qty   = max(0, (float) ($itemData['quantity'] ?? 0));
-                $price = max(0, (float) ($itemData['unit_price'] ?? 0));
+                $qtyRaw   = $itemData['quantity'] ?? null;
+                $priceRaw = $itemData['unit_price'] ?? null;
+
+                $hasQty   = ($qtyRaw !== null && $qtyRaw !== '');
+                $hasPrice = ($priceRaw !== null && $priceRaw !== '');
+
+                $qty   = $hasQty ? max(0, (float) $qtyRaw) : null;
+                $price = $hasPrice ? max(0, (float) $priceRaw) : null;
+
+                $totalCost = ($hasQty && $hasPrice) ? round($qty * $price, 2) : null;
 
                 OfferingItem::create([
                     'offering_category_id' => $cat->id,
-                    'component'            => $itemData['component'],
-                    'description'          => $itemData['description'] ?? null,
-                    'remark'               => $itemData['remark'] ?? 'Included (Wajib)',
-                    'type'                 => $itemData['type'] ?? 'V',
+                    'component'            => $component,
+                    'description'          => $description,
+                    'remark'               => $remark,
+                    'type'                 => $type,
                     'quantity'             => $qty,
                     'unit_price'           => $price,
-                    'total_cost'           => round($qty * $price, 2),
+                    'total_cost'           => $totalCost,
                     'sort_order'           => (int) ($itemData['sort_order'] ?? $itemSortIndex),
                 ]);
             }

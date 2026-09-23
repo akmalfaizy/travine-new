@@ -175,7 +175,7 @@
                     <div style="font-size: 2.5rem; margin-bottom: 12px;">🗺️</div>
                     <h3 style="color:#fff; font-size:1.15rem; font-weight:750; margin-bottom:8px;">{{ __('Butuh Bantuan Rencana Wisata?') }}</h3>
                     <p style="color:rgba(255,255,255,0.7); font-size:0.85rem; line-height:1.5; margin-bottom:20px;">
-                        {{ __('Konsultasikan rute liburan impian Anda bersama Travine secara gratis!') }}
+                        {{ __('Konsultasikan rute liburan impian Anda bersama travine.id secara gratis!') }}
                     </p>
                     <a href="{{ route('home') }}#contact" class="btn btn--primary" style="text-decoration:none; display:block; padding:10px; font-size:0.9rem; font-weight:600; text-align:center;">
                         {{ __('Mulai Konsultasi') }}

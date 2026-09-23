@@ -12,7 +12,7 @@
             {{-- Header --}}
             <tr>
                 <td style="background:linear-gradient(135deg,#0f2a52,#14B8A6); padding:32px; text-align:center;">
-                    <h1 style="color:#fff; font-size:24px; margin:0;">Travine<span style="color:#a7f3d0;">.id</span></h1>
+                    <h1 style="color:#fff; font-size:24px; margin:0;">travine<span style="color:#a7f3d0;">.id</span></h1>
                     <p style="color:rgba(255,255,255,0.8); margin:6px 0 0; font-size:13px;">Jelajahi Keindahan Nusantara</p>
                 </td>
             </tr>

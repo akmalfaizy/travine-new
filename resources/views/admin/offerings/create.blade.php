@@ -59,10 +59,13 @@
         <h1>Buat Offering Baru</h1>
         <p style="color:var(--text-muted);font-size:0.85rem;margin-top:4px;">Production Cost Proposal untuk klien</p>
     </div>
-    <a href="{{ route('admin.offerings.index') }}" class="admin-btn admin-btn--secondary">← Kembali</a>
+    <div style="display:flex;gap:10px;align-items:center;">
+        <a href="{{ route('admin.offerings.index') }}" class="admin-btn admin-btn--secondary">← Kembali</a>
+        <button type="submit" form="offeringForm" class="admin-btn admin-btn--primary">💾 Simpan Offering</button>
+    </div>
 </div>
 
-<form id="offeringForm" method="POST" action="{{ route('admin.offerings.store') }}">
+<form id="offeringForm" method="POST" action="{{ route('admin.offerings.store') }}" novalidate>
 @csrf
 
 {{-- Validation Errors --}}
@@ -135,8 +138,9 @@
             <label class="form-label">Deskripsi Singkat</label>
             <textarea name="description" class="form-control" rows="3" placeholder="Deskripsi kegiatan/event...">{{ old('description') }}</textarea>
         </div>
-        <div style="display:flex;justify-content:flex-end;margin-top:8px;">
-            <button type="button" class="admin-btn admin-btn--primary" onclick="goStep(2)">Lanjut → Budget Items</button>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;gap:10px;">
+            <button type="submit" class="admin-btn admin-btn--primary">💾 Simpan Offering</button>
+            <button type="button" class="admin-btn admin-btn--secondary" onclick="goStep(2)">Lanjut → Budget Items</button>
         </div>
     </div>
 </div>
@@ -184,7 +188,10 @@
 
         <div style="display:flex;justify-content:space-between;margin-top:20px;">
             <button type="button" class="admin-btn admin-btn--secondary" onclick="goStep(1)">← Kembali</button>
-            <button type="button" class="admin-btn admin-btn--primary" onclick="goStep(3)">Lanjut → Biaya Tambahan</button>
+            <div style="display:flex;gap:10px;">
+                <button type="submit" class="admin-btn admin-btn--primary">💾 Simpan Offering</button>
+                <button type="button" class="admin-btn admin-btn--secondary" onclick="goStep(3)">Lanjut → Biaya Tambahan</button>
+            </div>
         </div>
     </div>
 </div>
@@ -239,7 +246,10 @@
 
     <div style="display:flex;justify-content:space-between;margin-top:20px;">
         <button type="button" class="admin-btn admin-btn--secondary" onclick="goStep(2)">← Kembali</button>
-        <button type="button" class="admin-btn admin-btn--primary" onclick="goStep(4)">Lanjut → Catatan</button>
+        <div style="display:flex;gap:10px;">
+            <button type="submit" class="admin-btn admin-btn--primary">💾 Simpan Offering</button>
+            <button type="button" class="admin-btn admin-btn--secondary" onclick="goStep(4)">Lanjut → Catatan</button>
+        </div>
     </div>
 </div>
 
@@ -291,7 +301,10 @@
 
         <div style="display:flex;justify-content:space-between;margin-top:20px;">
             <button type="button" class="admin-btn admin-btn--secondary" onclick="goStep(3)">← Kembali</button>
-            <button type="button" class="admin-btn admin-btn--primary" onclick="goStep(5)">Lanjut → Preview</button>
+            <div style="display:flex;gap:10px;">
+                <button type="submit" class="admin-btn admin-btn--primary">💾 Simpan Offering</button>
+                <button type="button" class="admin-btn admin-btn--secondary" onclick="goStep(5)">Lanjut → Preview</button>
+            </div>
         </div>
     </div>
 </div>
@@ -305,12 +318,10 @@
     </div>
     <div style="display:flex;justify-content:space-between;margin-top:20px;gap:12px;">
         <button type="button" class="admin-btn admin-btn--secondary" onclick="goStep(4)">← Kembali</button>
-        <div style="display:flex;gap:10px;">
-            <button type="submit" class="admin-btn admin-btn--primary" style="min-width:140px;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                Simpan sebagai Draft
-            </button>
-        </div>
+        <button type="submit" class="admin-btn admin-btn--primary" style="min-width:140px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Simpan Offering
+        </button>
     </div>
 </div>
 
@@ -331,9 +342,9 @@
                     'component'   => $itemOld['component'] ?? '',
                     'description' => $itemOld['description'] ?? '',
                     'remark'      => $itemOld['remark'] ?? '',
-                    'type'        => $itemOld['type'] ?? 'V',
-                    'qty'         => (float)($itemOld['quantity'] ?? 0),
-                    'price'       => (float)($itemOld['unit_price'] ?? 0),
+                    'type'        => $itemOld['type'] ?? '',
+                    'qty'         => isset($itemOld['quantity']) && $itemOld['quantity'] !== '' ? $itemOld['quantity'] : '',
+                    'price'       => isset($itemOld['unit_price']) && $itemOld['unit_price'] !== '' ? $itemOld['unit_price'] : '',
                 ];
             }
             $oldCategories[] = $catEntry;
@@ -401,7 +412,7 @@ function removeCategory(id) {
 function addItem(catId) {
     const cat = categories.find(c => c.id === catId);
     if (!cat) return;
-    cat.items.push({ id: ++itemCounter, component:'', description:'', remark:'Included (Wajib)', type:'V', qty:1, price:0 });
+    cat.items.push({ id: ++itemCounter, component:'', description:'', remark:'', type:'', qty:'', price:'' });
     renderCategories();
 }
 
@@ -415,7 +426,10 @@ function removeItem(catId, itemId) {
 
 function updateCatName(catId, val) {
     const cat = categories.find(c => c.id === catId);
-    if (cat) cat.name = val;
+    if (cat) {
+        cat.name = val;
+        syncHiddenInputs();
+    }
 }
 
 function updateItem(catId, itemId, field, val) {
@@ -423,9 +437,38 @@ function updateItem(catId, itemId, field, val) {
     if (!cat) return;
     const item = cat.items.find(i => i.id === itemId);
     if (!item) return;
-    if (field === 'qty' || field === 'price') val = parseFloat(val) || 0;
+    if (field === 'qty' || field === 'price') {
+        val = (val === '' || isNaN(val)) ? '' : parseFloat(val);
+    }
     item[field] = val;
     recalc();
+    syncHiddenInputs();
+}
+
+function syncHiddenInputs() {
+    let container = document.getElementById('hiddenFormInputs');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'hiddenFormInputs';
+        document.getElementById('offeringForm').appendChild(container);
+    }
+    let html = '';
+    categories.forEach((cat, ci) => {
+        const catName = cat.name || '';
+        html += `<input type="hidden" name="categories[${ci}][name]" value="${escHtml(catName)}">
+                 <input type="hidden" name="categories[${ci}][sort_order]" value="${ci}">`;
+        (cat.items || []).forEach((item, ii) => {
+            html += `
+                <input type="hidden" name="categories[${ci}][items][${ii}][component]"   value="${escHtml(item.component || '')}">
+                <input type="hidden" name="categories[${ci}][items][${ii}][description]" value="${escHtml(item.description || '')}">
+                <input type="hidden" name="categories[${ci}][items][${ii}][remark]"      value="${escHtml(item.remark || '')}">
+                <input type="hidden" name="categories[${ci}][items][${ii}][type]"        value="${escHtml(item.type || '')}">
+                <input type="hidden" name="categories[${ci}][items][${ii}][quantity]"    value="${item.qty !== '' && item.qty !== null && !isNaN(item.qty) ? item.qty : ''}">
+                <input type="hidden" name="categories[${ci}][items][${ii}][unit_price]"  value="${item.price !== '' && item.price !== null && !isNaN(item.price) ? item.price : ''}">
+                <input type="hidden" name="categories[${ci}][items][${ii}][sort_order]"  value="${ii}">`;
+        });
+    });
+    container.innerHTML = html;
 }
 
 function renderCategories() {
@@ -451,27 +494,18 @@ function renderCategories() {
                 + Tambah Item
             </button>
         </div>`;
-
-        // Hidden inputs for form submission
-        div.innerHTML += `<input type="hidden" name="categories[${ci}][name]" value="${escHtml(cat.name)}">
-                          <input type="hidden" name="categories[${ci}][sort_order]" value="${ci}">`;
-        cat.items.forEach((item, ii) => {
-            div.innerHTML += `
-                <input type="hidden" name="categories[${ci}][items][${ii}][component]"   value="${escHtml(item.component)}">
-                <input type="hidden" name="categories[${ci}][items][${ii}][description]" value="${escHtml(item.description)}">
-                <input type="hidden" name="categories[${ci}][items][${ii}][remark]"      value="${escHtml(item.remark)}">
-                <input type="hidden" name="categories[${ci}][items][${ii}][type]"        value="${escHtml(item.type)}">
-                <input type="hidden" name="categories[${ci}][items][${ii}][quantity]"    value="${item.qty}">
-                <input type="hidden" name="categories[${ci}][items][${ii}][unit_price]"  value="${item.price}">
-                <input type="hidden" name="categories[${ci}][items][${ii}][sort_order]"  value="${ii}">`;
-        });
         container.appendChild(div);
     });
     recalc();
+    syncHiddenInputs();
 }
 
 function renderItemRow(catId, item) {
-    const total = fmtRp(item.qty * item.price);
+    const hasBoth = (item.qty !== '' && item.qty !== null && !isNaN(item.qty)) && (item.price !== '' && item.price !== null && !isNaN(item.price));
+    const total = hasBoth ? fmtRp(item.qty * item.price) : '-';
+    const qtyVal = (item.qty !== '' && item.qty !== null) ? item.qty : '';
+    const priceVal = (item.price !== '' && item.price !== null) ? item.price : '';
+
     return `<div class="item-row" id="itemrow-${item.id}">
         <input class="form-control" style="font-size:0.85rem;" placeholder="Component" value="${escHtml(item.component)}"
                oninput="updateItem(${catId},${item.id},'component',this.value)">
@@ -480,12 +514,13 @@ function renderItemRow(catId, item) {
         <input class="form-control" style="font-size:0.85rem;" placeholder="Remark" value="${escHtml(item.remark)}"
                oninput="updateItem(${catId},${item.id},'remark',this.value)">
         <select class="form-control" style="font-size:0.85rem;" onchange="updateItem(${catId},${item.id},'type',this.value)">
+            <option value="" ${!item.type ? 'selected' : ''}>-</option>
             <option value="V" ${item.type==='V'?'selected':''}>V</option>
             <option value="F" ${item.type==='F'?'selected':''}>F</option>
         </select>
-        <input type="number" class="form-control" style="font-size:0.85rem;" placeholder="Qty" value="${item.qty}" min="0" step="any"
+        <input type="number" class="form-control" style="font-size:0.85rem;" placeholder="Qty" value="${qtyVal}" min="0" step="any"
                oninput="updateItem(${catId},${item.id},'qty',this.value)">
-        <input type="number" class="form-control" style="font-size:0.85rem;" placeholder="Harga satuan" value="${item.price}" min="0" step="any"
+        <input type="number" class="form-control" style="font-size:0.85rem;" placeholder="Harga @" value="${priceVal}" min="0" step="any"
                oninput="updateItem(${catId},${item.id},'price',this.value)">
         <div style="display:flex;align-items:center;gap:6px;">
             <span style="font-size:0.85rem;font-weight:700;color:var(--teal);font-family:monospace;" id="itemtotal-${item.id}">${total}</span>
@@ -521,7 +556,9 @@ function recalc() {
     let prodCost = 0;
     categories.forEach(cat => {
         cat.items.forEach(item => {
-            prodCost += (item.qty || 0) * (item.price || 0);
+            if (item.qty !== '' && item.qty !== null && !isNaN(item.qty) && item.price !== '' && item.price !== null && !isNaN(item.price)) {
+                prodCost += (parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0);
+            }
         });
     });
     const participants = parseInt(document.getElementById('participantsInput')?.value) || 1;
@@ -537,7 +574,10 @@ function recalc() {
     categories.forEach(cat => {
         cat.items.forEach(item => {
             const el = document.getElementById('itemtotal-' + item.id);
-            if (el) el.textContent = fmtRp((item.qty||0)*(item.price||0));
+            if (el) {
+                const hasBoth = (item.qty !== '' && item.qty !== null && !isNaN(item.qty)) && (item.price !== '' && item.price !== null && !isNaN(item.price));
+                el.textContent = hasBoth ? fmtRp((parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0)) : '-';
+            }
         });
     });
 
@@ -592,7 +632,11 @@ function renderPreview() {
     const mgmtPct     = parseFloat(document.getElementById('mgmtFeePct')?.value) || 0;
 
     let prodCost = 0;
-    categories.forEach(cat => cat.items.forEach(i => prodCost += (i.qty||0)*(i.price||0)));
+    categories.forEach(cat => cat.items.forEach(i => {
+        if (i.qty !== '' && i.qty !== null && !isNaN(i.qty) && i.price !== '' && i.price !== null && !isNaN(i.price)) {
+            prodCost += (parseFloat(i.qty) || 0) * (parseFloat(i.price) || 0);
+        }
+    }));
     const otherCost  = prodCost * (otherPct/100);
     const mgmtFee    = prodCost * (mgmtPct/100);
     const grandTotal = prodCost + otherCost + mgmtFee;
@@ -601,16 +645,25 @@ function renderPreview() {
     let catRows = '';
     categories.forEach(cat => {
         if (!cat.items.length) return;
-        catRows += `<tr style="background:rgba(20,184,166,0.07)"><td colspan="7" style="font-weight:700;padding:8px 12px;color:var(--teal);">${escHtml(cat.name)}</td></tr>`;
+        catRows += `<tr style="background:rgba(20,184,166,0.07)"><td colspan="7" style="font-weight:700;padding:8px 12px;color:var(--teal);">${escHtml(cat.name || 'Kategori')}</td></tr>`;
         cat.items.forEach(item => {
+            const comp = item.component ? escHtml(item.component) : '-';
+            const desc = item.description ? escHtml(item.description) : '-';
+            const rem  = item.remark ? escHtml(item.remark) : '-';
+            const typeBadge = item.type ? `<span class="badge ${item.type==='V'?'badge-info':'badge-warning'}">${escHtml(item.type)}</span>` : '-';
+            const qtyText = (item.qty !== '' && item.qty !== null) ? item.qty : '-';
+            const priceText = (item.price !== '' && item.price !== null) ? fmtRp(item.price) : '-';
+            const hasBoth = (item.qty !== '' && item.qty !== null && !isNaN(item.qty)) && (item.price !== '' && item.price !== null && !isNaN(item.price));
+            const totalText = hasBoth ? fmtRp(item.qty * item.price) : '-';
+
             catRows += `<tr>
-                <td style="padding:6px 12px;font-size:0.82rem;">${escHtml(item.component)}</td>
-                <td style="padding:6px 12px;font-size:0.82rem;">${escHtml(item.description)}</td>
-                <td style="padding:6px 12px;font-size:0.82rem;">${escHtml(item.remark)}</td>
-                <td style="padding:6px 12px;text-align:center;font-size:0.82rem;"><span class="badge ${item.type==='V'?'badge-info':'badge-warning'}">${item.type}</span></td>
-                <td style="padding:6px 12px;text-align:right;font-size:0.82rem;">${item.qty}</td>
-                <td style="padding:6px 12px;text-align:right;font-size:0.82rem;">${fmtRp(item.price)}</td>
-                <td style="padding:6px 12px;text-align:right;font-size:0.82rem;font-weight:700;">${fmtRp(item.qty*item.price)}</td>
+                <td style="padding:6px 12px;font-size:0.82rem;">${comp}</td>
+                <td style="padding:6px 12px;font-size:0.82rem;">${desc}</td>
+                <td style="padding:6px 12px;font-size:0.82rem;">${rem}</td>
+                <td style="padding:6px 12px;text-align:center;font-size:0.82rem;">${typeBadge}</td>
+                <td style="padding:6px 12px;text-align:right;font-size:0.82rem;">${qtyText}</td>
+                <td style="padding:6px 12px;text-align:right;font-size:0.82rem;">${priceText}</td>
+                <td style="padding:6px 12px;text-align:right;font-size:0.82rem;font-weight:700;">${totalText}</td>
             </tr>`;
         });
     });
@@ -618,7 +671,7 @@ function renderPreview() {
     document.getElementById('previewContent').innerHTML = `
     <div style="border:2px solid rgba(20,184,166,0.3);border-radius:12px;overflow:hidden;">
         <div style="background:linear-gradient(135deg,#0f2a52,#14B8A6);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;">
-            <div style="color:#fff;font-size:1.1rem;font-weight:800;letter-spacing:1px;">TRAVINE.ID</div>
+            <div style="color:#fff;font-size:1.1rem;font-weight:800;letter-spacing:1px;">travine.id</div>
             <div style="text-align:right;color:#fff;">
                 <div style="font-size:1rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;">Production Cost</div>
                 <div style="font-size:0.8rem;opacity:0.8;margin-top:2px;">Preview Draft</div>
@@ -679,11 +732,73 @@ function fmtRp(v) {
     return 'Rp ' + Math.round(v).toLocaleString('id-ID');
 }
 function escHtml(s) {
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(String(s ?? '')));
+    return div.innerHTML;
 }
 
 // Init participant watcher
 document.getElementById('participantsInput')?.addEventListener('input', recalc);
+
+// Form submit & button click handling
+const offeringForm = document.getElementById('offeringForm');
+
+document.querySelectorAll('button[type="submit"]').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        const formAttr = this.getAttribute('form');
+        if (formAttr === 'offeringForm' || this.closest('#offeringForm')) {
+            if (this.form && this.form !== offeringForm) {
+                e.preventDefault();
+                if (offeringForm.requestSubmit) {
+                    offeringForm.requestSubmit();
+                } else {
+                    offeringForm.submit();
+                }
+            }
+        }
+    });
+});
+
+offeringForm?.addEventListener('submit', function(e) {
+    const clientNameInput = document.querySelector('[name="client_name"]');
+    const packageNameInput = document.querySelector('[name="package_name"]');
+    const participantsInput = document.getElementById('participantsInput');
+
+    const clientName = clientNameInput?.value.trim();
+    const packageName = packageNameInput?.value.trim();
+    const participants = parseInt(participantsInput?.value) || 0;
+
+    if (!clientName) {
+        e.preventDefault();
+        alert('Nama Klien / Perusahaan wajib diisi pada tab ① Client & Project.');
+        goStep(1);
+        clientNameInput?.focus();
+        return false;
+    }
+    if (!packageName) {
+        e.preventDefault();
+        alert('Nama Paket / Event wajib diisi pada tab ① Client & Project.');
+        goStep(1);
+        packageNameInput?.focus();
+        return false;
+    }
+    if (participants < 1) {
+        e.preventDefault();
+        alert('Jumlah Peserta minimal 1 orang pada tab ① Client & Project.');
+        goStep(1);
+        participantsInput?.focus();
+        return false;
+    }
+
+    syncHiddenInputs();
+
+    setTimeout(() => {
+        document.querySelectorAll('button[type="submit"]').forEach(btn => {
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Menyimpan...';
+        });
+    }, 50);
+});
 </script>
 @endpush
 @endsection
