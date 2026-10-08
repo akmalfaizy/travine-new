@@ -66,9 +66,9 @@ class VendorController extends Controller
             'is_active'  => 'nullable|boolean',
             // Products
             'products'               => 'nullable|array',
-            'products.*.name'        => 'required_with:products|string|max:255',
+            'products.*.name'        => 'nullable|string|max:255',
             'products.*.unit'        => 'nullable|string|max:50',
-            'products.*.price'       => 'nullable|numeric|min:0',
+            'products.*.price'       => 'nullable',
             'products.*.notes'       => 'nullable|string|max:255',
         ]);
 
@@ -122,9 +122,9 @@ class VendorController extends Controller
             'notes'      => 'nullable|string',
             'is_active'  => 'nullable|boolean',
             'products'               => 'nullable|array',
-            'products.*.name'        => 'required_with:products|string|max:255',
+            'products.*.name'        => 'nullable|string|max:255',
             'products.*.unit'        => 'nullable|string|max:50',
-            'products.*.price'       => 'nullable|numeric|min:0',
+            'products.*.price'       => 'nullable',
             'products.*.notes'       => 'nullable|string|max:255',
         ]);
 
@@ -171,6 +171,80 @@ class VendorController extends Controller
         return back()->with('success', "Vendor \"{$vendor->name}\" berhasil {$label}.");
     }
 
+    // ─── Single Product Operations ───────────────────────────────────────────
+
+    public function storeProduct(Request $request, Vendor $vendor)
+    {
+        $validated = $request->validate([
+            'name'  => 'required|string|max:255',
+            'unit'  => 'nullable|string|max:50',
+            'price' => 'nullable',
+            'notes' => 'nullable|string|max:255',
+        ]);
+
+        $priceRaw = $validated['price'] ?? 0;
+        if (is_string($priceRaw)) {
+            $priceRaw = preg_replace('/[^0-9.]/', '', str_replace(',', '.', $priceRaw));
+        }
+        $price = max(0, (float) ($priceRaw ?? 0));
+
+        $product = $vendor->products()->create([
+            'name'  => trim($validated['name']),
+            'unit'  => $validated['unit'] ?? null,
+            'price' => $price,
+            'notes' => $validated['notes'] ?? null,
+        ]);
+
+        ActivityLog::record("Tambah Produk Vendor {$vendor->name}: {$product->name}");
+
+        return back()->with('success', "Produk \"{$product->name}\" berhasil ditambahkan.");
+    }
+
+    public function updateProduct(Request $request, Vendor $vendor, VendorProduct $product)
+    {
+        if ($product->vendor_id !== $vendor->id) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'name'  => 'required|string|max:255',
+            'unit'  => 'nullable|string|max:50',
+            'price' => 'nullable',
+            'notes' => 'nullable|string|max:255',
+        ]);
+
+        $priceRaw = $validated['price'] ?? 0;
+        if (is_string($priceRaw)) {
+            $priceRaw = preg_replace('/[^0-9.]/', '', str_replace(',', '.', $priceRaw));
+        }
+        $price = max(0, (float) ($priceRaw ?? 0));
+
+        $product->update([
+            'name'  => trim($validated['name']),
+            'unit'  => $validated['unit'] ?? null,
+            'price' => $price,
+            'notes' => $validated['notes'] ?? null,
+        ]);
+
+        ActivityLog::record("Update Produk Vendor {$vendor->name}: {$product->name}");
+
+        return back()->with('success', "Produk \"{$product->name}\" berhasil diperbarui.");
+    }
+
+    public function destroyProduct(Vendor $vendor, VendorProduct $product)
+    {
+        if ($product->vendor_id !== $vendor->id) {
+            abort(404);
+        }
+
+        $name = $product->name;
+        $product->delete();
+
+        ActivityLog::record("Hapus Produk Vendor {$vendor->name}: {$name}");
+
+        return back()->with('success', "Produk \"{$name}\" berhasil dihapus.");
+    }
+
     // ─── Private Helpers ──────────────────────────────────────────────────────
 
     private function syncProducts(Vendor $vendor, array $products): void
@@ -179,11 +253,17 @@ class VendorController extends Controller
             $name = trim($p['name'] ?? '');
             if (empty($name)) continue;
 
+            $priceRaw = $p['price'] ?? 0;
+            if (is_string($priceRaw)) {
+                $priceRaw = preg_replace('/[^0-9.]/', '', str_replace(',', '.', $priceRaw));
+            }
+            $price = max(0, (float) ($priceRaw ?? 0));
+
             VendorProduct::create([
                 'vendor_id' => $vendor->id,
                 'name'      => $name,
                 'unit'      => $p['unit'] ?? null,
-                'price'     => max(0, (float) ($p['price'] ?? 0)),
+                'price'     => $price,
                 'notes'     => $p['notes'] ?? null,
             ]);
         }

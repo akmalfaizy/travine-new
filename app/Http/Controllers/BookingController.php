@@ -62,7 +62,7 @@ class BookingController extends Controller
         $dpAmount    = $dpPerPax * $draft['participants'];
         $fullAmount  = $tour->price * $draft['participants'];
 
-        $bankName    = \App\Models\Setting::get('bank_name', 'Bank BCA');
+        $bankName    = \App\Models\Setting::get('bank_name', 'Bank CIMB Niaga');
         $bankAccount = \App\Models\Setting::get('bank_account', '1234567890');
         $bankHolder  = \App\Models\Setting::get('bank_holder', 'PT Travine Indonesia');
         $whatsApp    = \App\Models\Setting::get('phone_whatsapp', '6282137925585');
@@ -189,7 +189,14 @@ class BookingController extends Controller
     public function show(string $code)
     {
         $booking = Booking::where('booking_code', $code)->with('tour.category')->firstOrFail();
-        return view('bookings.show', compact('booking'));
+
+        $bankName    = \App\Models\Setting::get('bank_name', 'Bank CIMB Niaga');
+        $bankAccount = \App\Models\Setting::get('bank_account', '1234567890');
+        $bankHolder  = \App\Models\Setting::get('bank_holder', 'PT Travine Indonesia');
+        $whatsAppNumber = \App\Models\Setting::get('phone_whatsapp', '6282137925585');
+        $dpAmount    = 100000 * $booking->participants;
+
+        return view('bookings.show', compact('booking', 'bankName', 'bankAccount', 'bankHolder', 'whatsAppNumber', 'dpAmount'));
     }
 
     public function uploadProof(Request $request, string $code)

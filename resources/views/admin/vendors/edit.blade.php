@@ -215,15 +215,22 @@ function escHtml(s) {
 
 // Pre-fill produk existing atau dari old() saat error validasi
 @php
-    $editProducts = old('products') ?? $vendor->products->toArray();
+    $editProducts = old('products') !== null ? old('products') : $vendor->products->map(function($p) {
+        return [
+            'name'  => $p->name,
+            'unit'  => $p->unit,
+            'price' => $p->price,
+            'notes' => $p->notes,
+        ];
+    })->values()->all();
 @endphp
-@foreach($editProducts as $p)
-addProductRow(
-    {{ json_encode($p['name'] ?? '') }},
-    {{ json_encode($p['unit'] ?? '') }},
-    {{ json_encode((string)($p['price'] ?? '')) }},
-    {{ json_encode($p['notes'] ?? '') }}
-);
-@endforeach
+const initialProducts = {!! json_encode($editProducts) !!};
+if (Array.isArray(initialProducts) && initialProducts.length > 0) {
+    initialProducts.forEach(p => {
+        addProductRow(p.name || '', p.unit || '', p.price !== undefined && p.price !== null ? p.price : '', p.notes || '');
+    });
+} else {
+    updateProductCounter();
+}
 </script>
 @endpush

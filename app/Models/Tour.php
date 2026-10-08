@@ -47,6 +47,11 @@ class Tour extends Model
         return $this->hasMany(Commission::class);
     }
 
+    public function getNameAttribute(): ?string
+    {
+        return $this->title;
+    }
+
     public function getPriceFormattedAttribute()
     {
         return 'Rp ' . number_format($this->price, 0, ',', '.');

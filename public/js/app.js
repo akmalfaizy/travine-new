@@ -30,14 +30,42 @@ function initTheme() {
         document.documentElement.setAttribute('data-theme', storedTheme);
     }
 
-    toggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const targetTheme = currentTheme === 'light' ? 'dark' : 'light';
-        
-        document.documentElement.setAttribute('data-theme', targetTheme);
-        localStorage.setItem('theme', targetTheme);
-    });
+    if (toggle) {
+        toggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const targetTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+            document.documentElement.setAttribute('data-theme', targetTheme);
+            localStorage.setItem('theme', targetTheme);
+        });
+    }
 }
+
+// ===== PASSWORD VISIBILITY TOGGLE (global delegated) =====
+document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.password-toggle-btn');
+    if (!btn) return;
+    e.preventDefault();
+
+    const wrapper = btn.closest('.password-wrapper');
+    const input = wrapper ? wrapper.querySelector('input') : null;
+    if (!input) return;
+
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+
+    // Toggle CSS class
+    btn.classList.toggle('is-visible', isPassword);
+    btn.setAttribute('aria-label', isPassword ? 'Sembunyikan password' : 'Lihat password');
+
+    // Directly manipulate SVG display (fallback for CSS caching issues)
+    const eyeOpen = btn.querySelector('.eye-open');
+    const eyeSlash = btn.querySelector('.eye-slash');
+    if (eyeOpen && eyeSlash) {
+        eyeOpen.style.display = isPassword ? 'none' : 'block';
+        eyeSlash.style.display = isPassword ? 'block' : 'none';
+    }
+});
 
 function initNavbar() {
     const navbar = document.getElementById('navbar');

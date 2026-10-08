@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 
 class ProjectInvoiceMail extends Mailable
@@ -17,7 +18,8 @@ class ProjectInvoiceMail extends Mailable
     public function __construct(
         public ProjectInvoice $projectInvoice,
         public $pdfData,
-        public ?string $emailMessage = null
+        public ?string $emailMessage = null,
+        public array $ccEmails = []
     ) {}
 
     public function envelope(): Envelope
@@ -31,8 +33,11 @@ class ProjectInvoiceMail extends Mailable
             default     => "Tagihan Invoice Resmi Project — {$this->projectInvoice->invoice_number} | travine.id",
         };
 
+        $cc = array_map(fn($email) => new Address(trim($email)), array_filter($this->ccEmails));
+
         return new Envelope(
             subject: $subject,
+            cc: $cc,
         );
     }
 

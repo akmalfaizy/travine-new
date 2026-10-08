@@ -38,6 +38,11 @@ class Commission extends Model
         return $this->belongsTo(Tour::class);
     }
 
+    public function getAmountAttribute(): int
+    {
+        return (int) $this->commission_amount;
+    }
+
     public function getCommissionAmountFormattedAttribute(): string
     {
         return 'Rp ' . number_format($this->commission_amount, 0, ',', '.');

@@ -306,14 +306,27 @@ class OfferingController extends Controller
         $request->validate([
             'recipient_email' => 'required|email|max:255',
             'email_message'   => 'nullable|string|max:2000',
+            'cc_emails'       => 'nullable|string|max:2000',
         ]);
 
         $recipientEmail = $request->recipient_email;
+
+        // Parse CC emails from comma/semicolon-separated string
+        $ccEmails = [];
+        if ($request->filled('cc_emails')) {
+            $ccEmails = array_values(array_filter(
+                array_map('trim', preg_split('/[,;]+/', $request->cc_emails)),
+                fn($e) => filter_var($e, FILTER_VALIDATE_EMAIL)
+            ));
+        }
 
         // If client_email in record was empty, update it
         if (empty($offering->client_email)) {
             $offering->update(['client_email' => $recipientEmail]);
         }
+
+        // Extend time limit — PDF generation + SMTP can exceed 30s
+        set_time_limit(120);
 
         // Generate proposal PDF
         $offering->load(['categories.items']);
@@ -322,16 +335,17 @@ class OfferingController extends Controller
         $pdfData = $pdf->output();
 
         // Send Email
-        Mail::to($recipientEmail)->send(new OfferingProposalMail($offering, $pdfData, $request->email_message));
+        Mail::to($recipientEmail)->send(new OfferingProposalMail($offering, $pdfData, $request->email_message, $ccEmails));
 
         // Advance draft to sent
         if ($offering->status === 'draft') {
             $offering->update(['status' => 'sent']);
         }
 
-        ActivityLog::record("Kirim Proposal Offering {$offering->offering_number} via email ke: {$recipientEmail}");
+        $ccNote = count($ccEmails) ? ' | CC: ' . implode(', ', $ccEmails) : '';
+        ActivityLog::record("Kirim Proposal Offering {$offering->offering_number} via email ke: {$recipientEmail}{$ccNote}");
 
-        return back()->with('success', "Proposal penawaran berhasil dikirim via email ke {$recipientEmail}.");
+        return back()->with('success', "Proposal penawaran berhasil dikirim via email ke {$recipientEmail}" . (count($ccEmails) ? ' + ' . count($ccEmails) . ' CC' : '') . '.');
     }
 
     // ─── Invoice Conversion ───────────────────────────────────────────────────

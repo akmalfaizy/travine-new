@@ -10,7 +10,7 @@ class CashLedger extends Model
     protected $table = 'cash_ledger';
 
     protected $fillable = [
-        'type', 'amount', 'note', 'source', 'booking_id', 'balance_after', 'created_by',
+        'type', 'amount', 'note', 'source', 'booking_id', 'project_invoice_id', 'balance_after', 'created_by',
     ];
 
     protected $casts = [
@@ -23,6 +23,11 @@ class CashLedger extends Model
     public function booking()
     {
         return $this->belongsTo(Booking::class);
+    }
+
+    public function projectInvoice()
+    {
+        return $this->belongsTo(ProjectInvoice::class);
     }
 
     // ─── Static Helpers ────────────────────────────────────────────────────────
@@ -40,9 +45,9 @@ class CashLedger extends Model
      * Add a manual cash transaction (in or out).
      * Automatically calculates and stores balance_after.
      */
-    public static function addEntry(string $type, int $amount, string $note = '', string $source = 'manual', ?int $bookingId = null, ?string $createdBy = null): self
+    public static function addEntry(string $type, int $amount, string $note = '', string $source = 'manual', ?int $bookingId = null, ?string $createdBy = null, ?int $projectInvoiceId = null): self
     {
-        return DB::transaction(function () use ($type, $amount, $note, $source, $bookingId, $createdBy) {
+        return DB::transaction(function () use ($type, $amount, $note, $source, $bookingId, $createdBy, $projectInvoiceId) {
             // Lock for concurrent safety
             $balance = static::lockForUpdate()->latest()->value('balance_after') ?? 0;
 
@@ -51,13 +56,14 @@ class CashLedger extends Model
                 : max(0, $balance - $amount);
 
             return static::create([
-                'type'          => $type,
-                'amount'        => $amount,
-                'note'          => $note,
-                'source'        => $source,
-                'booking_id'    => $bookingId,
-                'balance_after' => $newBalance,
-                'created_by'    => $createdBy,
+                'type'               => $type,
+                'amount'             => $amount,
+                'note'               => $note,
+                'source'             => $source,
+                'booking_id'         => $bookingId,
+                'project_invoice_id' => $projectInvoiceId,
+                'balance_after'      => $newBalance,
+                'created_by'         => $createdBy,
             ]);
         });
     }
@@ -99,6 +105,37 @@ class CashLedger extends Model
             source:    'booking',
             bookingId: $booking->id,
             createdBy: 'System (Auto)',
+        );
+    }
+
+    /**
+     * Auto-add management fee from a paid Project Invoice into the cash ledger.
+     * Only the management_fee is added to cash balance; the full amount is counted under gross revenue.
+     */
+    public static function addFromProjectInvoice(ProjectInvoice $invoice): void
+    {
+        // Avoid duplicate entries for the same project invoice
+        if (static::where('project_invoice_id', $invoice->id)->where('source', 'project_invoice')->exists()) {
+            return;
+        }
+
+        $amount = (int) ($invoice->management_fee ?? 0);
+
+        if ($amount <= 0) {
+            return;
+        }
+
+        $note = "Management fee dari Project Invoice {$invoice->invoice_number}"
+            . " — Client: {$invoice->client_name}"
+            . " | Project: {$invoice->project_name}";
+
+        static::addEntry(
+            type:             'in',
+            amount:           $amount,
+            note:             $note,
+            source:           'project_invoice',
+            projectInvoiceId: $invoice->id,
+            createdBy:        'System (Auto)',
         );
     }
 
@@ -148,7 +185,48 @@ class CashLedger extends Model
                 }
             }
 
-            // 2. Sync paid withdrawals
+            // 2. Sync paid project invoices (only management_fee enters cash balance)
+            $paidInvoices = ProjectInvoice::where('payment_status', 'paid')->get();
+
+            foreach ($paidInvoices as $inv) {
+                $amount = (int) ($inv->management_fee ?? 0);
+                if ($amount <= 0) {
+                    continue;
+                }
+
+                $note = "Management fee dari Project Invoice {$inv->invoice_number}"
+                    . " — Client: {$inv->client_name}"
+                    . " | Project: {$inv->project_name}";
+
+                $existingEntry = static::where('project_invoice_id', $inv->id)
+                    ->where('source', 'project_invoice')
+                    ->first();
+
+                if ($existingEntry) {
+                    // Update if amount or note changed
+                    if ($existingEntry->amount != $amount || $existingEntry->note != $note) {
+                        $existingEntry->amount = $amount;
+                        $existingEntry->note   = $note;
+                        $existingEntry->save();
+                    }
+                } else {
+                    $entry = new static([
+                        'type'               => 'in',
+                        'amount'             => $amount,
+                        'note'               => $note,
+                        'source'             => 'project_invoice',
+                        'project_invoice_id' => $inv->id,
+                        'balance_after'      => 0,
+                        'created_by'         => 'System (Auto)',
+                    ]);
+                    $entry->timestamps = false;
+                    $entry->created_at = $inv->updated_at ?? $inv->created_at;
+                    $entry->updated_at = $inv->updated_at ?? $inv->created_at;
+                    $entry->save();
+                }
+            }
+
+            // 3. Sync paid withdrawals
             $paidWithdrawals = Withdrawal::with('partner')
                 ->where('status', 'paid')
                 ->get();
@@ -178,7 +256,7 @@ class CashLedger extends Model
                 }
             }
 
-            // 3. Recalculate running balance_after chronologically
+            // 4. Recalculate running balance_after chronologically
             static::recalculateBalances();
         });
     }

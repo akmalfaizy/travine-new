@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\CashLedger;
 use App\Models\Offering;
 use App\Models\ProjectInvoice;
 use App\Models\ProjectInvoiceItem;
@@ -107,9 +108,9 @@ class ProjectInvoiceController extends Controller
                         'description'        => $item->description,
                         'remark'             => $item->remark,
                         'type'               => $item->type,
-                        'quantity'           => $item->quantity,
-                        'unit_price'         => $item->unit_price,
-                        'total_cost'         => $item->total_cost,
+                        'quantity'           => $item->quantity ?? 0,
+                        'unit_price'         => $item->unit_price ?? 0,
+                        'total_cost'         => $item->total_cost ?? 0,
                         'sort_order'         => $item->sort_order,
                     ]);
                 }
@@ -165,6 +166,11 @@ class ProjectInvoiceController extends Controller
             'payment_status'    => $status,
         ]);
 
+        // Auto-record to cash ledger when fully paid
+        if ($status === 'paid') {
+            CashLedger::addFromProjectInvoice($projectInvoice->fresh());
+        }
+
         ActivityLog::record("Rekam pembayaran Invoice {$projectInvoice->invoice_number}: Rp " . number_format($amountPaid, 0, ',', '.'));
 
         return back()->with('success', 'Pembayaran berhasil direkam.');
@@ -178,8 +184,31 @@ class ProjectInvoiceController extends Controller
             'payment_status' => 'required|in:unpaid,partial,paid,overdue,cancelled',
         ]);
 
-        $projectInvoice->update(['payment_status' => $request->payment_status]);
-        ActivityLog::record("Update status Invoice {$projectInvoice->invoice_number}: {$request->payment_status}");
+        $oldStatus = $projectInvoice->payment_status;
+        $newStatus = $request->payment_status;
+
+        $updateData = ['payment_status' => $newStatus];
+
+        // If manually marked as paid, ensure amount_paid matches gross_total
+        if ($newStatus === 'paid' && $projectInvoice->amount_paid < $projectInvoice->gross_total) {
+            $updateData['amount_paid'] = $projectInvoice->gross_total;
+            $updateData['remaining_balance'] = 0;
+        }
+
+        $projectInvoice->update($updateData);
+
+        // Auto-record to cash ledger when status changes to paid
+        if ($newStatus === 'paid') {
+            CashLedger::addFromProjectInvoice($projectInvoice->fresh());
+        } elseif ($oldStatus === 'paid' && $newStatus !== 'paid') {
+            // Reverted from paid: remove the ledger entry & recalculate
+            CashLedger::where('project_invoice_id', $projectInvoice->id)
+                ->where('source', 'project_invoice')
+                ->delete();
+            CashLedger::recalculateBalances();
+        }
+
+        ActivityLog::record("Update status Invoice {$projectInvoice->invoice_number}: {$newStatus}");
 
         return back()->with('success', 'Status Invoice berhasil diperbarui.');
     }
@@ -202,14 +231,27 @@ class ProjectInvoiceController extends Controller
         $request->validate([
             'recipient_email' => 'required|email|max:255',
             'email_message'   => 'nullable|string|max:2000',
+            'cc_emails'       => 'nullable|string|max:2000',
         ]);
 
         $recipientEmail = $request->recipient_email;
+
+        // Parse CC emails from comma/semicolon-separated string
+        $ccEmails = [];
+        if ($request->filled('cc_emails')) {
+            $ccEmails = array_values(array_filter(
+                array_map('trim', preg_split('/[,;]+/', $request->cc_emails)),
+                fn($e) => filter_var($e, FILTER_VALIDATE_EMAIL)
+            ));
+        }
 
         // If client_email in record was empty, update it
         if (empty($projectInvoice->client_email)) {
             $projectInvoice->update(['client_email' => $recipientEmail]);
         }
+
+        // Extend time limit — PDF generation + SMTP can exceed 30s
+        set_time_limit(120);
 
         // Generate invoice PDF
         $projectInvoice->load(['offering', 'items']);
@@ -218,11 +260,12 @@ class ProjectInvoiceController extends Controller
         $pdfData = $pdf->output();
 
         // Send Email
-        Mail::to($recipientEmail)->send(new ProjectInvoiceMail($projectInvoice, $pdfData, $request->email_message));
+        Mail::to($recipientEmail)->send(new ProjectInvoiceMail($projectInvoice, $pdfData, $request->email_message, $ccEmails));
 
-        ActivityLog::record("Kirim Project Invoice {$projectInvoice->invoice_number} ({$projectInvoice->payment_status}) via email ke: {$recipientEmail}");
+        $ccNote = count($ccEmails) ? ' | CC: ' . implode(', ', $ccEmails) : '';
+        ActivityLog::record("Kirim Project Invoice {$projectInvoice->invoice_number} ({$projectInvoice->payment_status}) via email ke: {$recipientEmail}{$ccNote}");
 
-        return back()->with('success', "Invoice berhasil dikirim via email ke {$recipientEmail}.");
+        return back()->with('success', "Invoice berhasil dikirim via email ke {$recipientEmail}" . (count($ccEmails) ? ' + ' . count($ccEmails) . ' CC' : '') . '.');
     }
 
     // ─── Destroy ──────────────────────────────────────────────────────────────
@@ -230,6 +273,11 @@ class ProjectInvoiceController extends Controller
     public function destroy(ProjectInvoice $projectInvoice)
     {
         ActivityLog::record("Hapus Project Invoice: {$projectInvoice->invoice_number}");
+
+        // Clean up linked ledger entry if any
+        CashLedger::where('project_invoice_id', $projectInvoice->id)->delete();
+        CashLedger::recalculateBalances();
+
         $projectInvoice->delete();
         return redirect()->route('admin.project-invoices.index')
             ->with('success', 'Invoice berhasil dihapus.');

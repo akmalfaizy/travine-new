@@ -81,10 +81,35 @@ class Partner extends Authenticatable
         return url('/?ref=' . $this->referral_code . '#kategori-wisata');
     }
 
+    /**
+     * Saldo komisi yang benar-benar bisa ditarik.
+     *
+     * Formula: Total Earned - Total Withdrawn (paid) - Total Pending Withdrawal
+     *
+     * Menggunakan withdrawal records sebagai sumber kebenaran pengeluaran,
+     * bukan status commission entries — ini lebih robust dan tidak terpengaruh
+     * oleh data commission yang mungkin ter-mark salah oleh proses sebelumnya.
+     */
     public function getAvailableCommissionAttribute(): float
     {
-        return (float) $this->commissions()->where('status', 'available')->sum('commission_amount');
+        // Total komisi yang sudah earned (semua status kecuali cancelled/rejected)
+        $totalEarned = (float) $this->commissions()
+            ->whereIn('status', ['available', 'requested', 'processing', 'paid'])
+            ->sum('commission_amount');
+
+        // Total yang sudah benar-benar dibayarkan
+        $totalPaid = (float) $this->withdrawals()
+            ->where('status', 'paid')
+            ->sum('amount');
+
+        // Total yang sedang dalam proses penarikan
+        $totalPending = (float) $this->withdrawals()
+            ->whereIn('status', ['requested', 'approved', 'processing'])
+            ->sum('amount');
+
+        return max(0, $totalEarned - $totalPaid - $totalPending);
     }
+
 
     public function getTotalCommissionAttribute(): float
     {

@@ -127,9 +127,9 @@
                         <tbody>
                             @foreach($recentCommissions as $commission)
                             <tr>
-                                <td>{{ $commission->tour->name ?? '-' }}</td>
-                                <td>Rp {{ number_format($commission->amount, 0, ',', '.') }}</td>
-                                <td><span class="partner-dash__badge partner-dash__badge--{{ $commission->status }}">{{ ucfirst($commission->status) }}</span></td>
+                                <td>{{ $commission->tour->title ?? $commission->tour->name ?? '-' }}</td>
+                                <td>Rp {{ number_format($commission->commission_amount, 0, ',', '.') }}</td>
+                                <td><span class="partner-dash__badge partner-dash__badge--{{ $commission->status }}">{{ $commission->status_label }}</span></td>
                             </tr>
                             @endforeach
                         </tbody>

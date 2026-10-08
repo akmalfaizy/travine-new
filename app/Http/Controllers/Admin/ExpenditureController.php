@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\CashLedger;
 use App\Models\Setting;
 use App\Models\Tour;
+use App\Models\ProjectInvoice;
 use App\Models\Withdrawal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -50,14 +51,25 @@ class ExpenditureController extends Controller
             ->whereIn('payment_status', ['dp_paid', 'paid'])
             ->get();
 
-        // Pendapatan Kotor = total harga semua booking terkonfirmasi
-        $grossRevenue = $confirmedBookings->sum('total_price');
+        // Paid project invoices
+        $paidInvoices = ProjectInvoice::where('payment_status', 'paid')->get();
 
-        // Pendapatan Bersih = Kotor − HPP (modal) — sudah termasuk bagian komisi partner
-        $netRevenue = $confirmedBookings->sum(function ($b) {
+        // Pendapatan Kotor = total harga booking terkonfirmasi + total pembayaran project invoice
+        $grossBookingRevenue = $confirmedBookings->sum('total_price');
+        $grossInvoiceRevenue = $paidInvoices->sum('amount_paid');
+        $grossRevenue = $grossBookingRevenue + $grossInvoiceRevenue;
+
+        // Pendapatan Bersih = Kotor − HPP (modal vendor)
+        // Booking: total_price - (hpp * participants)
+        $netBookingRevenue = $confirmedBookings->sum(function ($b) {
             $hpp = $b->tour ? (int) ($b->tour->hpp_price ?? 0) : 0;
             return max(0, (int) $b->total_price - ($hpp * (int) $b->participants));
         });
+        // Project Invoice: management_fee (keuntungan jasa proyek travine.id)
+        $netInvoiceRevenue = $paidInvoices->sum(function ($inv) {
+            return (int) ($inv->management_fee ?? 0);
+        });
+        $netRevenue = $netBookingRevenue + $netInvoiceRevenue;
 
         // Total komisi yang sudah ditransfer ke partner (withdrawal paid)
         $totalCommission = Withdrawal::where('status', 'paid')->sum('amount');
@@ -72,7 +84,7 @@ class ExpenditureController extends Controller
         $monthlyData = $this->getMonthlyData();
 
         // ── Ledger History ─────────────────────────────────────────────────
-        $ledgerHistory = CashLedger::with('booking')
+        $ledgerHistory = CashLedger::with('booking', 'projectInvoice')
             ->latest()
             ->paginate(15);
 
@@ -122,13 +134,29 @@ class ExpenditureController extends Controller
                 ->whereMonth('created_at', $m)
                 ->get();
 
-            $grossVal = $monthBookings->sum('total_price');
-            $netVal   = $monthBookings->sum(function ($b) {
+            $monthInvoices = ProjectInvoice::where('payment_status', 'paid')
+                ->where(function ($q) use ($year, $m) {
+                    $q->whereYear('updated_at', $year)->whereMonth('updated_at', $m)
+                      ->orWhere(function ($sq) use ($year, $m) {
+                          $sq->whereNull('updated_at')->whereYear('created_at', $year)->whereMonth('created_at', $m);
+                      });
+                })
+                ->get();
+
+            $grossBookingVal = $monthBookings->sum('total_price');
+            $grossInvoiceVal = $monthInvoices->sum('amount_paid');
+            $grossVal        = $grossBookingVal + $grossInvoiceVal;
+
+            $netBookingVal   = $monthBookings->sum(function ($b) {
                 $hpp = $b->tour ? (int) ($b->tour->hpp_price ?? 0) : 0;
                 return max(0, (int) $b->total_price - ($hpp * (int) $b->participants));
             });
+            $netInvoiceVal   = $monthInvoices->sum(function ($inv) {
+                return (int) ($inv->management_fee ?? 0);
+            });
+            $netVal          = $netBookingVal + $netInvoiceVal;
 
-            $withdrawalVal = Withdrawal::whereYear('updated_at', $year)
+            $withdrawalVal   = Withdrawal::whereYear('updated_at', $year)
                 ->whereMonth('updated_at', $m)
                 ->where('status', 'paid')
                 ->sum('amount');
@@ -137,7 +165,7 @@ class ExpenditureController extends Controller
             $gross[]        = $grossVal;
             $net[]          = $netVal;
             $margin[]       = max(0, $netVal - $withdrawalVal);
-            $bookingCount[] = $monthBookings->count();
+            $bookingCount[] = $monthBookings->count() + $monthInvoices->count();
         }
 
         return compact('labels', 'gross', 'net', 'margin', 'bookingCount');

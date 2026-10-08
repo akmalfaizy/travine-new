@@ -19,9 +19,19 @@ use App\Http\Controllers\Admin\ExpenditureController;
 use App\Http\Controllers\Admin\OfferingController;
 use App\Http\Controllers\Admin\ProjectInvoiceController;
 use App\Http\Controllers\Admin\VendorController;
+use App\Http\Controllers\Admin\InsightController;
+use App\Http\Controllers\Admin\BannerController;
 
 // ─── Public Routes ────────────────────────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Fallback login route for standard Laravel auth guards & packages
+Route::get('/login', function (\Illuminate\Http\Request $request) {
+    if ($request->is('admin*')) {
+        return redirect()->route('admin.login');
+    }
+    return redirect()->route('partner.login');
+})->name('login');
 
 // Locale switcher
 Route::get('/lang/{locale}', function (string $locale) {
@@ -65,6 +75,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Protected admin routes
     Route::middleware(\App\Http\Middleware\AdminMiddleware::class)->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/insights', [InsightController::class, 'index'])->name('insights.index');
 
         // Portfolios (existing)
         Route::resource('portfolios', AdminPortfolioController::class);
@@ -78,10 +89,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // News
         Route::resource('news', AdminNewsController::class)->except(['show']);
 
+        // Banners (Promo & Open Trip Slider)
+        Route::resource('banners', BannerController::class)->except(['show']);
+        Route::post('/banners/{banner}/toggle', [BannerController::class, 'toggle'])->name('banners.toggle');
+
         // Bookings
         Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
         Route::get('/bookings/export', [AdminBookingController::class, 'exportCsv'])->name('bookings.export');
         Route::get('/bookings/export-insurance', [AdminBookingController::class, 'exportInsuranceCsv'])->name('bookings.export-insurance');
+        Route::get('/bookings/export-manifest-pdf', [AdminBookingController::class, 'exportManifestPdf'])->name('bookings.export-manifest-pdf');
         Route::get('/bookings/create', [AdminBookingController::class, 'create'])->name('bookings.create');
         Route::post('/bookings', [AdminBookingController::class, 'storeBooking'])->name('bookings.store');
         Route::get('/bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
@@ -141,6 +157,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // ─── Vendors ──────────────────────────────────────────────────────
         Route::resource('vendors', VendorController::class);
         Route::post('/vendors/{vendor}/toggle', [VendorController::class, 'toggleActive'])->name('vendors.toggle');
+        Route::post('/vendors/{vendor}/products', [VendorController::class, 'storeProduct'])->name('vendors.products.store');
+        Route::put('/vendors/{vendor}/products/{product}', [VendorController::class, 'updateProduct'])->name('vendors.products.update');
+        Route::delete('/vendors/{vendor}/products/{product}', [VendorController::class, 'destroyProduct'])->name('vendors.products.destroy');
 
         // Expenditures / Keuangan (Private — PIN protected)
         Route::get('/expenditures', [ExpenditureController::class, 'index'])->name('expenditures.index');

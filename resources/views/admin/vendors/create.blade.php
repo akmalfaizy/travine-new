@@ -205,16 +205,13 @@ function escHtml(s) {
 }
 
 // Pre-fill dari old() saat validasi error
-@php $oldProducts = old('products', []); @endphp
-@if(!empty($oldProducts))
-@foreach($oldProducts as $p)
-addProductRow(
-    {{ json_encode($p['name'] ?? '') }},
-    {{ json_encode($p['unit'] ?? '') }},
-    {{ json_encode($p['price'] ?? '') }},
-    {{ json_encode($p['notes'] ?? '') }}
-);
-@endforeach
-@endif
+const initialProducts = {!! json_encode(old('products', [])) !!};
+if (Array.isArray(initialProducts) && initialProducts.length > 0) {
+    initialProducts.forEach(p => {
+        addProductRow(p.name || '', p.unit || '', p.price !== undefined && p.price !== null ? p.price : '', p.notes || '');
+    });
+} else {
+    updateProductCounter();
+}
 </script>
 @endpush

@@ -72,7 +72,8 @@ class AuthController extends Controller
             $partner->otp_attempts = 0;
             $partner->save();
 
-            Mail::to($partner->email)->send(new PartnerOtpMail($partner->otp_code));
+            Mail::to($partner->email)->send(new PartnerOtpMail($partner, (string) $partner->otp_code));
+
             return redirect()->route('partner.otp');
         }
 

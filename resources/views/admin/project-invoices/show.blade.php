@@ -303,9 +303,21 @@
                 @endif
             </div>
             <div class="form-group" style="margin-bottom:14px;">
-                <label class="form-label" style="display:block;margin-bottom:6px;">Email Penerima <span style="color:#ef4444;">*</span></label>
+                <label class="form-label" style="display:block;margin-bottom:6px;">Email Penerima (To) <span style="color:#ef4444;">*</span></label>
                 <input type="email" name="recipient_email" class="form-control" value="{{ old('recipient_email', $projectInvoice->client_email) }}" placeholder="finance@perusahaan.com" required>
             </div>
+
+            {{-- CC Email Tag Input --}}
+            <div class="form-group" style="margin-bottom:14px;">
+                <label class="form-label" style="display:block;margin-bottom:6px;">CC (Carbon Copy) <span style="color:var(--text-muted);font-weight:400;font-size:0.78rem;">(opsional)</span></label>
+                <input type="hidden" name="cc_emails" id="invCcHidden">
+                <div id="invCcBox" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:42px;padding:6px 10px;background:var(--input-bg,rgba(255,255,255,0.05));border:1px solid var(--glass-border);border-radius:var(--radius-sm,6px);cursor:text;transition:border-color 0.2s;" onclick="document.getElementById('invCcInput').focus()">
+                    <input id="invCcInput" type="text" placeholder="Ketik email lalu Enter..." autocomplete="off"
+                        style="border:none;background:transparent;outline:none;color:var(--text-primary);font-size:0.875rem;min-width:200px;flex:1;padding:2px 0;">
+                </div>
+                <p style="margin-top:4px;font-size:0.75rem;color:var(--text-muted);">Tekan <kbd style="padding:1px 5px;border-radius:3px;border:1px solid var(--glass-border);font-size:0.7rem;">Enter</kbd> atau <kbd style="padding:1px 5px;border-radius:3px;border:1px solid var(--glass-border);font-size:0.7rem;">,</kbd> untuk menambah email. Klik ✕ untuk hapus.</p>
+            </div>
+
             <div class="form-group" style="margin-bottom:16px;">
                 <label class="form-label" style="display:block;margin-bottom:6px;">Pesan Tambahan (Opsional)</label>
                 <textarea name="email_message" class="form-control" rows="3" placeholder="Tuliskan catatan khusus untuk finance klien..."></textarea>
@@ -323,13 +335,72 @@
 
 <script>
 function openInvoiceEmailModal() {
-    const modal = document.getElementById('invoiceEmailModal');
-    modal.style.display = 'flex';
+    document.getElementById('invoiceEmailModal').style.display = 'flex';
 }
 function closeInvoiceEmailModal() {
-    const modal = document.getElementById('invoiceEmailModal');
-    modal.style.display = 'none';
+    document.getElementById('invoiceEmailModal').style.display = 'none';
 }
+
+// ── CC Tag Input for Invoice Modal ──────────────────────────────────────────
+(function() {
+    var ccTags   = [];
+    var box      = document.getElementById('invCcBox');
+    var input    = document.getElementById('invCcInput');
+    var hidden   = document.getElementById('invCcHidden');
+
+    function renderTags() {
+        // Remove old chips
+        box.querySelectorAll('.cc-chip').forEach(function(el) { el.remove(); });
+        ccTags.forEach(function(email, idx) {
+            var chip = document.createElement('span');
+            chip.className = 'cc-chip';
+            chip.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(20,184,166,0.18);border:1px solid rgba(20,184,166,0.4);border-radius:20px;font-size:0.78rem;color:var(--teal,#14b8a6);white-space:nowrap;';
+            chip.innerHTML = '<span>' + email + '</span>';
+            var removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.textContent = '\u00d7';
+            removeBtn.style.cssText = 'background:none;border:none;cursor:pointer;color:inherit;padding:0;line-height:1;font-size:0.9rem;';
+            removeBtn.addEventListener('click', function() { removeTag(idx); });
+            chip.appendChild(removeBtn);
+            box.insertBefore(chip, input);
+        });
+        hidden.value = ccTags.join(',');
+    }
+
+    function addTag(raw) {
+        var emails = raw.split(/[,;]+/).map(function(e) { return e.trim().toLowerCase(); }).filter(Boolean);
+        emails.forEach(function(email) {
+            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && ccTags.indexOf(email) === -1) {
+                ccTags.push(email);
+            }
+        });
+        renderTags();
+        input.value = '';
+    }
+
+    function removeTag(idx) {
+        ccTags.splice(idx, 1);
+        renderTags();
+    }
+
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ',' || e.key === ';') {
+            e.preventDefault();
+            if (input.value.trim()) addTag(input.value);
+        } else if (e.key === 'Backspace' && input.value === '' && ccTags.length > 0) {
+            ccTags.pop();
+            renderTags();
+        }
+    });
+    input.addEventListener('blur', function() {
+        if (input.value.trim()) addTag(input.value);
+    });
+    input.addEventListener('paste', function(e) {
+        e.preventDefault();
+        var pasted = (e.clipboardData || window.clipboardData).getData('text');
+        addTag(pasted);
+    });
+})();
 </script>
 
 @endsection

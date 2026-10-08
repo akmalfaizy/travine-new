@@ -280,13 +280,13 @@ document.addEventListener('keydown', function(e) {
         <div class="fsc-icon">💳</div>
         <div class="fsc-value">Rp {{ number_format($grossRevenue, 0, ',', '.') }}</div>
         <div class="fsc-label">Pendapatan Kotor</div>
-        <div class="fsc-sub">Total dari booking terkonfirmasi</div>
+        <div class="fsc-sub">Booking & Project Invoice lunas</div>
     </div>
     <div class="finance-stat-card fsc-net">
         <div class="fsc-icon">💵</div>
         <div class="fsc-value">Rp {{ number_format($netRevenue, 0, ',', '.') }}</div>
         <div class="fsc-label">Pendapatan Bersih</div>
-        <div class="fsc-sub">Setelah dikurangi HPP modal</div>
+        <div class="fsc-sub">Setelah dikurangi HPP & modal vendor</div>
     </div>
     <div class="finance-stat-card fsc-margin">
         <div class="fsc-icon">📈</div>
@@ -409,11 +409,17 @@ document.addEventListener('keydown', function(e) {
                                 {{ Str::limit($entry->note, 60) }}
                                 @if($entry->booking)
                                     <br><span style="font-size:0.75rem;color:#14b8a6;">📋 {{ $entry->booking->booking_code }}</span>
+                                @elseif($entry->projectInvoice)
+                                    <br><a href="{{ route('admin.project-invoices.show', $entry->projectInvoice) }}" style="font-size:0.75rem;color:#818cf8;text-decoration:none;font-weight:600;">🧾 {{ $entry->projectInvoice->invoice_number }}</a>
                                 @endif
                             </td>
                             <td>
                                 @if($entry->source === 'booking')
-                                    <span class="badge badge-info">Auto</span>
+                                    <span class="badge badge-info">Booking</span>
+                                @elseif($entry->source === 'project_invoice')
+                                    <span class="badge" style="background:rgba(99,102,241,0.18);color:#a5b4fc;border:1px solid rgba(99,102,241,0.35);">Invoice</span>
+                                @elseif($entry->source === 'withdrawal')
+                                    <span class="badge badge-warning">Withdrawal</span>
                                 @else
                                     <span class="badge badge-muted">Manual</span>
                                 @endif
@@ -445,15 +451,33 @@ document.addEventListener('keydown', function(e) {
             @csrf
             <div class="form-group">
                 <label class="form-label">PIN Saat Ini</label>
-                <input type="password" name="current_pin" class="form-control" placeholder="Masukkan PIN lama" required>
+                <div class="password-wrapper">
+                    <input type="password" id="pin_current" name="current_pin" class="form-control" placeholder="Masukkan PIN lama" required>
+                    <button type="button" class="password-toggle-btn" onclick="togglePassword('pin_current', this)" aria-label="Lihat PIN" title="Lihat/Sembunyikan PIN">
+                        <svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        <svg class="eye-slash" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                    </button>
+                </div>
             </div>
             <div class="form-group">
                 <label class="form-label">PIN Baru</label>
-                <input type="password" name="new_pin" class="form-control" placeholder="Minimal 4 digit" minlength="4" required>
+                <div class="password-wrapper">
+                    <input type="password" id="pin_new" name="new_pin" class="form-control" placeholder="Minimal 4 digit" minlength="4" required>
+                    <button type="button" class="password-toggle-btn" onclick="togglePassword('pin_new', this)" aria-label="Lihat PIN" title="Lihat/Sembunyikan PIN">
+                        <svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        <svg class="eye-slash" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                    </button>
+                </div>
             </div>
             <div class="form-group">
                 <label class="form-label">Konfirmasi PIN Baru</label>
-                <input type="password" name="new_pin_confirmation" class="form-control" placeholder="Ulangi PIN baru" required>
+                <div class="password-wrapper">
+                    <input type="password" id="pin_confirm" name="new_pin_confirmation" class="form-control" placeholder="Ulangi PIN baru" required>
+                    <button type="button" class="password-toggle-btn" onclick="togglePassword('pin_confirm', this)" aria-label="Lihat PIN" title="Lihat/Sembunyikan PIN">
+                        <svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        <svg class="eye-slash" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                    </button>
+                </div>
             </div>
             <div style="display:flex;gap:12px;">
                 <button type="button" onclick="document.getElementById('changePinModal').classList.remove('active')"
@@ -598,6 +622,15 @@ new Chart(document.getElementById('bookingChart'), {
         }
     }
 });
+
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const isPass = input.type === 'password';
+    input.type = isPass ? 'text' : 'password';
+    btn.classList.toggle('is-visible', isPass);
+    btn.setAttribute('aria-label', isPass ? 'Sembunyikan' : 'Lihat');
+}
 </script>
 @endpush
 

@@ -69,14 +69,9 @@ class WithdrawalController extends Controller
                     $proofPath = $request->file('transfer_proof')->store('proofs/withdrawals', 'public');
                     $withdrawal->transfer_proof = $proofPath;
                 }
-                $withdrawal->paid_at = now();
-                $withdrawal->status  = 'paid';
+                $withdrawal->paid_at    = now();
+                $withdrawal->status     = 'paid';
                 $withdrawal->admin_note = $request->input('admin_note');
-
-                // Update partner's requested commissions to paid
-                Commission::where('partner_id', $withdrawal->partner_id)
-                    ->where('status', 'requested')
-                    ->update(['status' => 'paid']);
 
                 // Auto-deduct from cash ledger (partner commission paid out)
                 try {
@@ -96,11 +91,6 @@ class WithdrawalController extends Controller
                 $withdrawal->status           = 'rejected';
                 $withdrawal->rejection_reason = $request->input('rejection_reason');
                 $withdrawal->admin_note       = $request->input('admin_note');
-
-                // Revert partner's requested commissions back to available
-                Commission::where('partner_id', $withdrawal->partner_id)
-                    ->where('status', 'requested')
-                    ->update(['status' => 'available']);
             } else {
                 $withdrawal->status     = $newStatus;
                 $withdrawal->admin_note = $request->input('admin_note');

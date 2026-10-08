@@ -21,6 +21,18 @@ class BookingController extends Controller
     {
         $query = Booking::with('tour')->latest();
 
+        if ($request->filled('tour_id')) {
+            $query->where('tour_id', $request->tour_id);
+        }
+        if ($request->filled('departure_date')) {
+            $query->whereDate('departure_date', $request->departure_date);
+        }
+        if ($request->filled('departure_from')) {
+            $query->whereDate('departure_date', '>=', $request->departure_from);
+        }
+        if ($request->filled('departure_to')) {
+            $query->whereDate('departure_date', '<=', $request->departure_to);
+        }
         if ($request->filled('status')) {
             $query->where('booking_status', $request->status);
         }
@@ -31,12 +43,19 @@ class BookingController extends Controller
             $query->where(function ($q) use ($request) {
                 $q->where('booking_code', 'like', "%{$request->search}%")
                   ->orWhere('name', 'like', "%{$request->search}%")
-                  ->orWhere('email', 'like', "%{$request->search}%");
+                  ->orWhere('email', 'like', "%{$request->search}%")
+                  ->orWhere('whatsapp', 'like', "%{$request->search}%");
             });
         }
 
+        $totalPax = (clone $query)->sum('participants');
+        $totalRevenue = (clone $query)->sum('total_price');
         $bookings = $query->paginate(20);
-        return view('admin.bookings.index', compact('bookings'));
+
+        $tours = Tour::orderBy('title')->get();
+        $selectedTour = $request->filled('tour_id') ? Tour::find($request->tour_id) : null;
+
+        return view('admin.bookings.index', compact('bookings', 'tours', 'selectedTour', 'totalPax', 'totalRevenue'));
     }
 
     public function show(Booking $booking)
@@ -282,6 +301,86 @@ class BookingController extends Controller
 
         ActivityLog::record('Export CSV Asuransi diunduh.');
         return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export Manifest Data Peserta Open Trip ke PDF untuk tim lapangan / tour leader.
+     * Filter berdasarkan tour_id, tanggal keberangkatan, status booking, status bayar.
+     */
+    public function exportManifestPdf(Request $request)
+    {
+        $query = Booking::with(['tour.category', 'partner']);
+
+        if ($request->filled('tour_id')) {
+            $query->where('tour_id', $request->tour_id);
+        }
+        if ($request->filled('departure_date')) {
+            $query->whereDate('departure_date', $request->departure_date);
+        }
+        if ($request->filled('departure_from')) {
+            $query->whereDate('departure_date', '>=', $request->departure_from);
+        }
+        if ($request->filled('departure_to')) {
+            $query->whereDate('departure_date', '<=', $request->departure_to);
+        }
+        if ($request->filled('status')) {
+            $query->where('booking_status', $request->status);
+        } else {
+            // Default manifest untuk operasional: tidak tampilkan yang cancelled kecuali difilter manual
+            $query->where('booking_status', '!=', 'cancelled');
+        }
+        if ($request->filled('payment')) {
+            $query->where('payment_status', $request->payment);
+        }
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('booking_code', 'like', "%{$request->search}%")
+                  ->orWhere('name', 'like', "%{$request->search}%")
+                  ->orWhere('email', 'like', "%{$request->search}%")
+                  ->orWhere('whatsapp', 'like', "%{$request->search}%");
+            });
+        }
+
+        $bookings = $query->orderBy('departure_date', 'asc')->orderBy('created_at', 'asc')->get();
+
+        $selectedTour = $request->filled('tour_id') ? Tour::find($request->tour_id) : null;
+        $departureDate = $request->filled('departure_date') ? \Carbon\Carbon::parse($request->departure_date) : null;
+
+        $logoPath = public_path('images/logo_tagline.png');
+        $logoBase64 = file_exists($logoPath) ? base64_encode(file_get_contents($logoPath)) : null;
+
+        $totalBookings = $bookings->count();
+        $totalPax = $bookings->sum('participants');
+        $totalPaidPax = $bookings->where('payment_status', 'paid')->sum('participants');
+        $totalDpPax = $bookings->where('payment_status', 'dp_paid')->sum('participants');
+        $totalUnpaidPax = $bookings->whereIn('payment_status', ['unpaid', 'failed'])->sum('participants');
+
+        $totalRevenue = $bookings->sum('total_price');
+        $totalPaidAmount = $bookings->sum('paid_amount');
+        $totalRemainingAmount = $bookings->sum('remaining_amount');
+
+        $pdf = Pdf::loadView('pdf.manifest', compact(
+            'bookings',
+            'selectedTour',
+            'departureDate',
+            'logoBase64',
+            'totalBookings',
+            'totalPax',
+            'totalPaidPax',
+            'totalDpPax',
+            'totalUnpaidPax',
+            'totalRevenue',
+            'totalPaidAmount',
+            'totalRemainingAmount'
+        ))->setPaper('a4', 'portrait');
+
+        ActivityLog::record('Export PDF Manifest Peserta Open Trip diunduh.');
+
+        $tourSlug = $selectedTour ? \Illuminate\Support\Str::slug($selectedTour->title) : 'semua-trip';
+        $dateStr = $departureDate ? $departureDate->format('Y-m-d') : date('Y-m-d');
+        $filename = "manifest-open-trip-{$tourSlug}-{$dateStr}.pdf";
+
+        return $pdf->download($filename);
     }
 
 

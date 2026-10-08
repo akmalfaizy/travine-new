@@ -181,22 +181,6 @@ class PartnerDashboardController extends Controller
                 'status'              => 'requested',
             ]);
 
-            // Update status commissions from 'available' to 'requested' up to withdrawal amount
-            $availableCommissions = $partner->commissions()
-                ->where('status', 'available')
-                ->orderBy('created_at', 'asc')
-                ->get();
-
-            $accumulated = 0;
-            foreach ($availableCommissions as $comm) {
-                if ($accumulated >= $amount) {
-                    break;
-                }
-                $comm->status = 'requested';
-                $comm->save();
-                $accumulated += $comm->commission_amount;
-            }
-
             DB::commit();
 
             // Send notification mail

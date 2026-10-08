@@ -58,10 +58,309 @@
     .amount-banner.dp .ab-amount   { color: #F97316; }
     .amount-banner.lunas .ab-amount { color: #059669; }
 
-    /* QRIS */
-    .qris-box { text-align:center; }
-    .qris-box img { max-width:220px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1); border:2px solid rgba(0,0,0,0.06); }
-    .qris-box p { font-size:0.8rem; color:var(--text-muted); margin-top:10px; }
+    /* Payment Methods - Vertical Stack */
+    .payment-methods-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    /* Bank Transfer Card */
+    .bank-transfer-card {
+        background: var(--bg-offset, #f8fafc);
+        border: 1.5px solid rgba(0,0,0,0.07);
+        border-radius: 14px;
+        padding: 18px 20px;
+        transition: all 0.25s ease;
+    }
+    .bank-transfer-card:hover {
+        border-color: rgba(0,0,0,0.12);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+    }
+    .bank-logo-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .bank-logo-row img {
+        height: 26px;
+        width: auto;
+    }
+    .bank-logo-row .bank-label {
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+    }
+    .bank-account-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 6px 0 8px;
+    }
+    .bank-account-row .account-number {
+        font-size: 1.3rem;
+        font-weight: 800;
+        font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+        color: var(--text-primary);
+        letter-spacing: 2px;
+    }
+    .copy-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(20, 184, 166, 0.1);
+        border: 1px solid rgba(20, 184, 166, 0.25);
+        color: var(--teal, #14B8A6);
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-size: 0.73rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+    .copy-btn:hover {
+        background: var(--teal, #14B8A6);
+        color: #fff;
+    }
+    .copy-btn.copied {
+        background: #10B981;
+        color: #fff;
+        border-color: #10B981;
+    }
+    .bank-holder-text {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+    .bank-holder-text strong {
+        color: var(--text-primary);
+    }
+
+    /* QRIS Card */
+    .qris-card {
+        text-align: center;
+        background: var(--bg-offset, #f8fafc);
+        border: 1.5px solid rgba(0,0,0,0.07);
+        border-radius: 14px;
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: all 0.25s ease;
+    }
+    .qris-card:hover {
+        border-color: rgba(20, 184, 166, 0.4);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+    }
+    .qris-img-container {
+        position: relative;
+        cursor: pointer;
+        display: inline-block;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 2px solid rgba(20, 184, 166, 0.25);
+        background: #fff;
+        padding: 6px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .qris-img-container:hover {
+        transform: scale(1.02);
+        box-shadow: 0 10px 28px rgba(20, 184, 166, 0.2);
+    }
+    .qris-img-container img {
+        max-width: 180px;
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        display: block;
+    }
+    .qris-zoom-badge {
+        position: absolute;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(4px);
+        color: #ffffff;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+        pointer-events: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        transition: all 0.2s ease;
+    }
+    .qris-img-container:hover .qris-zoom-badge {
+        background: var(--teal, #14B8A6);
+    }
+    .qris-merchant-info {
+        margin-top: 10px;
+        text-align: center;
+    }
+    .qris-merchant-info strong {
+        font-size: 0.85rem;
+        color: var(--text-primary);
+        display: block;
+    }
+    .qris-merchant-info small {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        display: block;
+        margin-top: 2px;
+    }
+    .qris-action-buttons {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        width: 100%;
+        max-width: 240px;
+    }
+    .btn-qris-action {
+        flex: 1;
+        padding: 7px 10px;
+        border-radius: 8px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        box-sizing: border-box;
+    }
+    .btn-qris-zoom {
+        background: rgba(20, 184, 166, 0.12);
+        color: var(--teal, #14B8A6);
+        border: 1px solid rgba(20, 184, 166, 0.25);
+    }
+    .btn-qris-zoom:hover {
+        background: var(--teal, #14B8A6);
+        color: #fff;
+    }
+    .btn-qris-download {
+        background: var(--teal, #14B8A6);
+        color: #fff;
+        border: 1px solid var(--teal, #14B8A6);
+    }
+    .btn-qris-download:hover {
+        background: #0d9488;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+    }
+    .qris-hint {
+        font-size: 0.73rem;
+        color: var(--text-muted);
+        margin-top: 10px;
+        line-height: 1.4;
+        text-align: center;
+    }
+
+    /* QRIS Modal Lightbox */
+    .qris-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.88);
+        backdrop-filter: blur(8px);
+        z-index: 999999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+    }
+    .qris-modal.active {
+        display: flex;
+        animation: qrisFadeIn 0.22s ease-out forwards;
+    }
+    @keyframes qrisFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    .qris-modal-content {
+        background: #ffffff;
+        border-radius: 18px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.45);
+        overflow: hidden;
+        animation: qrisScaleUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        position: relative;
+    }
+    @keyframes qrisScaleUp {
+        from { transform: scale(0.92) translateY(16px); opacity: 0; }
+        to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .qris-modal-close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: #f1f5f9;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        font-size: 1.4rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #475569;
+        transition: all 0.2s;
+        line-height: 1;
+        z-index: 2;
+    }
+    .qris-modal-close:hover {
+        background: #ef4444;
+        color: #fff;
+    }
+    .qris-modal-header {
+        padding: 20px 20px 12px;
+        text-align: center;
+    }
+    .qris-modal-header h3 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 4px;
+    }
+    .qris-modal-header p {
+        font-size: 0.76rem;
+        color: #64748b;
+        margin: 0;
+    }
+    .qris-modal-body {
+        padding: 0 24px 16px;
+        text-align: center;
+    }
+    .qris-modal-body img {
+        width: 100%;
+        max-width: 320px;
+        height: auto;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        display: block;
+        margin: 0 auto;
+    }
+    .qris-modal-footer {
+        padding: 14px 20px 18px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
 
     /* Upload area */
     .upload-area { border:2px dashed rgba(0,0,0,0.1); border-radius:12px; padding:24px; text-align:center; cursor:pointer; transition:all .3s; background:var(--bg-offset,#f8fafc); position:relative; }
@@ -317,21 +616,74 @@
                 <div class="pay-card">
                     <h2><span class="num">2</span> {{ __('Informasi Pembayaran') }}</h2>
 
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                    <div class="payment-methods-stack">
                         {{-- Bank Transfer --}}
-                        <div>
-                            <p style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:.5px; margin:0 0 10px;">{{ __('Transfer Bank') }}</p>
-                            <div class="bank-box">
-                                <div class="bank-name">{{ $bankName }}</div>
-                                <div class="bank-num">{{ $bankAccount }}</div>
-                                <div class="bank-holder">a.n. {{ $bankHolder }}</div>
+                        <div class="bank-transfer-card">
+                            <div class="bank-logo-row">
+                                <img src="{{ asset('images/cimb_niaga.svg') }}" alt="CIMB Niaga">
+                                <span class="bank-label">{{ __('Transfer Bank') }}</span>
                             </div>
+                            <div class="bank-account-row">
+                                <span class="account-number" id="bank-account-num">{{ $bankAccount }}</span>
+                                <button type="button" class="copy-btn" id="copy-rekening-btn" onclick="copyRekening()">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                    <span id="copy-text">{{ __('Salin') }}</span>
+                                </button>
+                            </div>
+                            <div class="bank-holder-text">a.n. <strong>{{ $bankHolder }}</strong></div>
+                            <small style="color:var(--text-muted); font-size:0.73rem; display:block; margin-top:8px; line-height:1.5;">
+                                {{ __('Menerima transfer dari seluruh jaringan ATM, Internet Banking, dan Mobile Banking.') }}
+                            </small>
                         </div>
+
                         {{-- QRIS --}}
-                        <div class="qris-box">
-                            <p style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:.5px; margin:0 0 10px;">Scan QRIS</p>
-                            <img src="{{ asset('images/qris.png') }}" alt="QRIS travine.id">
-                            <p>{{ __('Scan dengan aplikasi dompet digital apapun') }}</p>
+                        <div class="qris-card">
+                            <p style="font-size:0.78rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:.5px; margin:0 0 10px;">{{ __('Scan / Download QRIS') }}</p>
+
+                            {{-- Total badge above image --}}
+                            <div id="qris-amount-badge" style="
+                                background: linear-gradient(135deg, #0f766e, #14B8A6);
+                                color: #fff;
+                                border-radius: 10px;
+                                padding: 8px 16px;
+                                margin-bottom: 12px;
+                                text-align: center;
+                                width: 100%;
+                                box-sizing: border-box;
+                            ">
+                                <div style="font-size:0.7rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase; opacity:.85; margin-bottom:2px;" id="qris-amount-label">{{ __('Bayar DP Sekarang') }}</div>
+                                <div style="font-size:1.45rem; font-weight:900; letter-spacing:1px; line-height:1.1;" id="qris-amount-value">Rp {{ number_format(100000 * $draft['participants'], 0, ',', '.') }}</div>
+                            </div>
+
+                            {{-- Clickable Container to Zoom --}}
+                            <div class="qris-img-container" onclick="openQrisModal()" title="{{ __('Klik untuk memperbesar gambar QRIS') }}">
+                                <img src="{{ asset('images/qris_travine.png') }}" alt="QRIS TRAVINE.ID MANAGEMENT">
+                                <div class="qris-zoom-badge">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                                    <span>{{ __('Klik untuk perbesar') }}</span>
+                                </div>
+                            </div>
+
+                            <div class="qris-merchant-info">
+                                <strong>TRAVINE.ID MANAGEMENT</strong>
+                                <small>NMID: ID1026610108908 &bull; Standar QRIS Nasional</small>
+                            </div>
+
+                            {{-- Action buttons --}}
+                            <div class="qris-action-buttons">
+                                <button type="button" class="btn-qris-action btn-qris-zoom" onclick="openQrisModal()">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                                    <span>{{ __('Perbesar') }}</span>
+                                </button>
+                                <a href="{{ asset('images/qris_travine.png') }}" download="QRIS-TRAVINE-ID-MANAGEMENT.png" class="btn-qris-action btn-qris-download" title="{{ __('Unduh gambar QRIS') }}">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    <span>{{ __('Download QRIS') }}</span>
+                                </a>
+                            </div>
+
+                            <span class="qris-hint">
+                                💡 {{ __('Bisa bayar dari CIMB Niaga, BCA, Mandiri, BRI, BNI, GoPay, OVO, Dana, ShopeePay, dll.') }}
+                            </span>
                         </div>
                     </div>
 
@@ -572,10 +924,76 @@
     </div>
 </div>
 
+{{-- QRIS Zoom Lightbox Modal --}}
+<div id="qrisModal" class="qris-modal" onclick="closeQrisModal()">
+    <div class="qris-modal-content" onclick="event.stopPropagation()">
+        <button type="button" class="qris-modal-close" onclick="closeQrisModal()" aria-label="Tutup">&times;</button>
+        <div class="qris-modal-header">
+            <h3>QRIS TRAVINE.ID MANAGEMENT</h3>
+            <p>NMID: ID1026610108908 &bull; Standar QRIS Nasional</p>
+        </div>
+        <div class="qris-modal-body">
+            <img src="{{ asset('images/qris_travine.png') }}" alt="QRIS TRAVINE.ID MANAGEMENT - Full Preview">
+        </div>
+        <div class="qris-modal-footer">
+            <a href="{{ asset('images/qris_travine.png') }}" download="QRIS-TRAVINE-ID-MANAGEMENT.png" class="btn-qris-action btn-qris-download" style="padding:10px 20px; font-size:0.85rem;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>{{ __('Download QRIS') }}</span>
+            </a>
+            <button type="button" class="btn-qris-action btn-qris-zoom" onclick="closeQrisModal()" style="padding:10px 20px; font-size:0.85rem;">
+                {{ __('Tutup') }}
+            </button>
+        </div>
+        <p style="font-size:0.73rem; color:#64748b; padding:0 20px 16px; text-align:center; margin:0;">
+            {{ __('Scan langsung lewat CIMB Niaga, BCA Mobile, Livin, BRImo, GoPay, OVO, Dana, ShopeePay, atau unduh ke galeri untuk scan dari file.') }}
+        </p>
+    </div>
+</div>
+
 <script>
     const dpAmount    = {{ 100000 * $draft['participants'] }};
     const fullAmount  = {{ $fullAmount }};
     const remaining   = fullAmount - dpAmount;
+
+    function copyRekening() {
+        const num = document.getElementById('bank-account-num').textContent.trim();
+        navigator.clipboard.writeText(num).then(function() {
+            const btn = document.getElementById('copy-rekening-btn');
+            const txt = document.getElementById('copy-text');
+            btn.classList.add('copied');
+            txt.textContent = '{{ __('Tersalin!') }}';
+            setTimeout(function() {
+                btn.classList.remove('copied');
+                txt.textContent = '{{ __('Salin') }}';
+            }, 2000);
+        });
+    }
+
+    function openQrisModal() {
+        const modal = document.getElementById('qrisModal');
+        if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeQrisModal(e) {
+        const modal = document.getElementById('qrisModal');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('qrisModal');
+            if (modal && modal.classList.contains('active')) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+    });
 
     function updatePayment() {
         const isDp = document.getElementById('type-dp').checked;
@@ -590,6 +1008,14 @@
         const paid = isDp ? dpAmount : fullAmount;
         document.getElementById('summary-paid').innerText = 'Rp ' + paid.toLocaleString('id-ID');
         document.getElementById('sisa-info').style.display = isDp ? 'block' : 'none';
+
+        // Update QRIS amount badge
+        const qrisLabel = document.getElementById('qris-amount-label');
+        const qrisValue = document.getElementById('qris-amount-value');
+        if (qrisLabel && qrisValue) {
+            qrisLabel.textContent = isDp ? '{{ __('Bayar DP Sekarang') }}' : '{{ __('Bayar Lunas Sekarang') }}';
+            qrisValue.textContent = 'Rp ' + paid.toLocaleString('id-ID');
+        }
     }
 
     function previewProof(input) {

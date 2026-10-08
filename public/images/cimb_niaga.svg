@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 56" width="260" height="56" fill="none">
+  <defs>
+    <linearGradient id="cimbGradMain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ED1C24" />
+      <stop offset="100%" stop-color="#A80D15" />
+    </linearGradient>
+    <linearGradient id="cimbGradLight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF3840" />
+      <stop offset="100%" stop-color="#ED1C24" />
+    </linearGradient>
+    <linearGradient id="cimbGradDark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#A80D15" />
+      <stop offset="100%" stop-color="#73050B" />
+    </linearGradient>
+  </defs>
+
+  <!-- CIMB Iconic Prism / Polygon Emblem -->
+  <g transform="translate(6, 4)">
+    <!-- Base Red Hexagon / Polygon -->
+    <polygon points="12,0 36,0 48,16 48,32 36,48 12,48 0,32 0,16" fill="url(#cimbGradMain)" />
+    <!-- Facet highlights to create the distinct 3D folded prism effect -->
+    <polygon points="12,0 36,0 48,16 28,24" fill="url(#cimbGradLight)" opacity="0.9" />
+    <polygon points="48,16 48,32 36,48 28,24" fill="url(#cimbGradDark)" />
+    <polygon points="36,48 12,48 0,32 28,24" fill="url(#cimbGradMain)" />
+    <polygon points="0,32 0,16 12,0 28,24" fill="#ED1C24" />
+    <!-- Forward Chevron in Center -->
+    <polygon points="17,14 26,14 34,24 26,34 17,34 25,24" fill="#FFFFFF" />
+  </g>
+
+  <!-- Typography: CIMB NIAGA -->
+  <g transform="translate(64, 4)">
+    <text x="0" y="30" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-weight="900" font-size="25" fill="#ED1C24" letter-spacing="-0.5">CIMB</text>
+    <text x="74" y="30" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="25" fill="#1E293B" letter-spacing="-0.5">NIAGA</text>
+    <text x="1" y="44" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="8.5" fill="#94A3B8" letter-spacing="1.5">FORWARD YOUR BANKING</text>
+  </g>
+</svg>
