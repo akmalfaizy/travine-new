@@ -1,0 +1,30 @@
+# ==============================================================================
+# TRAVINE - Root Security & Routing Configuration (.htaccess)
+# ==============================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1. Blokir akses ke file sensitif (.env, .git, config, artisan, logs, vendor)
+    RewriteRule ^(\.env|\.git|composer\.|package\.|artisan|storage/logs) - [F,L,NC]
+    RewriteRule ^(\.env.*)$ - [F,L,NC]
+
+    # 2. Arahkan semua permintaan ke folder public jika ditaruh langsung di public_html
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# 3. Nonaktifkan penjelajahan direktori (Directory Browsing)
+Options -Indexes
+
+# 4. Blokir akses langsung ke file tersembunyi
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# 5. Blokir ekstensi file konfigurasi dan arsip
+<FilesMatch "(composer\.(json|lock)|package(-lock)?\.(json)|artisan|\.md|\.log|\.sql|\.sqlite)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

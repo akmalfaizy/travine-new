@@ -32,6 +32,8 @@ class AuthController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
+        \App\Models\ActivityLog::record("Percobaan login admin gagal untuk username: {$credentials['username']}");
+
         return back()->withErrors(['username' => 'Username atau password salah.'])->withInput($request->only('username'));
     }
 

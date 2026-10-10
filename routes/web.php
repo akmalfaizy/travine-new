@@ -56,10 +56,10 @@ Route::get('/bookings/{code}/invoice', [BookingController::class, 'downloadInvoi
 
 // Booking Tracker (Cek Status Pemesanan)
 Route::get('/cek-booking', [BookingController::class, 'trackPage'])->name('bookings.track');
-Route::post('/cek-booking', [BookingController::class, 'trackSearch'])->name('bookings.track.search');
+Route::post('/cek-booking', [BookingController::class, 'trackSearch'])->middleware('throttle:15,1')->name('bookings.track.search');
 
 // Contact
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
 
 // News (public)
 Route::get('/berita', [NewsController::class, 'index'])->name('news.index');
@@ -67,9 +67,9 @@ Route::get('/berita/{news:slug}', [NewsController::class, 'show'])->name('news.s
 
 // ─── Admin Routes ─────────────────────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->group(function () {
-    // Auth (guest only)
+    // Auth (guest only with rate limiter)
     Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.post');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Protected admin routes
@@ -176,15 +176,17 @@ Route::prefix('partner')->name('partner.')->group(function () {
     // Guest routes
     Route::middleware('guest:partner')->group(function () {
         Route::get('register', [\App\Http\Controllers\Partner\AuthController::class, 'showRegister'])->name('register');
-        Route::post('register', [\App\Http\Controllers\Partner\AuthController::class, 'register']);
+        Route::post('register', [\App\Http\Controllers\Partner\AuthController::class, 'register'])->middleware('throttle:5,1');
         Route::get('login', [\App\Http\Controllers\Partner\AuthController::class, 'showLogin'])->name('login');
-        Route::post('login', [\App\Http\Controllers\Partner\AuthController::class, 'login']);
+        Route::post('login', [\App\Http\Controllers\Partner\AuthController::class, 'login'])->middleware('throttle:5,1');
         Route::get('forgot-password', [\App\Http\Controllers\Partner\AuthController::class, 'showForgotPassword'])->name('forgot-password');
-        Route::post('forgot-password', [\App\Http\Controllers\Partner\AuthController::class, 'sendResetLink']);
+        Route::post('forgot-password', [\App\Http\Controllers\Partner\AuthController::class, 'sendResetLink'])->middleware('throttle:3,1');
         Route::get('reset-password/{token}', [\App\Http\Controllers\Partner\AuthController::class, 'showResetForm'])->name('password.reset');
-        Route::post('reset-password', [\App\Http\Controllers\Partner\AuthController::class, 'resetPassword'])->name('password.update');
+        Route::post('reset-password', [\App\Http\Controllers\Partner\AuthController::class, 'resetPassword'])->middleware('throttle:5,1')->name('password.update');
         Route::get('otp', [\App\Http\Controllers\Partner\AuthController::class, 'showOtp'])->name('otp');
-        Route::post('otp', [\App\Http\Controllers\Partner\AuthController::class, 'verifyOtp']);
+        Route::get('verify-otp', [\App\Http\Controllers\Partner\AuthController::class, 'showOtp'])->name('verifyOtpPage');
+        Route::post('otp', [\App\Http\Controllers\Partner\AuthController::class, 'verifyOtp'])->middleware('throttle:5,1');
+        Route::post('otp/resend', [\App\Http\Controllers\Partner\AuthController::class, 'resendOtp'])->middleware('throttle:3,1')->name('otp.resend');
     });
 
     // Authenticated partner routes
@@ -200,10 +202,6 @@ Route::prefix('partner')->name('partner.')->group(function () {
         Route::post('withdrawals', [\App\Http\Controllers\Partner\PartnerDashboardController::class, 'storeWithdrawal'])->name('withdrawals.store');
         Route::post('logout', [\App\Http\Controllers\Partner\AuthController::class, 'logout'])->name('logout');
     });
-
-
-
-    // Alias for OTP verification page (used by existing controller redirects)
-    Route::get('partner/otp', [\App\Http\Controllers\Partner\AuthController::class, 'showOtp'])->name('partner.verifyOtpPage');
 });
+
 ?>

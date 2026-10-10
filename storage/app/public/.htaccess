@@ -1,0 +1,18 @@
+# ==============================================================================
+# TRAVINE - Storage Upload Security (.htaccess)
+# Mencegah eksekusi file script berbahaya pada direktori upload publik
+# ==============================================================================
+
+# Matikan eksekusi script PHP & CGI
+<FilesMatch "\.(php|phtml|phar|php3|php4|php5|php7|php8|cgi|pl|py|sh|bash)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Matikan opsi penjelajahan dan eksekusi skrip
+Options -Indexes -ExecCGI
+
+# Izinkan hanya akses file statis & gambar
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>

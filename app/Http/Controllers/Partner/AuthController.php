@@ -53,37 +53,60 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'login' => 'required|string',
+            'login'    => 'required|string',
             'password' => 'required|string',
         ]);
 
-        $field = filter_var($credentials['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'email'; // we only have email field for partners
-        $attempt = Auth::guard('partner')->attempt([
-            $field => $credentials['login'],
-            'password' => $credentials['password'],
-            'status' => 'active',
-        ]);
+        $partner = Partner::where('email', $credentials['login'])->first();
 
-        if ($attempt) {
-            // Generate OTP for extra verification
-            $partner = Auth::guard('partner')->user();
-            $partner->otp_code = rand(100000, 999999);
-            $partner->otp_expires_at = Carbon::now()->addMinutes(10);
-            $partner->otp_attempts = 0;
-            $partner->save();
-
-            Mail::to($partner->email)->send(new PartnerOtpMail($partner, (string) $partner->otp_code));
-
-            return redirect()->route('partner.otp');
+        if (!$partner || !Hash::check($credentials['password'], $partner->password)) {
+            return back()->withErrors(['login' => 'Email atau password yang Anda masukkan salah.'])->withInput($request->only('login'));
         }
 
-        return back()->withErrors(['login' => 'Invalid credentials or inactive account']);
+        if ($partner->status !== 'active') {
+            $msg = $partner->status === 'suspended'
+                ? 'Akun Partner Anda sedang ditangguhkan. Silakan hubungi admin.'
+                : 'Akun Partner Anda berstatus nonaktif.';
+            return back()->withErrors(['login' => $msg]);
+        }
+
+        // Generate 6-digit OTP code
+        $otpCode = (string) rand(100000, 999999);
+        $partner->otp_code = $otpCode;
+        $partner->otp_expires_at = Carbon::now()->addMinutes(10);
+        $partner->otp_attempts = 0;
+        $partner->otp_sent_at = Carbon::now();
+        $partner->save();
+
+        // Store pending partner ID & remember flag in session without authenticating yet
+        session([
+            'partner_2fa_id'       => $partner->id,
+            'partner_2fa_remember' => $request->boolean('remember'),
+        ]);
+
+        try {
+            Mail::to($partner->email)->send(new PartnerOtpMail($partner, $otpCode));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal mengirim email OTP partner #' . $partner->id . ': ' . $e->getMessage());
+        }
+
+        return redirect()->route('partner.otp')->with('success', 'Kode OTP 6-digit telah dikirimkan ke email Anda.');
     }
 
     // Show OTP verification form
     public function showOtp()
     {
-        return view('partner.auth.otp');
+        $partnerId = session('partner_2fa_id');
+        if (!$partnerId) {
+            return redirect()->route('partner.login');
+        }
+
+        $partner = Partner::find($partnerId);
+        if (!$partner) {
+            return redirect()->route('partner.login');
+        }
+
+        return view('partner.auth.otp', compact('partner'));
     }
 
     // Verify OTP
@@ -93,29 +116,72 @@ class AuthController extends Controller
             'otp' => 'required|digits:6',
         ]);
 
-        $partner = Auth::guard('partner')->user();
+        $partnerId = session('partner_2fa_id');
+        if (!$partnerId) {
+            return redirect()->route('partner.login')->withErrors(['login' => 'Sesi verifikasi habis. Silakan login kembali.']);
+        }
+
+        $partner = Partner::find($partnerId);
         if (!$partner) {
             return redirect()->route('partner.login');
         }
 
-        if ($partner->otp_expires_at->lt(Carbon::now())) {
-            return back()->withErrors(['otp' => 'OTP expired']);
+        if (!$partner->otp_expires_at || $partner->otp_expires_at->lt(Carbon::now())) {
+            return back()->withErrors(['otp' => 'Kode OTP telah kadaluarsa. Silakan minta kode baru.']);
         }
 
-        if ($partner->otp_attempts >= 3) {
-            return back()->withErrors(['otp' => 'Maximum attempts exceeded']);
+        if ($partner->otp_attempts >= 5) {
+            return back()->withErrors(['otp' => 'Batas percobaan OTP terlampaui. Silakan login kembali.']);
         }
 
-        if ($partner->otp_code == $request->input('otp')) {
+        if ((string) $partner->otp_code === (string) $request->input('otp')) {
             $partner->otp_code = null;
             $partner->otp_expires_at = null;
-            $partner->otp_attempts = null;
+            $partner->otp_attempts = 0;
             $partner->save();
-            return redirect()->route('partner.dashboard');
+
+            $remember = session('partner_2fa_remember', false);
+            session()->forget(['partner_2fa_id', 'partner_2fa_remember']);
+
+            // Authenticate securely now that 2FA OTP is verified
+            Auth::guard('partner')->login($partner, $remember);
+            $request->session()->regenerate();
+
+            return redirect()->route('partner.dashboard')->with('success', 'Login berhasil. Selamat datang kembali, ' . $partner->name);
         }
 
         $partner->increment('otp_attempts');
-        return back()->withErrors(['otp' => 'Invalid OTP']);
+        $sisa = max(0, 5 - $partner->otp_attempts);
+        return back()->withErrors(['otp' => "Kode OTP salah. Sisa kesempatan: {$sisa} kali."]);
+    }
+
+    // Resend OTP
+    public function resendOtp(Request $request)
+    {
+        $partnerId = session('partner_2fa_id');
+        if (!$partnerId) {
+            return redirect()->route('partner.login');
+        }
+
+        $partner = Partner::find($partnerId);
+        if (!$partner) {
+            return redirect()->route('partner.login');
+        }
+
+        $otpCode = (string) rand(100000, 999999);
+        $partner->otp_code = $otpCode;
+        $partner->otp_expires_at = Carbon::now()->addMinutes(10);
+        $partner->otp_attempts = 0;
+        $partner->otp_sent_at = Carbon::now();
+        $partner->save();
+
+        try {
+            Mail::to($partner->email)->send(new PartnerOtpMail($partner, $otpCode));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal kirim ulang OTP partner #' . $partner->id . ': ' . $e->getMessage());
+        }
+
+        return back()->with('success', 'Kode OTP baru telah berhasil dikirimkan ke email Anda.');
     }
 
     // Show password reset request form
