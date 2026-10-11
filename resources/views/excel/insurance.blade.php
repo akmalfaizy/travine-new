@@ -5,18 +5,20 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <!--[if gte mso 9]>
+    @verbatim
     <xml>
         <x:ExcelWorkbook>
             <x:ExcelWorksheets>
                 <x:ExcelWorksheet>
                     <x:Name>Data Asuransi</x:Name>
                     <x:WorksheetOptions>
-                        <x:DisplayGridlines/>
+                        <!-- <x:DisplayGridlines/> -->
                     </x:WorksheetOptions>
                 </x:ExcelWorksheet>
             </x:ExcelWorksheets>
         </x:ExcelWorkbook>
     </xml>
+    @endverbatim
     <![endif]-->
     <style>
         body {
