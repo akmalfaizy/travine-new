@@ -13,6 +13,7 @@ use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use App\Models\CashLedger;
 
 class BookingController extends Controller
@@ -222,20 +223,17 @@ class BookingController extends Controller
     }
 
     /**
-     * Export data peserta asuransi — satu baris per peserta.
-     * Kolom: Kode Booking, Paket Wisata, Tanggal Keberangkatan,
-     *        Nama Peserta, NIK/KTP/KITAS, Tanggal Lahir, Alamat, No. Telepon.
+     * Helper query data booking untuk ekspor asuransi berdasarkan filter aktif.
      */
-    public function exportInsuranceCsv(Request $request)
+    private function getFilteredInsuranceBookings(Request $request)
     {
-        $query = Booking::with('tour')
-            ->whereNotNull('participants_data')
-            ->whereIn('booking_status', ['confirmed', 'departed', 'completed'])
-            ->latest();
+        $query = Booking::with(['tour.category', 'partner']);
 
-        // Optional filters
         if ($request->filled('tour_id')) {
             $query->where('tour_id', $request->tour_id);
+        }
+        if ($request->filled('departure_date')) {
+            $query->whereDate('departure_date', $request->departure_date);
         }
         if ($request->filled('departure_from')) {
             $query->whereDate('departure_date', '>=', $request->departure_from);
@@ -243,8 +241,142 @@ class BookingController extends Controller
         if ($request->filled('departure_to')) {
             $query->whereDate('departure_date', '<=', $request->departure_to);
         }
+        if ($request->filled('status')) {
+            $query->where('booking_status', $request->status);
+        } else {
+            // Default untuk asuransi: tidak menyertakan pesanan yang dibatalkan
+            $query->where('booking_status', '!=', 'cancelled');
+        }
+        if ($request->filled('payment')) {
+            $query->where('payment_status', $request->payment);
+        }
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('booking_code', 'like', "%{$request->search}%")
+                  ->orWhere('name', 'like', "%{$request->search}%")
+                  ->orWhere('email', 'like', "%{$request->search}%")
+                  ->orWhere('whatsapp', 'like', "%{$request->search}%");
+            });
+        }
 
-        $bookings = $query->get();
+        return $query->orderBy('departure_date', 'asc')->latest()->get();
+    }
+
+    /**
+     * Format data peserta per baris untuk keperluan asuransi.
+     * Kolom: 1. Nama, 2. Identitas (NIK/KTP/KITAS), 3. Tgl Lahir, 4. Alamat, 5. No. Telepon
+     */
+    private function formatInsuranceRows($bookings): array
+    {
+        $rows = [];
+        $no = 1;
+
+        foreach ($bookings as $b) {
+            $participants = $b->participants_data ?? [];
+
+            // Jika belum ada data rincian peserta, gunakan data pemesan (PIC)
+            if (empty($participants)) {
+                $rows[] = [
+                    'no'           => $no++,
+                    'name'         => $b->name,
+                    'nik'          => '-',
+                    'birth_date'   => '-',
+                    'address'      => '-',
+                    'phone'        => $b->whatsapp ?: ($b->phone ?? '-'),
+                    'tour_title'   => $b->tour?->title ?? '-',
+                    'booking_code' => $b->booking_code,
+                    'departure'    => $b->departure_date ? $b->departure_date->format('d/m/Y') : '-',
+                    'is_pic'       => true,
+                ];
+                continue;
+            }
+
+            foreach ($participants as $idx => $p) {
+                $rawBirth = $p['birth_date'] ?? ($p['tanggal_lahir'] ?? ($p['tgl_lahir'] ?? ''));
+                $birthFormatted = '-';
+                if (!empty($rawBirth)) {
+                    try {
+                        $birthFormatted = \Carbon\Carbon::parse($rawBirth)->format('d/m/Y');
+                    } catch (\Throwable $e) {
+                        $birthFormatted = (string) $rawBirth;
+                    }
+                }
+
+                $nik = $p['nik'] ?? ($p['ktp'] ?? ($p['kitas'] ?? ($p['identity_number'] ?? '-')));
+                $name = $p['name'] ?? ($p['nama'] ?? ($idx === 0 ? $b->name : '-'));
+                $phone = $p['phone'] ?? ($p['telepon'] ?? ($p['whatsapp'] ?? ($idx === 0 ? $b->whatsapp : '-')));
+                $address = $p['address'] ?? ($p['alamat'] ?? '-');
+
+                $rows[] = [
+                    'no'           => $no++,
+                    'name'         => $name,
+                    'nik'          => $nik ?: '-',
+                    'birth_date'   => $birthFormatted ?: '-',
+                    'address'      => $address ?: '-',
+                    'phone'        => $phone ?: '-',
+                    'tour_title'   => $b->tour?->title ?? '-',
+                    'booking_code' => $b->booking_code,
+                    'departure'    => $b->departure_date ? $b->departure_date->format('d/m/Y') : '-',
+                    'is_pic'       => ($idx === 0),
+                ];
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Export Data Peserta Asuransi ke Format Excel (.xls)
+     * Format tabel dilengkapi style khusus (mso-number-format) agar NIK 16 digit tidak terpotong
+     * dan nomor telepon awalan 0 tidak hilang.
+     */
+    public function exportInsuranceExcel(Request $request)
+    {
+        $bookings = $this->getFilteredInsuranceBookings($request);
+        $rows     = $this->formatInsuranceRows($bookings);
+
+        $selectedTour = null;
+        if ($request->filled('tour_id')) {
+            $selectedTour = Tour::find($request->tour_id);
+        }
+
+        $departureDateFormatted = 'Semua Tanggal';
+        if ($request->filled('departure_date')) {
+            try {
+                $departureDateFormatted = \Carbon\Carbon::parse($request->departure_date)->translatedFormat('d F Y');
+            } catch (\Throwable $e) {
+                $departureDateFormatted = $request->departure_date;
+            }
+        } elseif ($request->filled('departure_from') || $request->filled('departure_to')) {
+            $from = $request->filled('departure_from') ? \Carbon\Carbon::parse($request->departure_from)->format('d/m/Y') : 'Awal';
+            $to   = $request->filled('departure_to') ? \Carbon\Carbon::parse($request->departure_to)->format('d/m/Y') : 'Akhir';
+            $departureDateFormatted = "{$from} s/d {$to}";
+        }
+
+        $tourSlug = $selectedTour ? Str::slug($selectedTour->title) : 'semua-paket';
+        $dateSlug = $request->filled('departure_date') ? $request->departure_date : now()->format('Ymd');
+        $filename = "Data-Asuransi-{$tourSlug}-{$dateSlug}.xls";
+
+        ActivityLog::record("Export Excel Asuransi diunduh ({$filename}).");
+
+        $view = view('excel.insurance', compact('rows', 'selectedTour', 'departureDateFormatted'))->render();
+
+        return response($view, 200, [
+            'Content-Type'        => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Pragma'              => 'no-cache',
+            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires'             => '0',
+        ]);
+    }
+
+    /**
+     * Export data peserta asuransi — CSV format alternatif.
+     */
+    public function exportInsuranceCsv(Request $request)
+    {
+        $bookings = $this->getFilteredInsuranceBookings($request);
+        $rows     = $this->formatInsuranceRows($bookings);
 
         $filename = 'data-asuransi-' . now()->format('Ymd-His') . '.csv';
         $headers  = [
@@ -252,49 +384,33 @@ class BookingController extends Controller
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ];
 
-        $callback = function () use ($bookings) {
+        $callback = function () use ($rows) {
             $handle = fopen('php://output', 'w');
-            // UTF-8 BOM so Excel opens correctly
+            // UTF-8 BOM agar Excel membuka CSV dengan karakter tepat
             fwrite($handle, "\xEF\xBB\xBF");
 
             fputcsv($handle, [
-                'Kode Booking',
-                'Paket Wisata',
-                'Tanggal Keberangkatan',
-                'Nama Peserta',
-                'NIK / No. KTP / KITAS',
+                'No',
+                'Nama',
+                'Nomor Identitas (NIK/No. KTP/KITAS)',
                 'Tanggal Lahir',
                 'Alamat',
-                'No. Telepon',
+                'Nomor Telepon',
+                'Paket Wisata',
+                'Kode Booking',
             ]);
 
-            foreach ($bookings as $b) {
-                $participants = $b->participants_data ?? [];
-
-                // If no participant detail data, output one row with PIC only
-                if (empty($participants)) {
-                    fputcsv($handle, [
-                        $b->booking_code,
-                        $b->tour?->title ?? '-',
-                        $b->departure_date ? $b->departure_date->format('d/m/Y') : '-',
-                        $b->name,
-                        '-', '-', '-', $b->whatsapp,
-                    ]);
-                    continue;
-                }
-
-                foreach ($participants as $p) {
-                    fputcsv($handle, [
-                        $b->booking_code,
-                        $b->tour?->title ?? '-',
-                        $b->departure_date ? $b->departure_date->format('d/m/Y') : '-',
-                        $p['name']       ?? '-',
-                        $p['nik']        ?? ($p['ktp'] ?? '-'),
-                        $p['birth_date'] ?? ($p['tanggal_lahir'] ?? '-'),
-                        $p['address']    ?? ($p['alamat'] ?? '-'),
-                        $p['phone']      ?? ($p['telepon'] ?? ($p['whatsapp'] ?? '-')),
-                    ]);
-                }
+            foreach ($rows as $r) {
+                fputcsv($handle, [
+                    $r['no'],
+                    $r['name'],
+                    $r['nik'],
+                    $r['birth_date'],
+                    $r['address'],
+                    $r['phone'],
+                    $r['tour_title'],
+                    $r['booking_code'],
+                ]);
             }
             fclose($handle);
         };
@@ -302,6 +418,7 @@ class BookingController extends Controller
         ActivityLog::record('Export CSV Asuransi diunduh.');
         return response()->stream($callback, 200, $headers);
     }
+
 
     /**
      * Export Manifest Data Peserta Open Trip ke PDF untuk tim lapangan / tour leader.

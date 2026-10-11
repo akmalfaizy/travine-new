@@ -97,6 +97,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
         Route::get('/bookings/export', [AdminBookingController::class, 'exportCsv'])->name('bookings.export');
         Route::get('/bookings/export-insurance', [AdminBookingController::class, 'exportInsuranceCsv'])->name('bookings.export-insurance');
+        Route::get('/bookings/export-insurance-excel', [AdminBookingController::class, 'exportInsuranceExcel'])->name('bookings.export-insurance-excel');
         Route::get('/bookings/export-manifest-pdf', [AdminBookingController::class, 'exportManifestPdf'])->name('bookings.export-manifest-pdf');
         Route::get('/bookings/create', [AdminBookingController::class, 'create'])->name('bookings.create');
         Route::post('/bookings', [AdminBookingController::class, 'storeBooking'])->name('bookings.store');

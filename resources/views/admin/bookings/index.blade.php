@@ -18,14 +18,14 @@
            title="Export Manifest Data Peserta Open Trip ke format PDF (Sesuai filter)">
             📄 Export PDF Manifest
         </a>
+        <a href="{{ route('admin.bookings.export-insurance-excel', request()->query()) }}"
+           class="admin-btn admin-btn--secondary"
+           style="border-color:rgba(16,185,129,0.4); color:#34d399; display:inline-flex; align-items:center; gap:6px; font-weight:700;"
+           title="Export data peserta untuk keperluan asuransi ke format Excel (.xls) (Sesuai filter)">
+            📊 Export Excel Asuransi
+        </a>
         <a href="{{ route('admin.bookings.export', request()->query()) }}" class="admin-btn admin-btn--secondary">
             ↓ Export CSV
-        </a>
-        <a href="{{ route('admin.bookings.export-insurance', request()->query()) }}"
-           class="admin-btn admin-btn--secondary"
-           style="border-color:rgba(251,191,36,0.3);color:#fbbf24;"
-           title="Export data peserta untuk keperluan asuransi (satu baris per peserta)">
-            🛡 CSV Asuransi
         </a>
     </div>
 </div>
@@ -124,11 +124,20 @@
         </span>
     </div>
 
-    <a href="{{ route('admin.bookings.export-manifest-pdf', request()->query()) }}"
-       class="admin-btn admin-btn--primary admin-btn--sm"
-       style="display:inline-flex; align-items:center; gap:6px; font-weight:700;">
-        📄 Unduh PDF Manifest Tim Lapangan
-    </a>
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <a href="{{ route('admin.bookings.export-manifest-pdf', request()->query()) }}"
+           class="admin-btn admin-btn--primary admin-btn--sm"
+           style="display:inline-flex; align-items:center; gap:6px; font-weight:700;"
+           title="Export Manifest Data Peserta Open Trip ke format PDF">
+            📄 Unduh PDF Manifest
+        </a>
+        <a href="{{ route('admin.bookings.export-insurance-excel', request()->query()) }}"
+           class="admin-btn admin-btn--sm"
+           style="background:#10b981; color:#ffffff; border:1px solid #059669; display:inline-flex; align-items:center; gap:6px; font-weight:700;"
+           title="Export Data Peserta untuk Asuransi ke format Excel (.xls)">
+            📊 Unduh Excel Asuransi
+        </a>
+    </div>
 </div>
 @endif
 
